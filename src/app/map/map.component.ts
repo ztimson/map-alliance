@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {PhysicsService} from "../physics/physics.service";
-import {filter, map} from "rxjs/operators";
+import {debounceTime, filter, map} from "rxjs/operators";
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
 import {CalibtrateComponent} from "./calibrate/calibtrate.component";
@@ -27,10 +27,17 @@ export class MapComponent {
 
     constructor(private bpObserver: BreakpointObserver, public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet) {
         bpObserver.observe([Breakpoints.Handset]).subscribe(results => this.mobile = results.matches);
-        physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
+        physicsService.info.pipe(filter(coord => !!coord), debounceTime(50)).subscribe(pos => {
             if(this.mapApi) {
                 if(!this.position) this.center(pos);
                 this.position = pos;
+
+                this.position.heading = 45;
+
+                if(this.position.heading) {
+                    let marker: HTMLElement = document.querySelector('img[src*="arrow.png"]');
+                    if(marker) marker.style.transform = `rotate(${this.position.heading}deg)`
+                }
             }
         });
 

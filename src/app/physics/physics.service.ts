@@ -38,7 +38,7 @@ export class PhysicsService {
         });
 
         // Combine data into one nice package
-        combineLatest(this.position, this.orientation.pipe(debounceTime(200)), this.speed).subscribe(data => {
+        combineLatest(this.position, this.orientation, this.speed).subscribe(data => {
             if(!data[0]) return;
 
             let info = {

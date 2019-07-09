@@ -23,7 +23,7 @@
 <agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" [disableDoubleClickZoom]="true" (mapReady)="mapReady($event)" gestureHandling="greedy" (mapClick)="clicked('single', $event)">
     <ng-container *ngIf="position">
         <agm-marker *ngIf="!position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/dot.png', anchor: {x: 11, y: 10}}"></agm-marker>
-        <agm-marker *ngIf="position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/arrow.png', anchor: {x: 11, y: 13}, rotation: position.heading}"></agm-marker>
+        <agm-marker *ngIf="position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/arrow.png', anchor: {x: 11, y: 13}, rotation: 90}"></agm-marker>
         <agm-circle [latitude]="position.latitude" [longitude]="position.longitude" [radius]="position.accuracy" fillColor="#5C95F2"></agm-circle>
     </ng-container>
     <agm-marker *ngFor="let m of markers" [latitude]="m.latitude" [longitude]="m.longitude"></agm-marker>
