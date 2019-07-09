@@ -1,0 +1,22 @@
+.info {
+  background-color: #00000050;
+  position: fixed;
+  z-index: 100;
+  bottom: 15px;
+  left: 15px;
+}
+
+.gps {
+  position: fixed;
+  z-index: 100;
+  bottom: 15px;
+  right: 15px;
+}
+
+.map {
+  height: calc(100vh - 64px);
+}
+
+.selected {
+  background-color: #cccccc;
+}

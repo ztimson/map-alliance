@@ -7,10 +7,13 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {FormsModule} from "@angular/forms";
-import {MatSnackBarModule, MatToolbarModule} from "@angular/material";
 import {MapComponent} from "./map/map.component";
 import {NotFoundComponent} from "./404/404.component";
 import {HomeComponent} from "./home/home.component";
+import {AgmCoreModule} from "@agm/core";
+import {MaterialModule} from "./material.module";
+
+
 
 @NgModule({
     declarations: [
@@ -20,13 +23,13 @@ import {HomeComponent} from "./home/home.component";
         NotFoundComponent,
     ],
     imports: [
-        BrowserModule,
+        AgmCoreModule.forRoot({apiKey: 'AIzaSyDFtvCY6nH_HUoTBNf_5b-E8nRweSLYtxE'}),
         AppRouting,
         BrowserAnimationsModule,
+        BrowserModule,
         FormsModule,
-        MatSnackBarModule,
+        MaterialModule,
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
-        MatToolbarModule
     ],
     providers: [],
     bootstrap: [AppComponent]

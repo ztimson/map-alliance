@@ -1,1 +1,45 @@
-<h1>Map</h1>
+<mat-toolbar>
+    Map Alliance <small class="ml-2 text-muted">{{version}}</small>
+    <div class="ml-auto">
+        <button mat-icon-button><mat-icon>room</mat-icon></button> <!-- Add Marker -->
+        <button mat-icon-button><mat-icon>create</mat-icon></button> <!-- Create shape -->
+        <button mat-icon-button><mat-icon>straighten</mat-icon></button> <!-- Measure distance -->
+        <button mat-icon-button [matMenuTriggerFor]="mapStyle"><mat-icon>layers</mat-icon></button>
+        <mat-menu #mapStyle="matMenu">
+            <button mat-menu-item (click)="style = 'satellite'" [ngClass]="{'selected': style == 'satellite'}">Satellite</button>
+            <button mat-menu-item (click)="style = 'terrain'" [ngClass]="{'selected': style == 'terrain'}">Terrain</button>
+            <button mat-menu-item (click)="style = 'roadmap'" [ngClass]="{'selected': style == 'roadmap'}">Road</button>
+            <button mat-menu-item (click)="style = 'hybrid'" [ngClass]="{'selected': style == 'hybrid'}">Hybrid</button>
+        </mat-menu>
+        <button mat-icon-button><mat-icon>chat</mat-icon></button> <!-- Group chat -->
+        <button mat-icon-button><mat-icon>perm_identity</mat-icon></button>
+    </div>
+</mat-toolbar>
+<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" (mapReady)="mapReady($event)">
+    <ng-container *ngIf="position">
+        <agm-marker *ngIf="!position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/dot.png', anchor: {x: 11, y: 10}}"></agm-marker>
+        <agm-marker *ngIf="position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/arrow.png', anchor: {x: 11, y: 13}, rotation: position.heading}"></agm-marker>
+        <agm-circle [latitude]="position.latitude" [longitude]="position.longitude" [radius]="position.accuracy" fillColor="#5C95F2"></agm-circle>
+    </ng-container>
+</agm-map>
+<div class="info p-2">
+    <span *ngIf="!position" class="text-danger">No GPS</span>
+    <div *ngIf="position" class="text-white">
+        Heading:
+        <span *ngIf="!position.heading" class="text-danger">No Heading</span>
+        <span *ngIf="position.altitude">{{position.heading}}°</span>
+        <br>
+        Latitude: {{position.latitude | number : '0.0-5'}}
+        <br>
+        Longitude: {{position.longitude | number : '0.0-5'}}
+        <br>
+        Altitude:
+        <span *ngIf="!position.altitude" class="text-danger">No Altitude</span>
+        <span *ngIf="position.altitude">{{position.altitude}}</span>
+        <br>
+        Speed:
+        <span *ngIf="!position.speed" class="text-danger">No Speed</span>
+        <span *ngIf="position.speed">{{position.speed * 60 * 60 / 1000 | number : '1.1'}} km/h</span>
+    </div>
+</div>
+<button mat-fab class="gps" (click)="center()"><mat-icon>gps_fixed</mat-icon></button>
