@@ -1,5 +1,6 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject, combineLatest} from "rxjs";
+import {debounceTime} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
@@ -7,17 +8,20 @@ import {BehaviorSubject, combineLatest} from "rxjs";
 export class PhysicsService {
     private motionTimestamp;
 
+    requireCalibration = new EventEmitter();
+    calibrate?: number;
+
     info = new BehaviorSubject(null);
     motion = new BehaviorSubject<DeviceMotionEvent>(null);
     orientation = new BehaviorSubject<DeviceOrientationEvent>(null);
-    position = new BehaviorSubject<Coordinates>(null);
+    position = new BehaviorSubject<Position>(null);
     speed = new BehaviorSubject(null);
 
     constructor() {
         // Gather physical data
         window.addEventListener('deviceorientation', orientation => this.orientation.next(orientation));
         window.addEventListener('devicemotion', motion => this.motion.next(motion));
-        navigator.geolocation.watchPosition(pos => this.position.next(pos.coords));
+        navigator.geolocation.watchPosition(position => this.position.next(position));
 
         // Calculate speed from motion events
         this.motion.subscribe(event => {
@@ -34,20 +38,26 @@ export class PhysicsService {
         });
 
         // Combine data into one nice package
-        combineLatest(this.position, this.orientation, this.speed).subscribe(data => {
+        combineLatest(this.position, this.orientation.pipe(debounceTime(200)), this.speed).subscribe(data => {
             if(!data[0]) return;
 
             let info = {
-                accuracy: data[0].accuracy,
-                altitude: data[0].altitude,
-                altitudeAccuracy: data[0].altitudeAccuracy,
-                heading: data[0].heading,
-                latitude: data[0].latitude,
-                longitude: data[0].longitude,
-                speed: data[0].speed
+                accuracy: data[0].coords.accuracy,
+                altitude: data[0].coords.altitude,
+                altitudeAccuracy: data[0].coords.altitudeAccuracy,
+                heading: data[0].coords.heading,
+                latitude: data[0].coords.latitude,
+                longitude: data[0].coords.longitude,
+                speed: data[0].coords.speed
             };
 
-            if(info.heading == null && !!data[1]) info.heading = data[1].alpha;
+            if(info.heading == null && !!data[1]) {
+                if(!data[1].absolute && this.calibrate == null) this.requireCalibration.emit();
+                this.calibrate = 0;
+                info.heading = data[1].alpha + this.calibrate;
+                if(this.calibrate > 360) this.calibrate -= 360;
+                if(this.calibrate < 0) this.calibrate += 360
+            }
             if(info.speed == null && !!data[2]) info.speed = Math.sqrt(data[2].x**2 + data[2].y**2 + data[2].z**2);
 
             this.info.next(info);
