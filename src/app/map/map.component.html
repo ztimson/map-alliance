@@ -39,7 +39,7 @@
         <br>
         Altitude:
         <span *ngIf="!position.altitude" class="text-danger">No Altitude</span>
-        <span *ngIf="position.altitude">{{position.altitude}} m</span>
+        <span *ngIf="position.altitude">{{position.altitude | number : '0.0'}} m</span>
         <br>
         Speed:
         <span *ngIf="!position.speed" class="text-danger">No Speed</span>

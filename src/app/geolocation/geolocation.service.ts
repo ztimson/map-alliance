@@ -26,7 +26,7 @@ export class GeolocationService implements OnDestroy {
                     default:
                         snackBar.open('Geolocation experienced an unknown error', null, {duration: 3000, horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
                 }
-            });
+            }, {enableHighAccuracy: true});
         } else {
             snackBar.open('Geolocation is not supported', null, {duration: 3000, horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
         }
