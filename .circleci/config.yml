@@ -1,0 +1,67 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10.9-browsers
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+
+      - run:
+          name: Install Dependancies
+          command: yarn
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: Build
+          command: yarn build --prod
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - node_modules
+            - dist/MapAlliance
+
+      - store_artifacts:
+          path: dist/MapAlliance
+
+  deploy:
+    docker:
+      - image: circleci/node:10.9-browsers
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: ./
+
+      - run:
+          name: Deploy
+          command: yarn deploy
+
+workflows:
+  version: 2
+
+  build_and_deply:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
