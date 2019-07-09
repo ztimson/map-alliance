@@ -6,13 +6,26 @@ import {MatSnackBar} from "@angular/material";
     providedIn: 'root'
 })
 export class GeolocationService implements OnDestroy {
-    readonly watchRegistrationID;
+    private readonly watchRegistrationID;
+    private orientation: DeviceOrientationEvent;
 
-    location = new BehaviorSubject<Coordinates>(null);
+    location = new BehaviorSubject<any>(null);
 
     constructor(snackBar: MatSnackBar) {
+        window.addEventListener('deviceorientation', (orientation) => this.orientation = orientation, true);
+
         if(navigator.geolocation) {
-            this.watchRegistrationID = navigator.geolocation.watchPosition(pos => this.location.next(pos.coords), (error) => {
+            this.watchRegistrationID = navigator.geolocation.watchPosition(pos => {
+                this.location.next({
+                    accuracy: pos.coords.accuracy,
+                    altitude: pos.coords.altitude,
+                    altitudeAccuracy: pos.coords.altitudeAccuracy,
+                    heading: pos.coords.heading || this.orientation.alpha,
+                    latitude: pos.coords.latitude,
+                    longitude: pos.coords.longitude,
+                    speed: pos.coords.speed
+                });
+            }, (error) => {
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
                         snackBar.open('Geolocation permission denied', null, {duration: 3000, horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
