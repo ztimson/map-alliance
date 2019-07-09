@@ -1,5 +1,5 @@
 <mat-toolbar>
-    <img src="/assets/icons/icon-72x72.png" height="35px" width="auto"> <small class="ml-2 text-muted">{{version}}</small>
+    <img src="/assets/images/logo.png" height="35px" width="auto"> <small class="ml-2 text-muted">{{version}}</small>
     <div class="ml-auto">
         <button mat-icon-button><mat-icon>room</mat-icon></button> <!-- Add Marker -->
         <button mat-icon-button><mat-icon>create</mat-icon></button> <!-- Create shape -->
@@ -15,7 +15,7 @@
         <button mat-icon-button><mat-icon>perm_identity</mat-icon></button>
     </div>
 </mat-toolbar>
-<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" (mapReady)="mapReady($event)">
+<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" (mapReady)="mapReady($event)" gestureHandling="greedy">
     <ng-container *ngIf="position">
         <agm-marker *ngIf="!position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/dot.png', anchor: {x: 11, y: 10}}"></agm-marker>
         <agm-marker *ngIf="position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/arrow.png', anchor: {x: 11, y: 13}, rotation: position.heading}"></agm-marker>
