@@ -32,7 +32,7 @@
     <div *ngIf="position" class="text-white">
         Heading:
         <span *ngIf="!position.heading" class="text-danger">No Heading</span>
-        <span *ngIf="position.heading">{{position.heading | number : '0.0'}}°</span>
+        <span *ngIf="position.heading">{{position.heading | number : '0.0-0'}}°</span>
         <br>
         Latitude: {{position.latitude | number : '0.0-5'}}
         <br>
@@ -40,11 +40,11 @@
         <br>
         Altitude:
         <span *ngIf="!position.altitude" class="text-danger">No Altitude</span>
-        <span *ngIf="position.altitude">{{position.altitude | number : '0.0'}} m</span>
+        <span *ngIf="position.altitude">{{position.altitude | number : '0.0-0'}} m</span>
         <br>
         Speed:
         <span *ngIf="!position.speed" class="text-danger">No Speed</span>
-        <span *ngIf="position.speed">{{position.speed * 60 * 60 / 1000 | number : '1.1'}} km/h</span>
+        <span *ngIf="position.speed">{{position.speed * 60 * 60 / 1000 | number : '1.0-1'}} km/h</span>
     </div>
 </div>
 <button mat-fab class="gps" (click)="center()"><mat-icon>gps_fixed</mat-icon></button>

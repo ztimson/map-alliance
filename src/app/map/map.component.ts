@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {GeolocationService} from "../geolocation/geolocation.service";
+import {PhysicsService} from "../physics/physics.service";
 import {filter} from "rxjs/operators";
 import {version} from "../../../package.json";
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
@@ -22,9 +22,9 @@ export class MapComponent {
     style: 'satellite' | 'terrain' | 'roadmap' | 'hybrid' = 'terrain';
     version = version;
 
-    constructor(bpObserver: BreakpointObserver, geolocation: GeolocationService) {
+    constructor(bpObserver: BreakpointObserver, physicsService: PhysicsService) {
         bpObserver.observe([Breakpoints.Handset]).subscribe(results => this.mobile = results.matches);
-        geolocation.location.pipe(filter(coord => !!coord)).subscribe(pos => {
+        physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
             if(this.mapApi) {
                 console.log(pos);
                 if(!this.position) this.center(pos);
