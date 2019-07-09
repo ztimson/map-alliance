@@ -9,9 +9,9 @@ export class PhysicsService {
 
     info = new BehaviorSubject(null);
     motion = new BehaviorSubject<DeviceMotionEvent>(null);
-    speed = new BehaviorSubject(null);
     orientation = new BehaviorSubject<DeviceOrientationEvent>(null);
     position = new BehaviorSubject<Coordinates>(null);
+    speed = new BehaviorSubject(null);
 
     constructor() {
         // Gather physical data
