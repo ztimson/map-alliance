@@ -8,7 +8,6 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {FormsModule} from "@angular/forms";
 import {MapComponent} from "./map/map.component";
-import {NotFoundComponent} from "./404/404.component";
 import {HomeComponent} from "./home/home.component";
 import {AgmCoreModule} from "@agm/core";
 import {MaterialModule} from "./material.module";
@@ -19,8 +18,7 @@ import {MaterialModule} from "./material.module";
     declarations: [
         AppComponent,
         HomeComponent,
-        MapComponent,
-        NotFoundComponent,
+        MapComponent
     ],
     imports: [
         AgmCoreModule.forRoot({apiKey: 'AIzaSyDFtvCY6nH_HUoTBNf_5b-E8nRweSLYtxE'}),
