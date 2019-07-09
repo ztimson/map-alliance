@@ -47,4 +47,4 @@
         <span *ngIf="position.speed">{{position.speed * 60 * 60 / 1000 | number : '1.0-1'}} km/h</span>
     </div>
 </div>
-<button mat-fab class="gps" (click)="center()"><mat-icon>gps_fixed</mat-icon></button>
+<button *ngIf="!position" mat-fab class="gps" (click)="center()"><mat-icon>gps_fixed</mat-icon></button>
