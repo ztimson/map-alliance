@@ -1,8 +1,10 @@
 import {Component} from "@angular/core";
 import {PhysicsService} from "../physics/physics.service";
-import {filter} from "rxjs/operators";
-import {version} from "../../../package.json";
+import {filter, map} from "rxjs/operators";
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
+import {MatBottomSheet, MatSnackBar} from "@angular/material";
+import {CalibtrateComponent} from "./calibrate/calibtrate.component";
+import {Subject} from "rxjs";
 
 declare const google;
 
@@ -20,21 +22,40 @@ export class MapComponent {
     position: any;
     remove = false;
     style: 'satellite' | 'terrain' | 'roadmap' | 'hybrid' = 'terrain';
-    version = version;
 
-    constructor(bpObserver: BreakpointObserver, physicsService: PhysicsService) {
+    constructor(private bpObserver: BreakpointObserver, public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet) {
         bpObserver.observe([Breakpoints.Handset]).subscribe(results => this.mobile = results.matches);
         physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
             if(this.mapApi) {
-                console.log(pos);
                 if(!this.position) this.center(pos);
                 this.position = pos;
             }
         });
+
+        physicsService.requireCalibration.subscribe(() => {
+            snackBar.open('Compass requires calibration', 'calibrate', {
+                duration: 5000,
+                panelClass: 'bg-warning,text-white'
+            }).onAction().subscribe(() => this.calibrate());
+        })
+
+        physicsService.requireCalibration.emit();
     }
 
     mapReady(map) {
         this.mapApi = map;
+    }
+
+    calibrate() {
+        let liveCalibration = new Subject<number>();
+        liveCalibration.subscribe(calibration => this.physicsService.calibrate = calibration);
+        this.bottomSheet.open(CalibtrateComponent, {
+            hasBackdrop: false,
+            data: {
+                in: this.physicsService.info.pipe(map(coords => coords.heading)),
+                out: liveCalibration
+            }
+        });
     }
 
     center(pos?) {

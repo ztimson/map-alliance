@@ -1,0 +1,16 @@
+<div>
+    <div>
+        <mat-form-field appearance="fill">
+            <mat-label>Calibrate</mat-label>
+            <input matInput type="number" min="-180" max="180" [(ngModel)]="calibration">
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-slider class="w-100" [max]="180" [min]="-180" [step]="1" [tickInterval]="90" [thumbLabel]="true" [(ngModel)]="calibration" (input)="calibration = $event.value"></mat-slider>
+    </div>
+    <mat-divider class="mb-1"></mat-divider>
+    <div>
+        <button mat-button class="float-left" (click)="setN()">Set N</button>
+        <button mat-button class="float-right" (click)="close()">Close</button>
+    </div>
+</div>

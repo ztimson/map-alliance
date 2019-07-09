@@ -11,12 +11,15 @@ import {MapComponent} from "./map/map.component";
 import {HomeComponent} from "./home/home.component";
 import {AgmCoreModule} from "@agm/core";
 import {MaterialModule} from "./material.module";
+import {CalibtrateComponent} from "./map/calibrate/calibtrate.component";
+import {MatInputModule} from "@angular/material";
 
 
 
 @NgModule({
     declarations: [
         AppComponent,
+        CalibtrateComponent,
         HomeComponent,
         MapComponent
     ],
@@ -28,8 +31,10 @@ import {MaterialModule} from "./material.module";
         FormsModule,
         MaterialModule,
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
+        MatInputModule,
     ],
     providers: [],
+    entryComponents: [CalibtrateComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {
