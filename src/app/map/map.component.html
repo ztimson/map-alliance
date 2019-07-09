@@ -4,11 +4,12 @@
     </button>
     <small class="ml-1 text-muted">{{version}}</small>
     <div class="ml-auto">
-        <button mat-icon-button (click)="mode = 'marker'"><mat-icon>room</mat-icon></button> <!-- Add Marker -->
-        <button mat-icon-button><mat-icon>create</mat-icon></button> <!-- Create shape -->
-        <button mat-icon-button><mat-icon>straighten</mat-icon></button> <!-- Measure distance -->
-        <button mat-icon-button [matMenuTriggerFor]="mapStyle"><mat-icon>layers</mat-icon></button>
-        <mat-menu #mapStyle="matMenu">
+        <button mat-icon-button (click)="mode = 'marker'" [ngClass]="{'selected': mode == 'marker'}"><mat-icon>room</mat-icon></button>
+        <button mat-icon-button (click)="draw()" [ngClass]="{'selected': !!drawListener}"><mat-icon>create</mat-icon></button>
+        <button mat-icon-button><mat-icon>straighten</mat-icon></button>
+        <button mat-icon-button (click)="remove = !remove" [ngClass]="{'selected': remove}"><mat-icon>delete</mat-icon></button>
+        <button mat-icon-button [matMenuTriggerFor]="styleMenu"><mat-icon>layers</mat-icon></button>
+        <mat-menu #styleMenu="matMenu">
             <button mat-menu-item (click)="style = 'satellite'" [ngClass]="{'selected': style == 'satellite'}">Satellite</button>
             <button mat-menu-item (click)="style = 'terrain'" [ngClass]="{'selected': style == 'terrain'}">Terrain</button>
             <button mat-menu-item (click)="style = 'roadmap'" [ngClass]="{'selected': style == 'roadmap'}">Road</button>
@@ -18,7 +19,7 @@
         <button mat-icon-button><mat-icon>perm_identity</mat-icon></button>
     </div>
 </mat-toolbar>
-<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" (mapReady)="mapReady($event)" gestureHandling="greedy" (mapClick)="clicked('single', $event)">
+<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" [disableDoubleClickZoom]="true" (mapReady)="mapReady($event)" gestureHandling="greedy" (mapClick)="clicked('single', $event)">
     <ng-container *ngIf="position">
         <agm-marker *ngIf="!position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/dot.png', anchor: {x: 11, y: 10}}"></agm-marker>
         <agm-marker *ngIf="position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/arrow.png', anchor: {x: 11, y: 13}, rotation: position.heading}"></agm-marker>
