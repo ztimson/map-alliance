@@ -2,6 +2,7 @@ import {Component} from "@angular/core";
 import {GeolocationService} from "../geolocation/geolocation.service";
 import {filter} from "rxjs/operators";
 import {version} from "../../../package.json";
+import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
 
 declare const google;
 
@@ -14,13 +15,15 @@ export class MapComponent {
     drawListener;
     mapApi: any;
     markers = [];
+    mobile = false;
     mode: 'marker' | 'circle' | 'square' | 'draw';
     position: any;
     remove = false;
     style: 'satellite' | 'terrain' | 'roadmap' | 'hybrid' = 'terrain';
     version = version;
 
-    constructor(public geolocation: GeolocationService) {
+    constructor(bpObserver: BreakpointObserver, geolocation: GeolocationService) {
+        bpObserver.observe([Breakpoints.Handset]).subscribe(results => this.mobile = results.matches);
         geolocation.location.pipe(filter(coord => !!coord)).subscribe(pos => {
             if(this.mapApi) {
                 console.log(pos);
@@ -48,25 +51,20 @@ export class MapComponent {
 
     draw() {
         if(!this.drawListener) {
-            this.drawListener = google.maps.event.addDomListener(this.mapApi.getDiv(), 'mousedown', () => {
+            this.mapApi.setOptions({draggable: false});
+            this.drawListener = google.maps.event.addDomListener(this.mapApi.getDiv(), (this.mobile ? 'touchstart' : 'mousedown'), () => {
                 let poly = new google.maps.Polyline({map: this.mapApi, clickable: true});
                 google.maps.event.addListener(poly, 'click', () => {
                     if(this.remove) poly.setMap(null);
                 });
-                let moveListener = google.maps.event.addListener(this.mapApi, 'mousemove', e => poly.getPath().push(e.latLng));
-                google.maps.event.addListener(this.mapApi, 'mouseup', () => google.maps.event.removeListener(moveListener));
-                google.maps.event.addListener(poly, 'mouseup', () => google.maps.event.removeListener(moveListener));
-            });
-
-            this.mapApi.setOptions({
-                draggable: false
+                let moveListener = google.maps.event.addListener(this.mapApi, (this.mobile ? 'touchmove' : 'mousemove'), e => poly.getPath().push(e.latLng));
+                google.maps.event.addListener(this.mapApi, (this.mobile ? 'touchend' : 'mouseup'), () => google.maps.event.removeListener(moveListener));
+                google.maps.event.addListener(poly, (this.mobile ? 'touchend' : 'mouseup'), () => google.maps.event.removeListener(moveListener));
             });
         } else {
+            this.mapApi.setOptions({draggable: true});
             google.maps.event.removeListener(this.drawListener);
             this.drawListener = null;
-            this.mapApi.setOptions({
-                draggable: true
-            });
         }
     }
 }
