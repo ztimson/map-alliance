@@ -1,7 +1,10 @@
 <mat-toolbar>
-    <img src="/assets/images/logo.png" height="35px" width="auto"> <small class="ml-2 text-muted">{{version}}</small>
+    <button mat-icon-button routerLink="/">
+        <img src="/assets/images/logo.png" height="35px" width="auto">
+    </button>
+    <small class="ml-1 text-muted">{{version}}</small>
     <div class="ml-auto">
-        <button mat-icon-button><mat-icon>room</mat-icon></button> <!-- Add Marker -->
+        <button mat-icon-button (click)="mode = 'marker'"><mat-icon>room</mat-icon></button> <!-- Add Marker -->
         <button mat-icon-button><mat-icon>create</mat-icon></button> <!-- Create shape -->
         <button mat-icon-button><mat-icon>straighten</mat-icon></button> <!-- Measure distance -->
         <button mat-icon-button [matMenuTriggerFor]="mapStyle"><mat-icon>layers</mat-icon></button>
@@ -15,19 +18,20 @@
         <button mat-icon-button><mat-icon>perm_identity</mat-icon></button>
     </div>
 </mat-toolbar>
-<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" (mapReady)="mapReady($event)" gestureHandling="greedy">
+<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" (mapReady)="mapReady($event)" gestureHandling="greedy" (mapClick)="clicked('single', $event)">
     <ng-container *ngIf="position">
-        <agm-marker *ngIf="!position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/dot.png', anchor: {x: 11, y: 10}}"></agm-marker>
-        <agm-marker *ngIf="position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/arrow.png', anchor: {x: 11, y: 13}, rotation: position.heading}"></agm-marker>
+        <agm-marker *ngIf="!position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/dot.png', anchor: {x: 11, y: 10}}"></agm-marker>
+        <agm-marker *ngIf="position.heading" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/arrow.png', anchor: {x: 11, y: 13}, rotation: position.heading}"></agm-marker>
         <agm-circle [latitude]="position.latitude" [longitude]="position.longitude" [radius]="position.accuracy" fillColor="#5C95F2"></agm-circle>
     </ng-container>
+    <agm-marker *ngFor="let m of markers" [latitude]="m.latitude" [longitude]="m.longitude"></agm-marker>
 </agm-map>
 <div class="info p-2">
     <span *ngIf="!position" class="text-danger">No GPS</span>
     <div *ngIf="position" class="text-white">
         Heading:
         <span *ngIf="!position.heading" class="text-danger">No Heading</span>
-        <span *ngIf="position.altitude">{{position.heading}}°</span>
+        <span *ngIf="position.altitude">{{position.heading | number : '0.0'}}°</span>
         <br>
         Latitude: {{position.latitude | number : '0.0-5'}}
         <br>

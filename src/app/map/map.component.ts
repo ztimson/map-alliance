@@ -10,8 +10,10 @@ import {version} from "../../../package.json";
 })
 export class MapComponent {
     mapApi: any;
+    markers = [];
+    mode: 'marker';
     position: any;
-    style = 'terrain';
+    style: 'satellite' | 'terrain' | 'roadmap' | 'hybrid' = 'terrain';
     version = version;
 
     constructor(public geolocation: GeolocationService) {
@@ -31,5 +33,12 @@ export class MapComponent {
     center(pos?) {
         if(!pos) pos = this.position;
         this.mapApi.setCenter({lat: pos.latitude, lng: pos.longitude});
+    }
+
+    clicked(type: 'single' | 'double' | 'right', event) {
+        if(this.mode == 'marker') {
+            this.markers.push({latitude: event.coords.lat, longitude: event.coords.lng});
+            this.mode = null;
+        }
     }
 }

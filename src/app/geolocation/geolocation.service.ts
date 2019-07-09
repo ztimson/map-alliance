@@ -15,20 +15,20 @@ export class GeolocationService implements OnDestroy {
             this.watchRegistrationID = navigator.geolocation.watchPosition(pos => this.location.next(pos.coords), (error) => {
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
-                        snackBar.open('Geolocation permission denied', null, {horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
+                        snackBar.open('Geolocation permission denied', null, {duration: 3000, horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        snackBar.open('Geolocation unavailable', null, {horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
+                        snackBar.open('Geolocation unavailable', null, {duration: 3000, horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
                         break;
                     case error.TIMEOUT:
-                        snackBar.open('Geolocation timeout', null, {horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
+                        snackBar.open('Geolocation timeout', null, {duration: 3000, horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
                         break;
                     default:
-                        snackBar.open('Geolocation experienced an unknown error', null, {horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
+                        snackBar.open('Geolocation experienced an unknown error', null, {duration: 3000, horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
                 }
             });
         } else {
-            snackBar.open('Geolocation is not supported', null, {horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
+            snackBar.open('Geolocation is not supported', null, {duration: 3000, horizontalPosition: 'right', panelClass: ['bg-warning', 'text-white']});
         }
     }
 
