@@ -24,7 +24,7 @@ export class PhysicsService {
             if (!this.motionTimestamp) return this.motionTimestamp = new Date().getTime();
 
             let currentTime = new Date().getTime();
-            let {speedX, speedY, speedZ} = this.speed.value;
+            let {speedX, speedY, speedZ} = this.speed.value || {speedX: 0, speedY: 0, speedZ: 0};
             this.speed.next({
                 speedX: speedX + event.acceleration.x / 1000 * ((currentTime - this.motionTimestamp) / 1000) / 3600,
                 speedY: speedY + event.acceleration.y / 1000 * ((currentTime - this.motionTimestamp) / 1000) / 3600,
@@ -35,15 +35,22 @@ export class PhysicsService {
 
         // Combine data into one nice package
         combineLatest(this.position, this.orientation, this.speed).subscribe(data => {
-            this.info.next({
+            if(!data[0]) return;
+
+            let info = {
                 accuracy: data[0].accuracy,
                 altitude: data[0].altitude,
                 altitudeAccuracy: data[0].altitudeAccuracy,
-                heading: data[0].heading || data[1].alpha,
+                heading: data[0].heading,
                 latitude: data[0].latitude,
                 longitude: data[0].longitude,
-                speed: data[0].speed || Math.sqrt(data[2].x**2 + data[2].y**2 + data[2].z**2),
-            });
+                speed: data[0].speed
+            };
+
+            if(info.heading == null && !!data[1]) info.heading = data[1].alpha;
+            if(info.speed == null && !!data[2]) info.speed = Math.sqrt(data[2].x**2 + data[2].y**2 + data[2].z**2);
+
+            this.info.next(info);
         })
     }
 }
