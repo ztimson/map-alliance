@@ -5,6 +5,7 @@ import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
 import {CalibtrateComponent} from "./calibrate/calibtrate.component";
 import {Subject} from "rxjs";
+import {version} from "../../../package.json";
 
 declare const google;
 
@@ -22,6 +23,7 @@ export class MapComponent {
     position: any;
     remove = false;
     style: 'satellite' | 'terrain' | 'roadmap' | 'hybrid' = 'terrain';
+    version = version;
 
     constructor(private bpObserver: BreakpointObserver, public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet) {
         bpObserver.observe([Breakpoints.Handset]).subscribe(results => this.mobile = results.matches);
