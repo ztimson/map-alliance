@@ -51,7 +51,7 @@ export class PhysicsService {
                 speed: data[0].coords.speed
             };
 
-            if(info.heading == null && !!data[1]) {
+            if(info.heading == null && !!data[1] && data[1].alpha) {
                 if(!data[1].absolute && this.calibrate == null) this.requireCalibration.emit();
                 this.calibrate = 0;
                 info.heading = data[1].alpha + this.calibrate;

@@ -37,9 +37,7 @@ export class MapComponent {
                 duration: 5000,
                 panelClass: 'bg-warning,text-white'
             }).onAction().subscribe(() => this.calibrate());
-        })
-
-        physicsService.requireCalibration.emit();
+        });
     }
 
     mapReady(map) {
@@ -51,6 +49,7 @@ export class MapComponent {
         liveCalibration.subscribe(calibration => this.physicsService.calibrate = calibration);
         this.bottomSheet.open(CalibtrateComponent, {
             hasBackdrop: false,
+            disableClose: true,
             data: {
                 in: this.physicsService.info.pipe(map(coords => coords.heading)),
                 out: liveCalibration
