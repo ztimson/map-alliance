@@ -24,12 +24,12 @@ export class MapComponent {
     style: 'satellite' | 'terrain' | 'roadmap' | 'hybrid' = 'terrain';
     version = version;
 
+    Infinity = Infinity;
     isNaN = isNaN;
 
     constructor(private bpObserver: BreakpointObserver, public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet) {
         bpObserver.observe([Breakpoints.Handset]).subscribe(results => this.mobile = results.matches);
-        physicsService.info.pipe(filter(coord => !!coord), debounceTime(50)).subscribe(pos => {
-            console.log('fire');
+        physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
             if(this.mapApi) {
                 if(!this.position) this.center(pos);
                 this.position = pos;

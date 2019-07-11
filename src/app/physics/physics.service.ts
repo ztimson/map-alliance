@@ -40,8 +40,11 @@ export class PhysicsService {
                     this.motionTimestamp = currentTime;
                 });
 
+                this.orientation.subscribe(() => console.log('orientation'));
+
                 // Combine data into one nice package
                 combineLatest(this.position, this.orientation, this.calibrate, this.speed).subscribe(data => {
+                    console.log('combine');
                     if(!data[0]) return;
 
                     let info = {
@@ -54,7 +57,6 @@ export class PhysicsService {
                         speed: data[0].coords.speed
                     };
 
-                    // TODO-debug
                     if(info.heading == null && data[1]) {
                         if(!data[1].absolute && data[2] == Infinity) {
                             this.calibrate.next(0);
