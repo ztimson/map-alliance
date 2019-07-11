@@ -14,7 +14,9 @@ export class CalibrateComponent {
         this.physicsService.calibrate.next(c);
     }
 
-    constructor(private bottomSheetRef: MatBottomSheetRef, private physicsService: PhysicsService) { }
+    constructor(private bottomSheetRef: MatBottomSheetRef, private physicsService: PhysicsService) {
+        this._calibration = this.physicsService.calibrate.value;
+    }
 
     close() {
         this.bottomSheetRef.dismiss();
