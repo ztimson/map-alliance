@@ -64,8 +64,6 @@ export class PhysicsService {
                         }
 
                         info.heading = -data[1].alpha + (data[2] == Infinity ? 0 : data[2]);
-                        if(info.heading > 360) info.heading -= 360;
-                        if(info.heading < 0) info.heading += 360;
                     }
                     if(info.speed == null && !!data[3]) info.speed = Math.sqrt(data[3].x**2 + data[3].y**2 + data[3].z**2);
 
