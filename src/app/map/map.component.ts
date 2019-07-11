@@ -3,8 +3,7 @@ import {PhysicsService} from "../physics/physics.service";
 import {debounceTime, filter, map} from "rxjs/operators";
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
-import {CalibtrateComponent} from "./calibrate/calibtrate.component";
-import {Subject} from "rxjs";
+import {CalibrateComponent} from "./calibrate/calibrate.component";
 import {version} from "../../../package.json";
 
 declare const google;
@@ -32,7 +31,7 @@ export class MapComponent {
                 if(!this.position) this.center(pos);
                 this.position = pos;
 
-                if(this.position.heading) {
+                if(this.position.heading != null) {
                     let marker: HTMLElement = document.querySelector('img[src*="arrow.png"]');
                     if(marker) marker.style.transform = `rotate(${this.position.heading}deg)`
                 }
@@ -52,15 +51,9 @@ export class MapComponent {
     }
 
     calibrate() {
-        let liveCalibration = new Subject<number>();
-        liveCalibration.subscribe(calibration => this.physicsService.calibrate = calibration);
-        this.bottomSheet.open(CalibtrateComponent, {
+        this.bottomSheet.open(CalibrateComponent, {
             hasBackdrop: false,
-            disableClose: true,
-            data: {
-                in: this.physicsService.info.pipe(map(coords => coords.heading)),
-                out: liveCalibration
-            }
+            disableClose: true
         });
     }
 

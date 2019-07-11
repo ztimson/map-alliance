@@ -1,6 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-
 import {AppRouting} from './app.routing';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -11,15 +10,13 @@ import {MapComponent} from "./map/map.component";
 import {HomeComponent} from "./home/home.component";
 import {AgmCoreModule} from "@agm/core";
 import {MaterialModule} from "./material.module";
-import {CalibtrateComponent} from "./map/calibrate/calibtrate.component";
+import {CalibrateComponent} from "./map/calibrate/calibrate.component";
 import {MatInputModule} from "@angular/material";
-
-
 
 @NgModule({
     declarations: [
         AppComponent,
-        CalibtrateComponent,
+        CalibrateComponent,
         HomeComponent,
         MapComponent
     ],
@@ -34,7 +31,7 @@ import {MatInputModule} from "@angular/material";
         MatInputModule,
     ],
     providers: [],
-    entryComponents: [CalibtrateComponent],
+    entryComponents: [CalibrateComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {

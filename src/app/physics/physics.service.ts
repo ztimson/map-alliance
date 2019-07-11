@@ -9,7 +9,7 @@ export class PhysicsService {
     private motionTimestamp;
 
     requireCalibration = new EventEmitter();
-    calibrate?: number;
+    calibrate = new BehaviorSubject(0);
 
     info = new BehaviorSubject(null);
     motion = new BehaviorSubject<DeviceMotionEvent>(null);
@@ -38,7 +38,7 @@ export class PhysicsService {
         });
 
         // Combine data into one nice package
-        combineLatest(this.position, this.orientation, this.speed).subscribe(data => {
+        combineLatest(this.position, this.orientation, this.calibrate, this.speed).subscribe(data => {
             if(!data[0]) return;
 
             let info = {
@@ -52,13 +52,16 @@ export class PhysicsService {
             };
 
             if(info.heading == null && !!data[1] && data[1].alpha) {
-                if(!data[1].absolute && this.calibrate == null) this.requireCalibration.emit();
-                this.calibrate = 0;
-                info.heading = data[1].alpha + this.calibrate;
-                if(this.calibrate > 360) this.calibrate -= 360;
-                if(this.calibrate < 0) this.calibrate += 360
+                if(!data[1].absolute && this.calibrate.value == null) {
+                    this.requireCalibration.emit();
+                    this.calibrate.next(0);
+                }
+
+                info.heading = data[1].alpha + this.calibrate.value;
+                if(info.heading > 360) info.heading -= 360;
+                if(info.heading < 0) info.heading += 360;
             }
-            if(info.speed == null && !!data[2]) info.speed = Math.sqrt(data[2].x**2 + data[2].y**2 + data[2].z**2);
+            if(info.speed == null && !!data[3]) info.speed = Math.sqrt(data[3].x**2 + data[3].y**2 + data[3].z**2);
 
             this.info.next(info);
         })
