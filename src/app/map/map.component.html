@@ -5,7 +5,7 @@
     <small class="ml-1 text-muted">{{version}}</small>
     <div class="ml-auto">
         <button mat-icon-button (click)="mode = 'marker'" [ngClass]="{'selected': mode == 'marker'}"><mat-icon>room</mat-icon></button>
-        <button mat-icon-button (click)="draw()" [ngClass]="{'selected': !!drawListener}"><mat-icon>create</mat-icon></button>
+        <button mat-icon-button (click)="draw()" [ngClass]="{'selected': drawListener.length}"><mat-icon>create</mat-icon></button>
         <button mat-icon-button><mat-icon>straighten</mat-icon></button>
         <button mat-icon-button (click)="remove = !remove" [ngClass]="{'selected': remove}"><mat-icon>delete</mat-icon></button>
         <button *ngIf="physicsService.calibrate != null" mat-icon-button (click)="calibrate()"><mat-icon>explore</mat-icon></button>

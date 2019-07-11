@@ -15,7 +15,7 @@ declare const google;
     styleUrls: ['map.component.scss']
 })
 export class MapComponent {
-    drawListener;
+    drawListener = [];
     mapApi: any;
     markers = [];
     mobile = false;
@@ -31,8 +31,6 @@ export class MapComponent {
             if(this.mapApi) {
                 if(!this.position) this.center(pos);
                 this.position = pos;
-
-                this.position.heading = 45;
 
                 if(this.position.heading) {
                     let marker: HTMLElement = document.querySelector('img[src*="arrow.png"]');
@@ -79,21 +77,32 @@ export class MapComponent {
     }
 
     draw() {
-        if(!this.drawListener) {
+        if(!this.drawListener.length) {
             this.mapApi.setOptions({draggable: false});
-            this.drawListener = google.maps.event.addDomListener(this.mapApi.getDiv(), (this.mobile ? 'touchstart' : 'mousedown'), () => {
+
+            let drawHander = () => {
                 let poly = new google.maps.Polyline({map: this.mapApi, clickable: true});
                 google.maps.event.addListener(poly, 'click', () => {
                     if(this.remove) poly.setMap(null);
                 });
-                let moveListener = google.maps.event.addListener(this.mapApi, (this.mobile ? 'touchmove' : 'mousemove'), e => poly.getPath().push(e.latLng));
-                google.maps.event.addListener(this.mapApi, (this.mobile ? 'touchend' : 'mouseup'), () => google.maps.event.removeListener(moveListener));
-                google.maps.event.addListener(poly, (this.mobile ? 'touchend' : 'mouseup'), () => google.maps.event.removeListener(moveListener));
-            });
+                let moveListener = [
+                    google.maps.event.addListener(this.mapApi, 'touchmove', e => poly.getPath().push(e.latLng)),
+                    google.maps.event.addListener(this.mapApi, 'mousemove', e => poly.getPath().push(e.latLng))
+                ];
+                google.maps.event.addListener(this.mapApi, 'touchend', () => moveListener.forEach(listener => google.maps.event.removeListener(listener)));
+                google.maps.event.addListener(this.mapApi, 'mouseup', () => moveListener.forEach(listener => google.maps.event.removeListener(listener)));
+                google.maps.event.addListener(poly, 'touchend', () => moveListener.forEach(listener => google.maps.event.removeListener(listener)));
+                google.maps.event.addListener(poly, 'mouseup', () => moveListener.forEach(listener => google.maps.event.removeListener(listener)));
+            };
+
+            this.drawListener = [
+                google.maps.event.addDomListener(this.mapApi.getDiv(), 'touchstart', drawHander),
+                google.maps.event.addDomListener(this.mapApi.getDiv(), 'mousedown', drawHander)
+            ]
         } else {
             this.mapApi.setOptions({draggable: true});
-            google.maps.event.removeListener(this.drawListener);
-            this.drawListener = null;
+            this.drawListener.forEach(listener => google.maps.event.removeListener(listener));
+            this.drawListener = [];
         }
     }
 }
