@@ -8,7 +8,7 @@
         <button mat-icon-button (click)="draw()" [ngClass]="{'selected': drawListener.length}"><mat-icon>create</mat-icon></button>
         <button mat-icon-button><mat-icon>straighten</mat-icon></button>
         <button mat-icon-button (click)="remove = !remove" [ngClass]="{'selected': remove}"><mat-icon>delete</mat-icon></button>
-        <button *ngIf="physicsService.calibrate.value != null" mat-icon-button (click)="calibrate()"><mat-icon>explore</mat-icon></button>
+        <button *ngIf="!isNaN(position?.heading)" mat-icon-button (click)="calibrate()"><mat-icon>explore</mat-icon></button>
         <button mat-icon-button [matMenuTriggerFor]="styleMenu"><mat-icon>layers</mat-icon></button>
         <mat-menu #styleMenu="matMenu">
             <button mat-menu-item (click)="style = 'satellite'" [ngClass]="{'selected': style == 'satellite'}">Satellite</button>
@@ -32,8 +32,8 @@
     <span *ngIf="!position" class="text-danger">No GPS</span>
     <div *ngIf="position" class="text-white">
         Heading:
-        <span *ngIf="!position.heading" class="text-danger">No Heading</span>
-        <span *ngIf="position.heading">{{position.heading | number : '0.0-0'}}°</span>
+        <span *ngIf="isNaN(position.heading)" class="text-danger">No Heading</span>
+        <span *ngIf="!isNaN(position.heading)">{{position.heading | number : '0.0-0'}}°</span>
         <br>
         Latitude: {{position.latitude | number : '0.0-5'}}
         <br>

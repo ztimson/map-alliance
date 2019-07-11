@@ -10,7 +10,7 @@ export class PhysicsService {
     private motionTimestamp;
 
     requireCalibration = new EventEmitter();
-    calibrate = new BehaviorSubject(0);
+    calibrate = new BehaviorSubject<number>(Infinity);
 
     info = new BehaviorSubject(null);
     motion = new BehaviorSubject<DeviceMotionEvent>(null);
@@ -54,13 +54,14 @@ export class PhysicsService {
                         speed: data[0].coords.speed
                     };
 
-                    if(info.heading == null && !!data[1] && data[1].alpha) {
-                        if(!data[1].absolute && this.calibrate.value == null) {
-                            this.requireCalibration.emit();
+                    // TODO-debug
+                    if(info.heading == null && data[1]) {
+                        if(!data[1].absolute && data[2] == Infinity) {
                             this.calibrate.next(0);
+                            this.requireCalibration.emit();
                         }
 
-                        info.heading = data[1].alpha + this.calibrate.value;
+                        info.heading = data[1].alpha + (data[2] == Infinity ? 0 : data[2]);
                         if(info.heading > 360) info.heading -= 360;
                         if(info.heading < 0) info.heading += 360;
                     }
