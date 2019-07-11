@@ -1,6 +1,6 @@
 import {
     MatBottomSheetModule,
-    MatButtonModule, MatDividerModule, MatFormFieldModule,
+    MatButtonModule, MatDialogModule, MatDividerModule, MatFormFieldModule,
     MatIconModule, MatInputModule, MatMenuModule, MatSliderModule,
     MatSnackBarModule,
     MatToolbarModule
@@ -10,6 +10,7 @@ import {NgModule} from "@angular/core";
 export const materialModules = [
     MatBottomSheetModule,
     MatButtonModule,
+    MatDialogModule,
     MatDividerModule,
     MatFormFieldModule,
     MatIconModule,

@@ -12,13 +12,15 @@ import {AgmCoreModule} from "@agm/core";
 import {MaterialModule} from "./material.module";
 import {CalibrateComponent} from "./map/calibrate/calibrate.component";
 import {MatInputModule} from "@angular/material";
+import {PermissionsComponent} from "./permissions/permissions.component";
 
 @NgModule({
     declarations: [
         AppComponent,
         CalibrateComponent,
         HomeComponent,
-        MapComponent
+        MapComponent,
+        PermissionsComponent
     ],
     imports: [
         AgmCoreModule.forRoot({apiKey: 'AIzaSyDFtvCY6nH_HUoTBNf_5b-E8nRweSLYtxE'}),
@@ -31,7 +33,7 @@ import {MatInputModule} from "@angular/material";
         MatInputModule,
     ],
     providers: [],
-    entryComponents: [CalibrateComponent],
+    entryComponents: [CalibrateComponent, PermissionsComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {

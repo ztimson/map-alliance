@@ -1,0 +1,10 @@
+<div mat-dialog-content>
+    <div class="d-flex">
+        <div><mat-icon class="mr-2">{{icon}}</mat-icon></div>
+        <div><p class="d-inline">{{message}}</p></div>
+    </div>
+</div>
+<div mat-dialog-actions class="float-right">
+    <button mat-button [mat-dialog-close]="false">No Thanks</button>
+    <button mat-button [mat-dialog-close]="true">Ok</button>
+</div>
