@@ -36,7 +36,7 @@ export class MapComponent {
 
                 if(this.position.heading != null) {
                     let marker: HTMLElement = document.querySelector('img[src*="arrow.png"]');
-                    if(marker) marker.style.transform = `rotate(-${this.position.heading}deg)`
+                    if(marker) marker.style.transform = `rotate(${this.position.heading}deg)`
                 }
             }
         });
