@@ -13,6 +13,8 @@ import {MaterialModule} from "./material.module";
 import {CalibrateComponent} from "./map/calibrate/calibrate.component";
 import {MatInputModule} from "@angular/material";
 import {PermissionsComponent} from "./permissions/permissions.component";
+import {AngularFireModule} from "@angular/fire";
+import {AngularFirestoreModule} from "@angular/fire/firestore";
 
 @NgModule({
     declarations: [
@@ -24,6 +26,8 @@ import {PermissionsComponent} from "./permissions/permissions.component";
     ],
     imports: [
         AgmCoreModule.forRoot({apiKey: 'AIzaSyDFtvCY6nH_HUoTBNf_5b-E8nRweSLYtxE'}),
+        AngularFireModule.initializeApp(environment.firebaseConfig),
+        AngularFirestoreModule.enablePersistence(),
         AppRouting,
         BrowserAnimationsModule,
         BrowserModule,
