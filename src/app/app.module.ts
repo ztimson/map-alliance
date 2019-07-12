@@ -15,6 +15,7 @@ import {MatInputModule} from "@angular/material";
 import {PermissionsComponent} from "./permissions/permissions.component";
 import {AngularFireModule} from "@angular/fire";
 import {AngularFirestoreModule} from "@angular/fire/firestore";
+import {ToolbarComponent} from "./map/toolbar/toolbar.component";
 
 @NgModule({
     declarations: [
@@ -22,7 +23,8 @@ import {AngularFirestoreModule} from "@angular/fire/firestore";
         CalibrateComponent,
         HomeComponent,
         MapComponent,
-        PermissionsComponent
+        PermissionsComponent,
+        ToolbarComponent
     ],
     imports: [
         AgmCoreModule.forRoot({apiKey: 'AIzaSyDFtvCY6nH_HUoTBNf_5b-E8nRweSLYtxE'}),

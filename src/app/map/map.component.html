@@ -1,32 +1,10 @@
-<mat-toolbar>
-    <button mat-icon-button routerLink="/">
-        <img src="/assets/images/logo.png" height="35px" width="auto">
-    </button>
-    <small class="ml-1 text-muted">{{version}}</small>
-    <div class="ml-auto">
-        <button mat-icon-button (click)="mode = 'marker'" [ngClass]="{'selected': mode == 'marker'}"><mat-icon>room</mat-icon></button>
-        <button mat-icon-button (click)="draw()" [ngClass]="{'selected': drawListener.length}"><mat-icon>create</mat-icon></button>
-        <button mat-icon-button><mat-icon>straighten</mat-icon></button>
-        <button mat-icon-button (click)="remove = !remove" [ngClass]="{'selected': remove}"><mat-icon>delete</mat-icon></button>
-        <button *ngIf="position?.heading != Infinity" mat-icon-button (click)="calibrate()"><mat-icon>explore</mat-icon></button>
-        <button mat-icon-button [matMenuTriggerFor]="styleMenu"><mat-icon>layers</mat-icon></button>
-        <mat-menu #styleMenu="matMenu">
-            <button mat-menu-item (click)="style = 'satellite'" [ngClass]="{'selected': style == 'satellite'}">Satellite</button>
-            <button mat-menu-item (click)="style = 'terrain'" [ngClass]="{'selected': style == 'terrain'}">Terrain</button>
-            <button mat-menu-item (click)="style = 'roadmap'" [ngClass]="{'selected': style == 'roadmap'}">Road</button>
-            <button mat-menu-item (click)="style = 'hybrid'" [ngClass]="{'selected': style == 'hybrid'}">Hybrid</button>
-        </mat-menu>
-        <!--<button mat-icon-button><mat-icon>chat</mat-icon></button>-->
-        <button mat-icon-button><mat-icon>perm_identity</mat-icon></button>
-    </div>
-</mat-toolbar>
-<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" [disableDoubleClickZoom]="true" (mapReady)="mapReady($event)" gestureHandling="greedy" (mapClick)="clicked('single', $event)">
+<toolbar [(menu)]="menu"></toolbar>
+<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" [disableDoubleClickZoom]="true" (mapReady)="mapApi = $event" gestureHandling="greedy" (mapClick)="mapClick.next($event.coords)">
     <ng-container *ngIf="position">
         <agm-marker *ngIf="position.heading == null" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/dot.png', anchor: {x: 11, y: 10}}"></agm-marker>
         <agm-marker *ngIf="position.heading != null" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/arrow.png', anchor: {x: 11, y: 13}, rotation: 90}"></agm-marker>
-        <agm-circle [latitude]="position.latitude" [longitude]="position.longitude" [radius]="position.accuracy" fillColor="#5C95F2"></agm-circle>
+        <agm-circle [latitude]="position.latitude" [longitude]="position.longitude" [radius]="position.accuracy" fillColor="#5C95F2" [clickable]="false"></agm-circle>
     </ng-container>
-    <agm-marker *ngFor="let m of markers" [latitude]="m.latitude" [longitude]="m.longitude"></agm-marker>
 </agm-map>
 <div class="info p-2">
     <span *ngIf="!position" class="text-danger">No GPS</span>

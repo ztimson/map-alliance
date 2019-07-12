@@ -40,11 +40,8 @@ export class PhysicsService {
                     this.motionTimestamp = currentTime;
                 });
 
-                this.orientation.subscribe(() => console.log('orientation'));
-
                 // Combine data into one nice package
                 combineLatest(this.position, this.orientation, this.calibrate, this.speed).subscribe(data => {
-                    console.log('combine');
                     if(!data[0]) return;
 
                     let info = {

@@ -1,0 +1,15 @@
+<mat-toolbar>
+    <button mat-icon-button routerLink="/">
+        <img src="/assets/images/logo.png" height="35px" width="auto">
+    </button>
+    <small class="ml-1 text-muted">{{version}}</small>
+    <div class="ml-auto">
+        <div *ngFor="let section of menu" class="d-inline ml-4">
+            <ng-container *ngFor="let item of section">
+                <button *ngIf="!item.hidden" mat-icon-button [ngClass]="{'selected': item.enabled}" class="ml-1" (click)="clickWrapper(item)">
+                    <mat-icon>{{item.icon}}</mat-icon>
+                </button>
+            </ng-container>
+        </div>
+    </div>
+</mat-toolbar>
