@@ -23,7 +23,7 @@ export class MapComponent {
     isNaN = isNaN;
 
     menu: ToolbarItem[][] = [[
-        {name: 'compass', icon: 'explore', click: () => this.calibrate(), hidden: true},
+        {name: 'compass', icon: 'explore', click: () => this.calibrate()},
     ], [
         {name: 'marker', icon: 'room', toggle: true, individualToggle: true, click: () => this.addMarker()},
         {name: 'draw', icon: 'create', toggle: true, individualToggle: true, onEnabled: () => this.startDraw(), onDisabled: () => this.endDraw()},
