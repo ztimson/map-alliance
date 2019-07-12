@@ -23,13 +23,14 @@ export class MapComponent {
     isNaN = isNaN;
 
     menu: ToolbarItem[][] = [[
-        {name: 'compass', icon: 'explore', click: () => this.calibrate()},
+        {name: 'compass', icon: 'explore', click: () => this.calibrate(), hidden: true},
     ], [
         {name: 'marker', icon: 'room', toggle: true, individualToggle: true, click: () => this.addMarker()},
         {name: 'draw', icon: 'create', toggle: true, individualToggle: true, onEnabled: () => this.startDraw(), onDisabled: () => this.endDraw()},
         {name: 'measure', icon: 'straighten', toggle: true, individualToggle: true, click: () => this.measure()},
         {name: 'delete', icon: 'delete', toggle: true, individualToggle: true},
-        {name: 'style', icon: 'terrain', enabled: true, toggle: true, onEnabled: () => this.style = 'terrain', onDisabled: () => this.style = 'satellite'}
+        {name: 'style', icon: 'terrain', enabled: true, toggle: true, onEnabled: () => this.style = 'terrain', onDisabled: () => this.style = 'satellite'},
+        {name: 'compass', icon: 'explore', click: () => this.calibrate()}
     ], [
         {name: 'messages', icon: 'chat', hidden: true},
         {name: 'identity', icon: 'perm_identity', hidden: true},

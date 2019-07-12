@@ -10,7 +10,7 @@
         <div class="col-5 pl-0">
             <mat-form-field appearance="fill" class="w-100">
                 <mat-label>Heading</mat-label>
-                <input matInput type="number" [ngModel]="(physicsService.info | async)?.heading" readonly>
+                <input matInput type="number" [value]="(physicsService.info | async)?.heading | number : '1.0-0'" readonly>
             </mat-form-field>
         </div>
     </div>
