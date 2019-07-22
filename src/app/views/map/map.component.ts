@@ -10,14 +10,11 @@ import {flyInRight, flyOutRight} from "../../animations";
 
 declare const google;
 
-const flyInRightFast = flyInRight('150ms');
-const flyOutRightFast = flyOutRight('150ms');
-
 @Component({
     selector: 'map',
     templateUrl: 'map.component.html',
     styleUrls: ['map.component.scss'],
-    animations: [flyInRightFast, flyOutRightFast]
+    animations: [flyInRight, flyOutRight]
 })
 export class MapComponent {
     drawColor: string;
