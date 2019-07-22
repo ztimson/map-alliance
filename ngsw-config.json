@@ -28,7 +28,7 @@
       "installMode": "lazy",
       "resources": {
         "urls": [
-          "www.google.com/maps/vt/**"
+          "https://maps.googleapis.com/maps/**"
         ]
       }
     }
