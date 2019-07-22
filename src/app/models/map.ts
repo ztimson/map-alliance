@@ -1,3 +1,12 @@
+import {Marker} from "./marker";
+import {Drawing} from "./drawing";
+import {User} from "./user";
+import {Message} from "./message";
+
 export interface Map {
-    name: string
+    drawings: Drawing[];
+    markers: Marker[];
+    messages: Message[];
+    name: string;
+    users: User[];
 }

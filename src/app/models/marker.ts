@@ -1,6 +1,7 @@
-export class Marker {
-    latitude: number;
-    longitude: number;
+import {LatLng} from "./latlng";
+
+export interface Marker {
+    latLng: LatLng;
     name: string;
     color: string;
     notes: string;
