@@ -21,6 +21,13 @@ export class MapComponent {
     drawListener = [];
     mapApi: any;
     mapClick = new BehaviorSubject<LatLngLiteral>(null);
+    mapStyle = [{
+        "featureType": "poi",
+        "elementType": "labels",
+        "stylers": [{
+            "visibility": "off"
+        }]
+    }];
     position: any;
     showPalette = false;
     style = 'terrain';

@@ -1,5 +1,5 @@
 <toolbar [(menu)]="menu"></toolbar>
-<agm-map class="map" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" [disableDoubleClickZoom]="true" (mapReady)="mapApi = $event" gestureHandling="greedy" (mapClick)="mapClick.next($event.coords)">
+<agm-map class="map" [styles]="mapStyle" [mapTypeId]="style" [zoomControl]="false" [streetViewControl]="false" [disableDoubleClickZoom]="true" (mapReady)="mapApi = $event" gestureHandling="greedy" (mapClick)="mapClick.next($event.coords)">
     <ng-container *ngIf="position">
         <agm-marker *ngIf="position.heading == null" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/dot.png', anchor: {x: 11, y: 10}}"></agm-marker>
         <agm-marker *ngIf="position.heading != null" [markerClickable]="false" [latitude]="position.latitude" [longitude]="position.longitude" [iconUrl]="{url: '/assets/images/arrow.png', anchor: {x: 11, y: 13}, rotation: 90}"></agm-marker>
