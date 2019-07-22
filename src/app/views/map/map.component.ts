@@ -113,26 +113,25 @@ export class MapComponent {
 
                 let distance = distanceInM(first.lat, first.lng, coords.lat, coords.lng);
 
-                let marker = new google.maps.Marker({
-                    map: this.mapApi,
-                    icon: null,
-                    position: {lat: (first.lat + coords.lat) / 2, lng: (first.lng + coords.lng) / 2},
-                    label: distance >= 1000 ? `${Math.round(distance / 100) / 10} km` : `${Math.round(distance)} m`
+                let info = new google.maps.InfoWindow({
+                    content: distance >= 1000 ? `${Math.round(distance / 100) / 10} km` : `${Math.round(distance)} m`,
+                    position: {lat: (first.lat + coords.lat) / 2, lng: (first.lng + coords.lng) / 2}
                 });
+                info.open(this.mapApi);
 
                 google.maps.event.addListener(line, 'click', () => {
                     if(this.menu[1][3].enabled) {
                         line.setMap(null);
-                        marker.setMap(null);
+                        info.setMap(null);
                     }
-                })
+                });
 
-                google.maps.event.addListener(marker, 'click', () => {
+                google.maps.event.addListener(info, 'click', () => {
                     if(this.menu[1][3].enabled) {
                         line.setMap(null);
-                        marker.setMap(null);
+                        info.setMap(null);
                     }
-                })
+                });
             }
         })
     }

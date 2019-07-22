@@ -16,15 +16,22 @@ body {
 }
 
 // Remove google maps branding
-a[href^="http://maps.google.com/maps"]{display:none !important}
-a[href^="https://maps.google.com/maps"]{display:none !important}
+agm-map {
+  a[href^="http://maps.google.com/maps"]{display:none !important}
+  a[href^="https://maps.google.com/maps"]{display:none !important}
 
-.gmnoprint a, .gmnoprint span, .gm-style-cc {
-  display:none;
-}
+  .gmnoprint a, .gmnoprint span, .gm-style-cc {
+    display: none;
+  }
 
-.gmnoprint div {
-  background:none !important;
+  .gmnoprint div {
+    background: none !important;
+
+  }
+
+  button[title="Close"] {
+    display: none !important;
+  }
 }
 
 .mat-padding-0 {
