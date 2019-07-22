@@ -6,16 +6,17 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {FormsModule} from "@angular/forms";
-import {MapComponent} from "./map/map.component";
-import {HomeComponent} from "./home/home.component";
+import {MapComponent} from "./views/map/map.component";
+import {HomeComponent} from "./views/home/home.component";
 import {AgmCoreModule} from "@agm/core";
 import {MaterialModule} from "./material.module";
-import {CalibrateComponent} from "./map/calibrate/calibrate.component";
+import {CalibrateComponent} from "./components/calibrate/calibrate.component";
 import {MatInputModule} from "@angular/material";
-import {PermissionsComponent} from "./permissions/permissions.component";
+import {PermissionsComponent} from "./components/permissions/permissions.component";
 import {AngularFireModule} from "@angular/fire";
 import {AngularFirestoreModule} from "@angular/fire/firestore";
-import {ToolbarComponent} from "./map/toolbar/toolbar.component";
+import {ToolbarComponent} from "./components/toolbar/toolbar.component";
+import {PaletteComponent} from "./components/palette/palette.component";
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import {ToolbarComponent} from "./map/toolbar/toolbar.component";
         CalibrateComponent,
         HomeComponent,
         MapComponent,
+        PaletteComponent,
         PermissionsComponent,
         ToolbarComponent
     ],

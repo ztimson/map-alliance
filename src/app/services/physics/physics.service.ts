@@ -1,7 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject, combineLatest} from "rxjs";
-import {debounceTime} from "rxjs/operators";
-import {PermissionsService} from "../permissions/permissions.service";
+import {PermissionsService} from "../../components/permissions/permissions.service";
 
 @Injectable({
     providedIn: 'root'

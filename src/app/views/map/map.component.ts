@@ -1,9 +1,9 @@
 import {Component} from "@angular/core";
-import {PhysicsService} from "../physics/physics.service";
+import {PhysicsService} from "../../services/physics/physics.service";
 import {filter, skip, take} from "rxjs/operators";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
-import {CalibrateComponent} from "./calibrate/calibrate.component";
-import {ToolbarItem} from "./toolbar/toolbarItem";
+import {CalibrateComponent} from "../../components/calibrate/calibrate.component";
+import {ToolbarItem} from "../../components/toolbar/toolbarItem";
 import {BehaviorSubject} from "rxjs";
 import {LatLngLiteral} from "@agm/core";
 
