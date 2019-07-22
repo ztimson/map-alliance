@@ -1,0 +1,9 @@
+.color-palette {
+  border-radius: 50% 50%;
+  width: 30px;
+  height: 30px;
+
+  &.selected {
+    border: 4px solid #3b5998;
+  }
+}

@@ -6,8 +6,8 @@
         <agm-circle [latitude]="position.latitude" [longitude]="position.longitude" [radius]="position.accuracy" fillColor="#5C95F2" [clickable]="false"></agm-circle>
     </ng-container>
 </agm-map>
-<div class="palette">
-    <palette></palette>
+<div *ngIf="showPalette" [@flyInRight] [@flyOutRight] class="palette">
+    <palette [(selected)]="drawColor"></palette>
 </div>
 <div class="info p-2">
     <span *ngIf="!position" class="text-danger">No GPS</span>

@@ -6,19 +6,23 @@ import {CalibrateComponent} from "../../components/calibrate/calibrate.component
 import {ToolbarItem} from "../../components/toolbar/toolbarItem";
 import {BehaviorSubject} from "rxjs";
 import {LatLngLiteral} from "@agm/core";
+import {flyInRight, flyOutRight} from "../../animations";
 
 declare const google;
 
 @Component({
     selector: 'map',
     templateUrl: 'map.component.html',
-    styleUrls: ['map.component.scss']
+    styleUrls: ['map.component.scss'],
+    animations: [flyInRight('150ms'), flyOutRight('150ms')]
 })
 export class MapComponent {
+    drawColor: string;
     drawListener = [];
     mapApi: any;
     mapClick = new BehaviorSubject<LatLngLiteral>(null);
     position: any;
+    showPalette = false;
     style = 'terrain';
     isNaN = isNaN;
 
@@ -146,10 +150,11 @@ export class MapComponent {
     }
 
     startDraw() {
+        this.showPalette = true;
         this.mapApi.setOptions({draggable: false});
 
         let drawHander = () => {
-            let poly = new google.maps.Polyline({map: this.mapApi, clickable: true});
+            let poly = new google.maps.Polyline({map: this.mapApi, clickable: true, strokeColor: this.drawColor});
             google.maps.event.addListener(poly, 'click', () => {
                 if(this.menu[1][3].enabled) poly.setMap(null);
             });
@@ -170,6 +175,7 @@ export class MapComponent {
     }
 
     endDraw() {
+        this.showPalette = false;
         this.mapApi.setOptions({draggable: true});
         this.drawListener.forEach(listener => google.maps.event.removeListener(listener));
         this.drawListener = [];

@@ -1,3 +1,3 @@
-<div class="bg-white p-3">
-    <div *ngFor="let c of colors" class="rounded-circle" [style.backgroundColor]="c" style="height: 30px; width: 30px"></div>
+<div class="py-1">
+    <div *ngFor="let c of colors" class="m-3 color-palette" [ngClass]="{'selected': selected == c}" [style.backgroundColor]="c" (click)="selected = c"></div>
 </div>
