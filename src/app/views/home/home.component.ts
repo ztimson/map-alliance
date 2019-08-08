@@ -2,7 +2,7 @@ import {Component} from "@angular/core";
 import {Observable, timer} from "rxjs";
 import {map, take} from "rxjs/operators";
 import {Router} from "@angular/router";
-import {SyncService} from "../map/sync.service";
+import {SyncService} from "../../services/sync.service";
 
 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
