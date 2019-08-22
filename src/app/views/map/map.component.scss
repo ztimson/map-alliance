@@ -1,10 +1,10 @@
-.map {
+#map {
   height: calc(100vh - 40px);
 }
 
 .palette {
   position: fixed;
-  z-index: 100;
+  z-index: 500;
   top: 50px;
   right: 15px;
 }
@@ -12,14 +12,14 @@
 .info {
   background-color: #00000050;
   position: fixed;
-  z-index: 100;
+  z-index: 500;
   bottom: 15px;
   left: 15px;
 }
 
 .gps {
   position: fixed;
-  z-index: 100;
+  z-index: 500;
   bottom: 15px;
   right: 15px;
 }
