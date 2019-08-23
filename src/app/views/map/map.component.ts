@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {PhysicsService} from "../../services/physics/physics.service";
+import {PhysicsService} from "../../services/physics.service";
 import {filter, skip, take} from "rxjs/operators";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
 import {CalibrateComponent} from "../../components/calibrate/calibrate.component";
@@ -19,6 +19,7 @@ export class MapComponent implements OnInit {
     map: MapService;
     markers = [];
     position;
+    positionMarker;
 
 
     drawColor = '#d82b00';
@@ -42,13 +43,12 @@ export class MapComponent implements OnInit {
 
     ngOnInit() {
         this.map = new MapService('map');
+        let positionIcon = L.icon({iconUrl: '/assets/images/arrow.png'});
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
             if(!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
+            if(this.positionMarker) this.map.delete(this.positionMarker);
+            this.positionMarker = this.map.newMarker({lat: pos.latitude, lng: pos.longitude}, {icon: positionIcon, rotationAngle: pos.heading, rotationOrigin: 'center center'});
             this.position = pos;
-            if(this.position.heading != null) {
-                let marker: HTMLElement = document.querySelector('img[src*="arrow.png"]');
-                if(marker) marker.style.transform = `rotate(${this.position.heading}deg)`
-            }
         });
 
         this.physicsService.requireCalibration.subscribe(() => {

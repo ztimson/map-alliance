@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject, combineLatest} from "rxjs";
-import {PermissionsService} from "../../components/permissions/permissions.service";
+import {PermissionsService} from "../components/permissions/permissions.service";
 
 @Injectable({
     providedIn: 'root'

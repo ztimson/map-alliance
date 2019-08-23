@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {MatBottomSheetRef} from "@angular/material";
-import {PhysicsService} from "../../services/physics/physics.service";
+import {PhysicsService} from "../../services/physics.service";
 
 @Component({
     selector: 'calibrate',

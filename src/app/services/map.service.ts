@@ -92,10 +92,15 @@ export class MapService {
         if(this.weatherLayer) this.weatherLayer.addTo(this.map);
     }
 
-    newMarker(latlng: LatLng) {
-        let marker = L.marker(latlng).addTo(this.map);
+    newMarker(latlng: LatLng, opts: any={}) {
+        let marker = L.marker(latlng, opts).addTo(this.map);
         this.markers.push(marker);
-        marker.on('click', () => { if(this.deleteMode) this.delete(marker); });
+        marker.on('click', () => {
+            if(!opts.noDelete && this.deleteMode) {
+                this.delete(marker);
+            } else {
+
+            }});
         return marker;
     }
 
