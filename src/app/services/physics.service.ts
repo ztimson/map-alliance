@@ -23,8 +23,6 @@ export class PhysicsService {
                 window.addEventListener('deviceorientation', orientation => this.orientation.next(orientation));
                 window.addEventListener('devicemotion', motion => this.motion.next(motion));
                 navigator.geolocation.watchPosition(position => this.position.next(position));
-                navigator.geolocation.getCurrentPosition(e => console.log(e));
-                this.position.subscribe(e => console.log(e));
 
                 // Combine data into one nice package
                 combineLatest(this.position, this.orientation, this.calibrate).subscribe(data => {
