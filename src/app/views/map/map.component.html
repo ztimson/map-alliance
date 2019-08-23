@@ -1,7 +1,7 @@
 <toolbar [(menu)]="menu"></toolbar>
 <div id="map"></div>
 <div *ngIf="showPalette" [@flyInRight] [@flyOutRight] class="palette">
-    <palette [(selected)]="drawColor"></palette>
+    <palette [(selected)]="drawColor" (selectedChange)="map.drawingColor = $event"></palette>
 </div>
 <div class="info p-2">
     <span *ngIf="!position" class="text-danger">No GPS</span>
