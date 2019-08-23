@@ -93,6 +93,7 @@ export class MapService {
     }
 
     newMarker(latlng: LatLng, opts: any={}) {
+        if(!opts.icon) opts.icon = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
         let marker = L.marker(latlng, opts).addTo(this.map);
         this.markers.push(marker);
         marker.on('click', () => {
@@ -105,10 +106,10 @@ export class MapService {
     }
 
     newMeasurement(latlng1: LatLng, latlng2: LatLng) {
-        let line = L.polyline([latlng1, latlng2], {weight: 5}).addTo(this.map);
+        let line = L.polyline([latlng1, latlng2], {color: '#d82b00', weight: 5}).addTo(this.map);
         let decoration = L.polylineDecorator(line, {patterns: [
-                {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {stroke: true}})},
-                {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {stroke: true}})}
+                {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#d82b00', stroke: true}})},
+                {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#d82b00', stroke: true}})}
             ]}).addTo(this.map);
         this.measurements.push({line: line, decoration: decoration});
         let distance = distanceInM(latlng1.lat, latlng1.lng, latlng2.lat, latlng2.lng);
