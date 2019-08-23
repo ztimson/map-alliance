@@ -8,7 +8,6 @@ import {environment} from '../environments/environment';
 import {FormsModule} from "@angular/forms";
 import {MapComponent} from "./views/map/map.component";
 import {HomeComponent} from "./views/home/home.component";
-import {AgmCoreModule} from "@agm/core";
 import {MaterialModule} from "./material.module";
 import {CalibrateComponent} from "./components/calibrate/calibrate.component";
 import {MatInputModule} from "@angular/material";
@@ -29,7 +28,6 @@ import {PaletteComponent} from "./components/palette/palette.component";
         ToolbarComponent
     ],
     imports: [
-        AgmCoreModule.forRoot({apiKey: 'AIzaSyDFtvCY6nH_HUoTBNf_5b-E8nRweSLYtxE'}),
         AngularFireModule.initializeApp(environment.firebaseConfig),
         AngularFirestoreModule.enablePersistence(),
         AppRouting,
