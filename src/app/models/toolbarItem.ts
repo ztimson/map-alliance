@@ -1,6 +1,6 @@
 export interface ToolbarItem {
     name: string;
-    icon: string;
+    icon?: string;
     hidden?: boolean;
     toggle?: boolean;
     individualToggle?: boolean;
@@ -8,4 +8,5 @@ export interface ToolbarItem {
     enabled?: boolean;
     onEnabled?: () => void;
     onDisabled?: () => void;
+    subMenu?: ToolbarItem[];
 }

@@ -6,6 +6,7 @@ import {
     MatToolbarModule
 } from "@angular/material";
 import {NgModule} from "@angular/core";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 export const materialModules = [
     MatBottomSheetModule,
@@ -19,6 +20,7 @@ export const materialModules = [
     MatSliderModule,
     MatSnackBarModule,
     MatToolbarModule,
+    MatTooltipModule
 ];
 
 @NgModule({

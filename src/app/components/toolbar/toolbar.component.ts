@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, HostListener, Input, Output,} from "@angular/core";
-import {ToolbarItem} from "./toolbarItem";
+import {ToolbarItem} from "../../models/toolbarItem";
 import {version} from '../../../../package.json';
 
 @Component({

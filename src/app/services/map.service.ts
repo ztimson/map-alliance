@@ -31,7 +31,7 @@ export class MapService {
 
     click = new BehaviorSubject<{lat: number, lng: number}>(null);
     deleteMode = false;
-    drawingColor = '#d82b00';
+    drawingColor = '#ff4141';
     drawingWeight = 10;
     map;
 
@@ -71,28 +71,32 @@ export class MapService {
                 this.mapLayer = L.esri.basemapLayer('ImageryClarity');
         }
         this.mapLayer.addTo(this.map);
+        if(this.weatherLayer) this.setWeatherLayer(this.weatherLayer.name);
     }
 
     setWeatherLayer(layer?: WeatherLayers) {
-        if(this.weatherLayer) this.map.removeLayer(this.weatherLayer);
+        if(this.weatherLayer) {
+            this.map.removeLayer(this.weatherLayer.layer);
+            this.weatherLayer = null;
+        }
         switch(layer) {
             case WeatherLayers.CLOUDS_NEW:
-                this.weatherLayer = L.OWM.clouds({appId: environment.openWeather, opacity: 0.5});
+                this.weatherLayer = {name: WeatherLayers.CLOUDS_NEW, layer: L.OWM.clouds({appId: environment.openWeather, opacity: 0.5})};
                 break;
             case WeatherLayers.PRECIPITATION_NEW:
-                this.weatherLayer = L.OWM.precipitation({appId: environment.openWeather, opacity: 0.5});
+                this.weatherLayer = {name: WeatherLayers.PRECIPITATION_NEW, layer: L.OWM.precipitation({appId: environment.openWeather, opacity: 0.5})};
                 break;
             case WeatherLayers.SEA_LEVEL_PRESSURE:
-                this.weatherLayer = L.OWM.pressure({appId: environment.openWeather, opacity: 0.5});
+                this.weatherLayer = {name: WeatherLayers.SEA_LEVEL_PRESSURE, layer: L.OWM.pressure({appId: environment.openWeather, opacity: 0.5})};
                 break;
             case WeatherLayers.WIND_NEW:
-                this.weatherLayer = L.OWM.wind({appId: environment.openWeather, opacity: 0.5});
+                this.weatherLayer = {name: WeatherLayers.WIND_NEW, layer: L.OWM.wind({appId: environment.openWeather, opacity: 0.5})};
                 break;
             case WeatherLayers.TEMP_NEW:
-                this.weatherLayer = L.OWM.temperature({appId: environment.openWeather, opacity: 0.5});
+                this.weatherLayer = {name: WeatherLayers.TEMP_NEW, layer: L.OWM.temperature({appId: environment.openWeather, opacity: 0.5})};
                 break;
         }
-        if(this.weatherLayer) this.weatherLayer.addTo(this.map);
+        if(this.weatherLayer) this.weatherLayer.layer.addTo(this.map);
     }
 
     newCircle(latlng: LatLng, radius: number, opts: any={}) {
@@ -123,10 +127,10 @@ export class MapService {
     }
 
     newMeasurement(latlng1: LatLng, latlng2: LatLng) {
-        let line = L.polyline([latlng1, latlng2], {color: '#d82b00', weight: 5}).addTo(this.map);
+        let line = L.polyline([latlng1, latlng2], {color: '#ff4141', weight: 5}).addTo(this.map);
         let decoration = L.polylineDecorator(line, {patterns: [
-                {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#d82b00', stroke: true}})},
-                {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#d82b00', stroke: true}})}
+                {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', stroke: true}})},
+                {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', stroke: true}})}
             ]}).addTo(this.map);
         this.measurements.push({line: line, decoration: decoration});
         let distance = distanceInM(latlng1.lat, latlng1.lng, latlng2.lat, latlng2.lng);

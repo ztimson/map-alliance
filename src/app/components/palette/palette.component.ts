@@ -6,7 +6,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
     styleUrls: ['palette.component.scss']
 })
 export class PaletteComponent implements OnInit {
-    @Input() colors = ['#393936', '#ffffff', '#008dd5', '#1a891d', '#d82b00'];
+    @Input() colors = ['#393936', '#ffffff', '#008dd5', '#1a891d', '#ff4141'];
 
     @Output() selectedChange = new EventEmitter<string>();
 
