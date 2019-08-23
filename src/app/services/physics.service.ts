@@ -15,7 +15,6 @@ export class PhysicsService {
     motion = new BehaviorSubject<DeviceMotionEvent>(null);
     orientation = new BehaviorSubject<DeviceOrientationEvent>(null);
     position = new BehaviorSubject<Position>(null);
-    speed = new BehaviorSubject(null);
 
     constructor(permissionsService: PermissionsService) {
         permissionsService.requestPermission('geolocation', 'gps_fixed', 'Can we use your location?').then(granted => {
@@ -24,23 +23,11 @@ export class PhysicsService {
                 window.addEventListener('deviceorientation', orientation => this.orientation.next(orientation));
                 window.addEventListener('devicemotion', motion => this.motion.next(motion));
                 navigator.geolocation.watchPosition(position => this.position.next(position));
-
-                // Calculate speed from motion events
-                this.motion.subscribe(event => {
-                    if (!this.motionTimestamp) return this.motionTimestamp = new Date().getTime();
-
-                    let currentTime = new Date().getTime();
-                    let {speedX, speedY, speedZ} = this.speed.value || {speedX: 0, speedY: 0, speedZ: 0};
-                    this.speed.next({
-                        speedX: speedX + event.acceleration.x / 1000 * ((currentTime - this.motionTimestamp) / 1000) / 3600,
-                        speedY: speedY + event.acceleration.y / 1000 * ((currentTime - this.motionTimestamp) / 1000) / 3600,
-                        speedZ: speedZ + event.acceleration.z / 1000 * ((currentTime - this.motionTimestamp) / 1000) / 3600
-                    });
-                    this.motionTimestamp = currentTime;
-                });
+                navigator.geolocation.getCurrentPosition(e => console.log(e));
+                this.position.subscribe(e => console.log(e));
 
                 // Combine data into one nice package
-                combineLatest(this.position, this.orientation, this.calibrate, this.speed).subscribe(data => {
+                combineLatest(this.position, this.orientation, this.calibrate).subscribe(data => {
                     if(!data[0]) return;
 
                     let info = {
@@ -63,7 +50,6 @@ export class PhysicsService {
                         if(info.heading < 0) info.heading += 360;
                         if(info.heading >= 360) info.heading -= 360;
                     }
-                    if(info.speed == null && !!data[3]) info.speed = Math.sqrt(data[3].x**2 + data[3].y**2 + data[3].z**2);
 
                     this.info.next(info);
                 })

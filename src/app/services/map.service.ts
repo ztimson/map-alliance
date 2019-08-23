@@ -19,7 +19,7 @@ export enum WeatherLayers {
     TEMP_NEW
 }
 
-export const ARROW = L.icon({iconUrl: '/assets/images/arrow.png', iconSize: [50, 55], iconAnchor: [25, 28]});
+export const ARROW = L.icon({iconUrl: '/assets/images/arrow.png', iconSize: [40, 45], iconAnchor: [20, 23]});
 export const MARKER = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
 
 export class MapService {

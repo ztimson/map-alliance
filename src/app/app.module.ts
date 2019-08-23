@@ -16,6 +16,7 @@ import {AngularFireModule} from "@angular/fire";
 import {AngularFirestoreModule} from "@angular/fire/firestore";
 import {ToolbarComponent} from "./components/toolbar/toolbar.component";
 import {PaletteComponent} from "./components/palette/palette.component";
+import {MarkerComponent} from "./components/marker/marker.component";
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import {PaletteComponent} from "./components/palette/palette.component";
         CalibrateComponent,
         HomeComponent,
         MapComponent,
+        MarkerComponent,
         PaletteComponent,
         PermissionsComponent,
         ToolbarComponent
@@ -39,7 +41,7 @@ import {PaletteComponent} from "./components/palette/palette.component";
         MatInputModule,
     ],
     providers: [],
-    entryComponents: [CalibrateComponent, PermissionsComponent],
+    entryComponents: [CalibrateComponent, MarkerComponent, PermissionsComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {
