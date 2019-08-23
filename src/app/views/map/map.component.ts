@@ -13,7 +13,6 @@ declare const L;
     selector: 'map',
     templateUrl: 'map.component.html',
     styleUrls: ['map.component.scss'],
-    providers: [MapService],
     animations: [flyInRight, flyOutRight]
 })
 export class MapComponent implements OnInit {
