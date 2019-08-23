@@ -19,6 +19,9 @@ export enum WeatherLayers {
     TEMP_NEW
 }
 
+export const ARROW = L.icon({iconUrl: '/assets/images/arrow.png', iconSize: [50, 55], iconAnchor: [25, 28]});
+export const MARKER = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
+
 export class MapService {
     private drawListener;
     private markers = [];
@@ -92,8 +95,21 @@ export class MapService {
         if(this.weatherLayer) this.weatherLayer.addTo(this.map);
     }
 
+    newCircle(latlng: LatLng, radius: number, opts: any={}) {
+        opts.radius = radius;
+        let circle = L.circle(latlng, opts).addTo(this.map);
+        circle.on('click', () => {
+            if(!opts.noDelete && this.deleteMode) {
+                this.delete(circle);
+            } else {
+
+            }
+        });
+        return circle;
+    }
+
     newMarker(latlng: LatLng, opts: any={}) {
-        if(!opts.icon) opts.icon = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
+        if(!opts.icon) opts.icon = MARKER;
         let marker = L.marker(latlng, opts).addTo(this.map);
         this.markers.push(marker);
         marker.on('click', () => {
@@ -101,7 +117,8 @@ export class MapService {
                 this.delete(marker);
             } else {
 
-            }});
+            }
+        });
         return marker;
     }
 

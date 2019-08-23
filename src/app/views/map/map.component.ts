@@ -5,7 +5,7 @@ import {MatBottomSheet, MatSnackBar} from "@angular/material";
 import {CalibrateComponent} from "../../components/calibrate/calibrate.component";
 import {ToolbarItem} from "../../components/toolbar/toolbarItem";
 import {flyInRight, flyOutRight} from "../../animations";
-import {MapService} from "../../services/map.service";
+import {ARROW, MapService} from "../../services/map.service";
 
 declare const L;
 
@@ -19,7 +19,7 @@ export class MapComponent implements OnInit {
     map: MapService;
     markers = [];
     position;
-    positionMarker;
+    positionMarker = {arrow: null, circle: null};
 
 
     drawColor = '#d82b00';
@@ -43,11 +43,12 @@ export class MapComponent implements OnInit {
 
     ngOnInit() {
         this.map = new MapService('map');
-        let positionIcon = L.icon({iconUrl: '/assets/images/arrow.png'});
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
             if(!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
-            if(this.positionMarker) this.map.delete(this.positionMarker);
-            this.positionMarker = this.map.newMarker({lat: pos.latitude, lng: pos.longitude}, {icon: positionIcon, rotationAngle: pos.heading, rotationOrigin: 'center center'});
+            if(this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
+            if(this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
+            this.positionMarker.arrow = this.map.newMarker({lat: pos.latitude, lng: pos.longitude}, {noDelete: true, icon: ARROW, rotationAngle: pos.heading, rotationOrigin: 'center'});
+            this.positionMarker.circle = this.map.newCircle({lat: pos.latitude, lng: pos.longitude}, pos.accuracy, {interactive: false});
             this.position = pos;
         });
 
