@@ -12,9 +12,9 @@ export class ToolbarComponent implements AfterViewInit {
 
     @Output() menuItemsChange = new EventEmitter<ToolbarItem[]>();
 
-    private maxMenuItems;
-
     readonly version = version;
+
+    maxMenuItems = 0;
 
     constructor() { }
 
