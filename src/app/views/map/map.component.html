@@ -1,4 +1,4 @@
-<toolbar [(menu)]="menu"></toolbar>
+<toolbar [(menuItems)]="menu"></toolbar>
 <div id="map"></div>
 <div *ngIf="showPalette" [@flyInRight] [@flyOutRight] class="palette">
     <palette [(selected)]="drawColor" (selectedChange)="map.drawingColor = $event"></palette>

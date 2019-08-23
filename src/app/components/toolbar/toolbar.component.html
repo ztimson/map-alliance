@@ -1,15 +1,34 @@
-<mat-toolbar>
+<mat-toolbar id="toolbar">
     <button mat-icon-button routerLink="/">
         <img src="/assets/images/logo.png" height="35px" width="auto">
     </button>
     <small class="ml-1 text-muted">{{version}}</small>
     <div class="ml-auto">
-        <div *ngFor="let section of menu" class="d-inline ml-4">
-            <ng-container *ngFor="let item of section">
-                <button *ngIf="!item.hidden" mat-icon-button [ngClass]="{'selected': item.enabled}" class="ml-1" (click)="clickWrapper(item)">
-                    <mat-icon>{{item.icon}}</mat-icon>
-                </button>
+        <div *ngFor="let item of menuItems; let i = index" class="d-inline mx-1">
+            <ng-container *ngIf="i <= maxMenuItems">
+                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item}"></ng-container>
             </ng-container>
         </div>
+        <button *ngIf="menuItems.length > maxMenuItems" mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <ng-container *ngFor="let item of menuItems; let i = index">
+                <ng-container *ngIf="i > maxMenuItems">
+                    <button mat-menu-item>
+                        <mat-icon>{{item.icon}}</mat-icon>
+                        {{item.name}}
+                    </button>
+                </ng-container>
+            </ng-container>
+        </mat-menu>
     </div>
 </mat-toolbar>
+
+<ng-template #menuItem let-item>
+    <ng-container>
+        <button mat-icon-button [ngClass]="{'selected': item?.enabled}" class="ml-1" (click)="clickWrapper(item)">
+            <mat-icon>{{item?.icon}}</mat-icon>
+        </button>
+    </ng-container>
+</ng-template>

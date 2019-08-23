@@ -26,21 +26,18 @@ export class MapComponent implements OnInit {
     showPalette = false;
     isNaN = isNaN;
 
-    menu: ToolbarItem[][] = [[
-        {name: 'compass', icon: 'explore', hidden: true},
-    ], [
-        {name: 'marker', icon: 'room', toggle: true, individualToggle: true, click: () => this.addMarker()},
-        {name: 'draw', icon: 'create', toggle: true, individualToggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.endDrawing()},
-        {name: 'measure', icon: 'straighten', toggle: true, individualToggle: true, click: () => this.measure()},
-        {name: 'delete', icon: 'delete', toggle: true, individualToggle: true, onEnabled: () => this.map.deleteMode = true, onDisabled: () => this.map.deleteMode = false},
-        {name: 'style', icon: 'terrain', enabled: true, toggle: true},
-        {name: 'weather', icon: 'cloud', toggle: true},
-        {name: 'compass', icon: 'explore', click: () => this.calibrate()}
-    ], [
-        {name: 'messages', icon: 'chat', hidden: true},
-        {name: 'identity', icon: 'perm_identity', hidden: true},
-        {name: 'settings', icon: 'settings', hidden: true}
-    ]];
+    menu: ToolbarItem[] = [
+        {name: 'Marker', icon: 'room', toggle: true, individualToggle: true, click: () => this.addMarker()},
+        {name: 'Draw', icon: 'create', toggle: true, individualToggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.endDrawing()},
+        {name: 'Measure', icon: 'straighten', toggle: true, individualToggle: true, click: () => this.measure()},
+        {name: 'Delete', icon: 'delete', toggle: true, individualToggle: true, onEnabled: () => this.map.deleteMode = true, onDisabled: () => this.map.deleteMode = false},
+        {name: 'Style', icon: 'terrain', enabled: true, toggle: true},
+        {name: 'Weather', icon: 'cloud', toggle: true},
+        {name: 'Calibrate', icon: 'explore', click: () => this.calibrate()},
+        {name: 'Messages', icon: 'chat', hidden: true},
+        {name: 'Identity', icon: 'perm_identity', hidden: true},
+        {name: 'Settings', icon: 'settings', hidden: true}
+    ];
 
     constructor(public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet) { }
 
@@ -70,7 +67,7 @@ export class MapComponent implements OnInit {
 
     addMarker() {
         this.map.click.pipe(skip(1), take(1)).subscribe(latlng => {
-            this.menu[1][0].enabled = false;
+            this.menu[0].enabled = false;
             this.markers.push(latlng);
             this.map.newMarker(latlng);
         });
@@ -86,7 +83,7 @@ export class MapComponent implements OnInit {
             if(!firstPoint) {
                 firstPoint = this.map.newMarker(latlng);
             } else {
-                this.menu[1][2].enabled = false;
+                this.menu[3].enabled = false;
                 this.map.newMeasurement(firstPoint.getLatLng(), latlng);
                 this.map.delete(firstPoint);
             }
