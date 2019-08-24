@@ -12,11 +12,11 @@ if (environment.production) {
 platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.error(err));
 
-// Add touch events to leaflet
+// leaflet ===========================================
 declare const L;
 
+// Touch support
 L.Map.mergeOptions({touchExtend: true});
-
 L.Map.TouchExtend = L.Handler.extend({
     initialize: function (map) {
         this._map = map;
