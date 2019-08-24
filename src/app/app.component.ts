@@ -8,9 +8,7 @@ import {SwUpdate} from "@angular/service-worker";
 })
 export class AppComponent {
   constructor(private snackbar: MatSnackBar, private update: SwUpdate) {
-    update.available.subscribe(() => snackbar.open('Update Available!! 🚀', 'Reload').onAction().subscribe(async () => {
-      await update.activateUpdate();
-      window.location.reload();
-    }))
+    update.available.subscribe(() => snackbar.open('Update Available!! 🚀', 'Reload').onAction().subscribe(async () => update.activateUpdate()))
+    update.activated.subscribe(() => window.location.reload());
   }
 }
