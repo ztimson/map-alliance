@@ -36,7 +36,7 @@ export class MapService {
     map;
 
     constructor(private elementId: string) {
-        this.map = L.map(elementId, {attributionControl: false, zoomControl: false}).setView({lat: 0, lng: 0}, 10);
+        this.map = L.map(elementId, {attributionControl: false, zoomControl: false, maxBoundsViscosity: 1}).setView({lat: 0, lng: 0}, 10);
         this.map.on('click', (e) => this.click.next(e.latlng));
         this.setMapLayer();
     }
@@ -140,21 +140,20 @@ export class MapService {
     }
 
     startDrawing() {
-        this.map.dragging.disable();
-
-        this.drawListener = () => {
-            let poly = L.polyline([], {interactive: true, color: this.drawingColor, weight: this.drawingWeight}).addTo(this.map);
+        this.map.setMaxBounds(this.map.getBounds());
+        this.drawListener = e => {
+            let poly = L.polyline([e.latlng], {interactive: true, color: this.drawingColor, weight: this.drawingWeight}).addTo(this.map);
             poly.on('click', () => { if(this.deleteMode) this.map.removeLayer(poly); });
             let pushLine = e => poly.addLatLng(e.latlng);
-            this.map.on('mousemove', pushLine);
-            this.map.on('mouseup', () => this.map.off('mousemove', pushLine));
+            this.map.on('mousemove touchmove', pushLine);
+            this.map.on('mouseup touchend', () => this.map.off('mousemove touchmove', pushLine));
         };
 
-        this.map.on('mousedown', this.drawListener);
+        this.map.on('mousedown touchstart', this.drawListener);
     }
 
     stopDrawing() {
-        this.map.dragging.enable();
-        this.map.off('mousedown', this.drawListener);
+        this.map.setMaxBounds(null);
+        this.map.off('mousedown touchstart', this.drawListener);
     }
 }

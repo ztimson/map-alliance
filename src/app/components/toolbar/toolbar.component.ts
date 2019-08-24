@@ -20,7 +20,7 @@ export class ToolbarComponent implements AfterViewInit {
 
     @HostListener('window:resize', ['$event'])
     ngAfterViewInit() {
-        setTimeout(() => this.maxMenuItems = Math.floor((document.getElementById('toolbar').offsetWidth - 200) / 75), 1);
+        setTimeout(() => this.maxMenuItems = Math.floor((document.getElementById('toolbar').offsetWidth - 100) / 75), 1);
     }
 
     clickWrapper(item: ToolbarItem, menu?: ToolbarItem[]) {
