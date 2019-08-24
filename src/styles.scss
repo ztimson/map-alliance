@@ -14,28 +14,3 @@ body {
   overscroll-behavior: none;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-
-// Remove google maps branding
-agm-map {
-  a[href^="http://maps.google.com/maps"]{display:none !important}
-  a[href^="https://maps.google.com/maps"]{display:none !important}
-
-  .gmnoprint a, .gmnoprint span, .gm-style-cc {
-    display: none;
-  }
-
-  .gmnoprint div {
-    background: none !important;
-
-  }
-
-  button[title="Close"] {
-    display: none !important;
-  }
-}
-
-.mat-padding-0 {
-  .mat-form-field-infix {
-    border: 0 !important;
-  }
-}
