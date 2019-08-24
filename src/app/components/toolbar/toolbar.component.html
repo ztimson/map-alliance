@@ -4,18 +4,18 @@
     </button>
     <small class="ml-1 text-muted">{{version}}</small>
     <div class="ml-auto">
-        <ng-container *ngFor="let item of menuItems; let i = index">
+        <ng-container *ngFor="let item of displayMenuItems; let i = index">
             <ng-container *ngIf="i < maxMenuItems">
-                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item, menu: menuItems, mode: 'icon'}"></ng-container>
+                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item, menu: displayMenuItems, mode: 'icon'}"></ng-container>
             </ng-container>
         </ng-container>
-        <button *ngIf="menuItems.length > maxMenuItems" mat-icon-button [matMenuTriggerFor]="overflowMenu">
+        <button *ngIf="displayMenuItems.length > maxMenuItems" mat-icon-button [matMenuTriggerFor]="overflowMenu">
             <mat-icon>menu</mat-icon>
         </button>
         <mat-menu #overflowMenu="matMenu">
-            <ng-container *ngFor="let item of menuItems; let i = index">
+            <ng-container *ngFor="let item of displayMenuItems; let i = index">
                 <ng-container *ngIf="i >= maxMenuItems">
-                    <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item, menu: menuItems, mode: 'menu'}"></ng-container>
+                    <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item, menu: displayMenuItems, mode: 'menu'}"></ng-container>
                 </ng-container>
             </ng-container>
         </mat-menu>

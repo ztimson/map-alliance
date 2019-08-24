@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, HostListener, Input, Output,} from "@angular/core";
+import {AfterViewInit, Component, EventEmitter, HostListener, Input, OnInit, Output,} from "@angular/core";
 import {ToolbarItem} from "../../models/toolbarItem";
 import {version} from '../../../../package.json';
 
@@ -7,16 +7,21 @@ import {version} from '../../../../package.json';
     templateUrl: 'toolbar.component.html',
     styleUrls: ['toolbar.component.scss']
 })
-export class ToolbarComponent implements AfterViewInit {
+export class ToolbarComponent implements OnInit, AfterViewInit {
     @Input() menuItems: ToolbarItem[];
 
     @Output() menuItemsChange = new EventEmitter<ToolbarItem[]>();
 
     readonly version = version;
 
+    displayMenuItems: ToolbarItem[];
     maxMenuItems = 0;
 
     constructor() { }
+
+    ngOnInit() {
+        this.displayMenuItems = this.menuItems.filter(item => !item.hidden);
+    }
 
     @HostListener('window:resize', ['$event'])
     ngAfterViewInit() {
@@ -33,7 +38,7 @@ export class ToolbarComponent implements AfterViewInit {
             }
 
             item.enabled = !item.enabled;
-            this.menuItemsChange.emit(this.menuItems);
+            this.menuItemsChange.emit(this.displayMenuItems);
 
             if(item.enabled) {
                 if(item.onEnabled) item.onEnabled();
