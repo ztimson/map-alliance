@@ -6,6 +6,7 @@ import {CalibrateComponent} from "../../components/calibrate/calibrate.component
 import {ToolbarItem} from "../../models/toolbarItem";
 import {flyInRight, flyOutRight} from "../../animations";
 import {ARROW, MapLayers, MapService, WeatherLayers} from "../../services/map.service";
+import {Subscription} from "rxjs";
 
 declare const L;
 
@@ -23,11 +24,13 @@ export class MapComponent implements OnInit {
     position;
     positionMarker = {arrow: null, circle: null};
     showPalette = false;
+    lastMeasuringPoint;
+    measuringSubscription: Subscription;
 
     menu: ToolbarItem[] = [
         {name: 'Marker', icon: 'room', toggle: true, click: () => { this.addMarker(); }},
         {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.endDrawing()},
-        {name: 'Measure', icon: 'straighten', toggle: true, click: () => this.measure()},
+        {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: () => this.startMeasuring(), onDisabled: () => this.stopMeasuring()},
         {name: 'Delete', icon: 'delete', toggle: true, onEnabled: () => this.map.deleteMode = true, onDisabled: () => this.map.deleteMode = false},
         {name: 'Map Style', icon: 'terrain', subMenu: [
             {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
@@ -85,17 +88,25 @@ export class MapComponent implements OnInit {
         this.markers.forEach(marker => this.map.newMarker(marker));
     }
 
-    measure() {
-        let firstPoint;
-        this.map.click.pipe(skip(1), take(2)).subscribe(latlng => {
-            if(!firstPoint) {
-                firstPoint = this.map.newMarker(latlng);
-            } else {
-                this.menu[3].enabled = false;
-                this.map.newMeasurement(firstPoint.getLatLng(), latlng);
-                this.map.delete(firstPoint);
+    startMeasuring() {
+        this.measuringSubscription = this.map.click.pipe(skip(1)).subscribe(latlng => {
+            if(this.lastMeasuringPoint) {
+                this.map.newMeasurement(this.lastMeasuringPoint.getLatLng(), latlng);
+                this.map.delete(this.lastMeasuringPoint);
             }
+            this.lastMeasuringPoint = this.map.newMarker(latlng);
         })
+    }
+
+    stopMeasuring() {
+        if(this.measuringSubscription) {
+            this.measuringSubscription.unsubscribe();
+            this.measuringSubscription = null;
+        }
+        if(this.lastMeasuringPoint) {
+            this.map.delete(this.lastMeasuringPoint);
+            this.lastMeasuringPoint = null;
+        }
     }
 
     calibrate() {
