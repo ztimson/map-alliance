@@ -134,7 +134,7 @@ export class MapService {
             ]}).addTo(this.map);
         this.measurements.push({line: line, decoration: decoration});
         let distance = distanceInM(latlng1.lat, latlng1.lng, latlng2.lat, latlng2.lng);
-        line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : null}m`).openPopup();
+        line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`).openPopup();
         line.on('click', () => { if(this.deleteMode) this.delete(line, decoration);});
         return {line: line, decoration: decoration};
     }
