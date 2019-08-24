@@ -25,7 +25,7 @@ export class MapComponent implements OnInit {
     showPalette = false;
 
     menu: ToolbarItem[] = [
-        {name: 'Marker', icon: 'room', click: () => this.addMarker()},
+        {name: 'Marker', icon: 'room', toggle: true, click: () => { this.addMarker(); }},
         {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.endDrawing()},
         {name: 'Measure', icon: 'straighten', toggle: true, click: () => this.measure()},
         {name: 'Delete', icon: 'delete', toggle: true, onEnabled: () => this.map.deleteMode = true, onDisabled: () => this.map.deleteMode = false},
@@ -74,7 +74,7 @@ export class MapComponent implements OnInit {
     }
 
     addMarker() {
-        this.map.click.pipe(skip(1), take(1)).subscribe(latlng => {
+        this.map.click.pipe(skip(1), take(1), filter(() => this.menu[0].enabled)).subscribe(latlng => {
             this.menu[0].enabled = false;
             this.markers.push(latlng);
             this.map.newMarker(latlng);
