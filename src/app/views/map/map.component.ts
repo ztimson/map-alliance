@@ -7,6 +7,7 @@ import {ToolbarItem} from "../../models/toolbarItem";
 import {flyInRight, flyOutRight} from "../../animations";
 import {ARROW, MapLayers, MapService, WeatherLayers} from "../../services/map.service";
 import {Subscription} from "rxjs";
+import {MarkerComponent} from "../../components/marker/marker.component";
 
 declare const L;
 
@@ -31,7 +32,7 @@ export class MapComponent implements OnInit {
         {name: 'Marker', icon: 'room', toggle: true, click: () => { this.addMarker(); }},
         {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.endDrawing()},
         {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: () => this.startMeasuring(), onDisabled: () => this.stopMeasuring()},
-        {name: 'Delete', icon: 'delete', toggle: true, onEnabled: () => this.map.deleteMode = true, onDisabled: () => this.map.deleteMode = false},
+        {name: 'Delete', icon: 'delete', toggle: true},
         {name: 'Map Style', icon: 'terrain', subMenu: [
             {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
             {name: 'ESRI:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY)},
@@ -54,6 +55,17 @@ export class MapComponent implements OnInit {
 
     ngOnInit() {
         this.map = new MapService('map');
+
+        // Handle click actions
+        this.map.click.pipe(filter(e => !!e)).subscribe(e => {
+            const event = e.event;
+            const symbol = e.symbol;
+
+            if(!!symbol && this.menu[3].enabled) return this.map.delete(symbol);
+
+            if(symbol instanceof L.Marker) this.bottomSheet.open(MarkerComponent, {data: symbol});
+        });
+
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
             if(!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
             if(this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
@@ -77,10 +89,10 @@ export class MapComponent implements OnInit {
     }
 
     addMarker() {
-        this.map.click.pipe(skip(1), take(1), filter(() => this.menu[0].enabled)).subscribe(latlng => {
+        this.map.click.pipe(skip(1), take(1), filter(() => this.menu[0].enabled)).subscribe(e => {
             this.menu[0].enabled = false;
-            this.markers.push(latlng);
-            this.map.newMarker(latlng);
+            this.markers.push(e.event.latlng);
+            this.map.newMarker(e.event.latlng);
         });
     }
 
@@ -89,12 +101,12 @@ export class MapComponent implements OnInit {
     }
 
     startMeasuring() {
-        this.measuringSubscription = this.map.click.pipe(skip(1)).subscribe(latlng => {
+        this.measuringSubscription = this.map.click.pipe(skip(1)).subscribe(e => {
             if(this.lastMeasuringPoint) {
-                this.map.newMeasurement(this.lastMeasuringPoint.getLatLng(), latlng);
+                this.map.newMeasurement(this.lastMeasuringPoint.getLatLng(), e.event.latlng);
                 this.map.delete(this.lastMeasuringPoint);
             }
-            this.lastMeasuringPoint = this.map.newMarker(latlng);
+            this.lastMeasuringPoint = this.map.newMarker(e.event.latlng);
         })
     }
 

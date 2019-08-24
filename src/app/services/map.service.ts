@@ -2,6 +2,7 @@ import {BehaviorSubject} from "rxjs";
 import {distanceInM} from "../utils";
 import {environment} from "../../environments/environment";
 import {LatLng} from "../models/latlng";
+import {filter} from "rxjs/operators";
 
 declare const L;
 
@@ -29,15 +30,14 @@ export class MapService {
     private mapLayer;
     private weatherLayer;
 
-    click = new BehaviorSubject<{lat: number, lng: number}>(null);
-    deleteMode = false;
+    click = new BehaviorSubject<{event: any, symbol?: any}>(null);
     drawingColor = '#ff4141';
     drawingWeight = 10;
     map;
 
     constructor(private elementId: string) {
         this.map = L.map(elementId, {attributionControl: false, tap: true, zoomControl: false, maxBoundsViscosity: 1, doubleClickZoom: false}).setView({lat: 0, lng: 0}, 10);
-        this.map.on('click', (e) => this.click.next(e.latlng));
+        this.map.on('click', (e) => this.click.next({event: e}));
         this.setMapLayer();
     }
 
@@ -116,60 +116,50 @@ export class MapService {
     newCircle(latlng: LatLng, radius: number, opts: any={}) {
         opts.radius = radius;
         let circle = L.circle(latlng, opts).addTo(this.map);
-        circle.on('click', () => {
-            if(!opts.noDelete && this.deleteMode) {
-                this.delete(circle);
-            } else {
-
-            }
-        });
+        circle.on('click', e => this.click.next({event: e, symbol: circle}));
         return circle;
     }
 
     newMarker(latlng: LatLng, opts: any={}) {
         if(!opts.icon) opts.icon = MARKER;
         let marker = L.marker(latlng, opts).addTo(this.map);
+        if(opts.label) marker.bindTooltip(opts.label, {permanent: true, direction: 'bottom'});
         this.markers.push(marker);
-        marker.on('click', () => {
-            if(!opts.noDelete && this.deleteMode) {
-                this.delete(marker);
-            } else {
-
-            }
-        });
+        marker.on('click', e => this.click.next({event: e, symbol: marker}));
         return marker;
     }
 
     newMeasurement(latlng1: LatLng, latlng2: LatLng) {
-        let line = L.polyline([latlng1, latlng2], {color: '#ff4141', weight: 5}).addTo(this.map);
+        let line = L.polyline([latlng1, latlng2], {color: '#ff4141', weight: 5});
         let decoration = L.polylineDecorator(line, {patterns: [
-                {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', stroke: true}})},
-                {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', stroke: true}})}
-            ]}).addTo(this.map);
+            {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', stroke: true}})},
+            {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', stroke: true}})}
+        ]});
         this.measurements.push({line: line, decoration: decoration});
         let distance = distanceInM(latlng1.lat, latlng1.lng, latlng2.lat, latlng2.lng);
+        let group = L.layerGroup([line, decoration]);
+        line.on('click', e => this.click.next({event: e, symbol: group}));
+        group.addTo(this.map);
         line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`, {autoClose: false, closeOnClick: false}).openPopup();
-        line.on('click', () => { if(this.deleteMode) this.delete(line, decoration);});
-        return {line: line, decoration: decoration};
+        return group;
     }
 
     startDrawing() {
         this.lock();
-        let poly;
         this.drawListener = e => {
-            poly = L.polyline([e.latlng], {interactive: true, color: this.drawingColor, weight: this.drawingWeight}).addTo(this.map);
-            poly.on('click', () => { if(this.deleteMode) this.map.removeLayer(poly); });
+            let poly = L.polyline([e.latlng], {interactive: true, color: this.drawingColor, weight: this.drawingWeight}).addTo(this.map);
+            poly.on('click', e => this.click.next({event: e, symbol: poly}));
             let pushLine = e => poly.addLatLng(e.latlng);
-            this.map.on('mousemove touchmove', pushLine);
-            this.map.on('mouseup touchend', () => this.map.off('mousemove touchmove', pushLine));
+            this.map.on('touchmove', pushLine);
+            this.map.on('touchend', () => this.map.off('touchmove', pushLine));
         };
 
-        this.map.on('mousedown touchstart', this.drawListener);
+        this.map.on('touchstart', this.drawListener);
     }
 
     stopDrawing() {
         this.lock(true);
         this.map.setMaxBounds(null);
-        this.map.off('mousedown touchstart', this.drawListener);
+        this.map.off('touchstart', this.drawListener);
     }
 }
