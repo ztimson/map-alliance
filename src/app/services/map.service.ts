@@ -36,7 +36,7 @@ export class MapService {
     map;
 
     constructor(private elementId: string) {
-        this.map = L.map(elementId, {attributionControl: false, zoomControl: false, maxBoundsViscosity: 1}).setView({lat: 0, lng: 0}, 10);
+        this.map = L.map(elementId, {attributionControl: false, tap: true, zoomControl: false, maxBoundsViscosity: 1, doubleClickZoom: false}).setView({lat: 0, lng: 0}, 10);
         this.map.on('click', (e) => this.click.next(e.latlng));
         this.setMapLayer();
     }
@@ -56,6 +56,20 @@ export class MapService {
     deleteAll() {
         this.markers.forEach(m => this.delete(m));
         this.measurements.forEach(m => this.delete(m.line, m.decoration));
+    }
+
+    lock(unlock?: boolean) {
+        if(unlock) {
+            this.map.setMaxBounds(null);
+            this.map.boxZoom.disable();
+            this.map.touchZoom.enable();
+            this.map.scrollWheelZoom.enable();
+        } else {
+            this.map.setMaxBounds(this.map.getBounds());
+            this.map.boxZoom.disable();
+            this.map.touchZoom.disable();
+            this.map.scrollWheelZoom.disable();
+        }
     }
 
     setMapLayer(layer?: MapLayers) {
@@ -140,9 +154,10 @@ export class MapService {
     }
 
     startDrawing() {
-        this.map.setMaxBounds(this.map.getBounds());
+        this.lock();
+        let poly;
         this.drawListener = e => {
-            let poly = L.polyline([e.latlng], {interactive: true, color: this.drawingColor, weight: this.drawingWeight}).addTo(this.map);
+            poly = L.polyline([e.latlng], {interactive: true, color: this.drawingColor, weight: this.drawingWeight}).addTo(this.map);
             poly.on('click', () => { if(this.deleteMode) this.map.removeLayer(poly); });
             let pushLine = e => poly.addLatLng(e.latlng);
             this.map.on('mousemove touchmove', pushLine);
@@ -153,6 +168,7 @@ export class MapService {
     }
 
     stopDrawing() {
+        this.lock(true);
         this.map.setMaxBounds(null);
         this.map.off('mousedown touchstart', this.drawListener);
     }

@@ -33,36 +33,29 @@ L.Map.TouchExtend = L.Handler.extend({
         L.DomEvent.off(this._container, 'touchend', this._onTouchEnd);
         L.DomEvent.off(this._container, 'touchmove', this._onTouchMove);
     },
+    _eventWrapper: function(e) {
+        let containerPoint = this._map.mouseEventToContainerPoint(e);
+        let layerPoint = this._map.containerPointToLayerPoint(containerPoint);
+        let latlng = this._map.layerPointToLatLng(layerPoint);
+
+        return {
+            latlng: latlng,
+            layerPoint: layerPoint,
+            containerPoint: containerPoint,
+            originalEvent: e
+        }
+    },
     _onTouchStart: function (e) {
         if (!this._map._loaded) return;
-
-      var containerPoint = this._map.mouseEventToContainerPoint(e),
-          layerPoint = this._map.containerPointToLayerPoint(containerPoint),
-          latlng = this._map.layerPointToLatLng(layerPoint);
-
-        this._map.fire('touchstart', {
-          latlng: latlng,
-          layerPoint: layerPoint,
-          containerPoint: containerPoint,
-            originalEvent: e
-        });
+        this._map.fire('touchstart', this._eventWrapper(e));
     },
     _onTouchEnd: function (e) {
         if (!this._map._loaded) return;
-        this._map.fire('touchend', {originalEvent: e});
+        this._map.fire('touchend', this._eventWrapper(e));
     },
     _onTouchMove: function(e) {
         if(!this._map._loaded) return;
-        console.log('fire');
-      var containerPoint = this._map.mouseEventToContainerPoint(e),
-          layerPoint = this._map.containerPointToLayerPoint(containerPoint),
-          latlng = this._map.layerPointToLatLng(layerPoint);
-        this._map.fire('touchmove', {
-          latlng: latlng,
-          layerPoint: layerPoint,
-          containerPoint: containerPoint,
-          originalEvent: e
-        });
+        this._map.fire('touchmove', this._eventWrapper(e));
     }
 });
 L.Map.addInitHook('addHandler', 'touchExtend', L.Map.TouchExtend);
