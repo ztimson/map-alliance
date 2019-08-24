@@ -6,7 +6,7 @@
     <div class="ml-auto">
         <ng-container *ngFor="let item of menuItems; let i = index">
             <ng-container *ngIf="i < maxMenuItems">
-                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item, mode: 'icon'}"></ng-container>
+                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item, menu: menuItems, mode: 'icon'}"></ng-container>
             </ng-container>
         </ng-container>
         <button *ngIf="menuItems.length > maxMenuItems" mat-icon-button [matMenuTriggerFor]="overflowMenu">
@@ -15,41 +15,41 @@
         <mat-menu #overflowMenu="matMenu">
             <ng-container *ngFor="let item of menuItems; let i = index">
                 <ng-container *ngIf="i >= maxMenuItems">
-                    <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item, mode: 'menu'}"></ng-container>
+                    <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: item, menu: menuItems, mode: 'menu'}"></ng-container>
                 </ng-container>
             </ng-container>
         </mat-menu>
     </div>
 </mat-toolbar>
 
-<ng-template #menuItem let-item let-mode="mode">
+<ng-template #menuItem let-item let-menu="menu" let-mode="mode">
     <ng-container *ngIf="mode == 'icon' && !item.subMenu">
-        <button mat-icon-button class="d-inline mr-1" [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item)" [matTooltip]="item.name">
+        <button mat-icon-button class="d-inline mr-1" [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item, menu)" [matTooltip]="item.name">
             <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
         </button>
     </ng-container>
     <ng-container *ngIf="mode == 'menu' && !item.subMenu">
-        <button mat-menu-item [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item)">
+        <button mat-menu-item [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item, menu)">
             <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon> {{item?.name}}
         </button>
     </ng-container>
     <ng-container *ngIf="mode == 'icon' && item.subMenu">
-        <button mat-icon-button class="d-inline mr-1" [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item)" [matTooltip]="item.name" [matMenuTriggerFor]="subMenu">
+        <button mat-icon-button class="d-inline mr-1" [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item, menu)" [matTooltip]="item.name" [matMenuTriggerFor]="subMenu">
             <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
         </button>
         <mat-menu #subMenu="matMenu">
             <ng-container *ngFor="let child of item.subMenu">
-                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: child, mode: 'menu'}"></ng-container>
+                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: child, menu: item.subMenu, mode: 'menu'}"></ng-container>
             </ng-container>
         </mat-menu>
     </ng-container>
     <ng-container *ngIf="mode == 'menu' && item.subMenu">
-        <button mat-menu-item [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item)" [matMenuTriggerFor]="subMenu">
+        <button mat-menu-item [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item, menu)" [matMenuTriggerFor]="subMenu">
             <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon> {{item?.name}}
         </button>
         <mat-menu #subMenu="matMenu">
             <ng-container *ngFor="let child of item.subMenu">
-                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: child, mode: 'menu'}"></ng-container>
+                <ng-container *ngTemplateOutlet="menuItem; context: {$implicit: child, menu: item.subMenu, mode: 'menu'}"></ng-container>
             </ng-container>
         </mat-menu>
     </ng-container>

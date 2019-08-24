@@ -25,21 +25,21 @@ export class MapComponent implements OnInit {
     showPalette = false;
 
     menu: ToolbarItem[] = [
-        {name: 'Marker', icon: 'room', toggle: true, individualToggle: true, click: () => this.addMarker()},
-        {name: 'Draw', icon: 'create', toggle: true, individualToggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.endDrawing()},
-        {name: 'Measure', icon: 'straighten', toggle: true, individualToggle: true, click: () => this.measure()},
-        {name: 'Delete', icon: 'delete', toggle: true, individualToggle: true, onEnabled: () => this.map.deleteMode = true, onDisabled: () => this.map.deleteMode = false},
-        {name: 'Map Style', icon: 'terrain', toggle: true, subMenu: [
-            {name: 'ESRI:Topographic', click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
-            {name: 'ESRI:Satelite', click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY)},
-            {name: 'ESRI:Satelite Clear', click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY_CLARITY)}
+        {name: 'Marker', icon: 'room', click: () => this.addMarker()},
+        {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.endDrawing()},
+        {name: 'Measure', icon: 'straighten', toggle: true, click: () => this.measure()},
+        {name: 'Delete', icon: 'delete', toggle: true, onEnabled: () => this.map.deleteMode = true, onDisabled: () => this.map.deleteMode = false},
+        {name: 'Map Style', icon: 'terrain', subMenu: [
+            {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
+            {name: 'ESRI:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY)},
+            {name: 'ESRI:Satellite Clear', toggle: true, enabled: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY_CLARITY)}
         ]},
-        {name: 'Weather', icon: 'cloud', toggle: true, subMenu: [
-                {name: 'None', click: () => this.map.setWeatherLayer()},
-                {name: 'Temperature', click: () => this.map.setWeatherLayer(WeatherLayers.TEMP_NEW)},
-                {name: 'Wind', click: () => this.map.setWeatherLayer(WeatherLayers.WIND_NEW)},
-                {name: 'Sea Level Pressure', click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)},
-                {name: 'Clouds', click: () => this.map.setWeatherLayer(WeatherLayers.CLOUDS_NEW)},
+        {name: 'Weather', icon: 'cloud', subMenu: [
+                {name: 'None', toggle: true, enabled: true, click: () => this.map.setWeatherLayer()},
+                {name: 'Temperature', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.TEMP_NEW)},
+                {name: 'Wind', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.WIND_NEW)},
+                {name: 'Sea Level Pressure', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)},
+                {name: 'Clouds', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.CLOUDS_NEW)},
         ]},
         {name: 'Calibrate', icon: 'explore', click: () => this.calibrate()},
         {name: 'Messages', icon: 'chat', hidden: true},

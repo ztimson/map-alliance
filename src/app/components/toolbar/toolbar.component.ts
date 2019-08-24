@@ -23,10 +23,10 @@ export class ToolbarComponent implements AfterViewInit {
         setTimeout(() => this.maxMenuItems = Math.floor((document.getElementById('toolbar').offsetWidth - 200) / 75), 1);
     }
 
-    clickWrapper(item: ToolbarItem) {
+    clickWrapper(item: ToolbarItem, menu?: ToolbarItem[]) {
         if(item.toggle) {
-            if (item.individualToggle) {
-                this.menuItems.filter(i2 => item.name != i2.name && i2.individualToggle).forEach(item => {
+            if (!item.individualToggle) {
+                menu.filter(i => item.name != i.name && !i.individualToggle).forEach(item => {
                     item.enabled = false;
                     if (item.onDisabled) item.onDisabled();
                 });
