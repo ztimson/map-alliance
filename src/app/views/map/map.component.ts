@@ -5,7 +5,7 @@ import {MatBottomSheet, MatSnackBar} from "@angular/material";
 import {CalibrateComponent} from "../../components/calibrate/calibrate.component";
 import {ToolbarItem} from "../../models/toolbarItem";
 import {flyInRight, flyOutRight} from "../../animations";
-import {ARROW, MapLayers, MapService, WeatherLayers} from "../../services/map.service";
+import {ARROW, MapLayers, MapService, MEASURE, WeatherLayers} from "../../services/map.service";
 import {Subscription} from "rxjs";
 import {MarkerComponent} from "../../components/marker/marker.component";
 
@@ -106,7 +106,7 @@ export class MapComponent implements OnInit {
                 this.map.newMeasurement(this.lastMeasuringPoint.getLatLng(), e.event.latlng);
                 this.map.delete(this.lastMeasuringPoint);
             }
-            this.lastMeasuringPoint = this.map.newMarker(e.event.latlng);
+            this.lastMeasuringPoint = this.map.newMarker(e.event.latlng, {icon: MEASURE});
         })
     }
 

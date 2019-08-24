@@ -2,7 +2,6 @@ import {BehaviorSubject} from "rxjs";
 import {distanceInM} from "../utils";
 import {environment} from "../../environments/environment";
 import {LatLng} from "../models/latlng";
-import {filter} from "rxjs/operators";
 
 declare const L;
 
@@ -22,6 +21,7 @@ export enum WeatherLayers {
 
 export const ARROW = L.icon({iconUrl: '/assets/images/arrow.png', iconSize: [40, 45], iconAnchor: [20, 23]});
 export const MARKER = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
+export const MEASURE = L.icon({iconUrl: '/assets/images/measure.png', iconSize: [75, 50], iconAnchor: [25, 25]});
 
 export class MapService {
     private drawListener;
