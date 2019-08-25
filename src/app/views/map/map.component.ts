@@ -47,7 +47,7 @@ export class MapComponent implements OnInit {
                 {name: 'Sea Level Pressure', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)},
                 {name: 'Clouds', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.CLOUDS_NEW)},
         ]},
-        {name: 'Calibrate', icon: 'explore', toggle: true, onEnabled: () => this.calibrate(), onDisabled: () => this.calibration.dismiss()},
+        {name: 'Calibrate', icon: 'explore', toggle: true, onEnabled: () => this.startCalibrating(), onDisabled: () => this.stopCalibrating()},
         {name: 'Messages', icon: 'chat', hidden: true},
         {name: 'Identity', icon: 'perm_identity', hidden: true},
         {name: 'Settings', icon: 'settings', hidden: true}
@@ -77,7 +77,7 @@ export class MapComponent implements OnInit {
             this.snackBar.open('Compass requires calibration', 'calibrate', {
                 duration: 5000,
                 panelClass: 'bg-warning,text-white'
-            }).onAction().subscribe(() => this.calibrate());
+            }).onAction().subscribe(() => this.startCalibrating());
         });
     }
 
@@ -89,18 +89,21 @@ export class MapComponent implements OnInit {
         });
     }
 
-    calibrate() {
+    center(pos?) {
+        if(!pos) pos = {lat: this.position.latitude, lng: this.position.longitude};
+        this.map.centerOn(pos);
+    }
+
+    startCalibrating() {
         this.menu[6].enabled = true;
         this.calibration = this.bottomSheet.open(CalibrateComponent, {
             hasBackdrop: false,
             disableClose: true
         });
-        this.calibration.afterDismissed().subscribe(() => this.menu[6].enabled = false);
-    }
-
-    center(pos?) {
-        if(!pos) pos = {lat: this.position.latitude, lng: this.position.longitude};
-        this.map.centerOn(pos);
+        this.calibration.afterDismissed().subscribe(() => {
+            this.menu[6].enabled = false;
+            this.calibration = null;
+        });
     }
 
     startDrawing() {
@@ -116,6 +119,10 @@ export class MapComponent implements OnInit {
             }
             this.lastMeasuringPoint = this.map.newMarker(e.event.latlng, {icon: MEASURE});
         })
+    }
+
+    stopCalibrating() {
+        if(this.calibration) this.calibration.dismiss();
     }
 
     stopDrawing() {
