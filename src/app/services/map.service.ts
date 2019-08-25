@@ -132,10 +132,10 @@ export class MapService {
     }
 
     newMeasurement(latlng1: LatLng, latlng2: LatLng) {
-        let line = L.polyline([latlng1, latlng2], {color: '#ff4141', weight: 5});
+        let line = L.polyline([latlng1, latlng2], {color: '#ff4141', weight: 10});
         let decoration = L.polylineDecorator(line, {patterns: [
-            {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', stroke: true}})},
-            {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', stroke: true}})}
+            {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', weight: 10, stroke: true}})},
+            {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', weight: 10, stroke: true}})}
         ]});
         this.measurements.push({line: line, decoration: decoration});
         let distance = distanceInM(latlng1.lat, latlng1.lng, latlng2.lat, latlng2.lng);
