@@ -1,5 +1,6 @@
 export interface ToolbarItem {
     name: string;
+    faicon?: string;
     icon?: string;
     hidden?: boolean;
     toggle?: boolean;

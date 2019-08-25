@@ -25,17 +25,17 @@
 <ng-template #menuItem let-item let-menu="menu" let-mode="mode">
     <ng-container *ngIf="mode == 'icon' && !item.subMenu">
         <button mat-icon-button class="d-inline mr-1" [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item, menu)" [matTooltip]="item.name">
-            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon><span *ngIf="item.faicon" [class]="item.faicon" style="height: 18px; width: 18px; font-size: 18px"></span>
         </button>
     </ng-container>
     <ng-container *ngIf="mode == 'menu' && !item.subMenu">
         <button mat-menu-item [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item, menu)">
-            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon> {{item?.name}}
+            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon><span *ngIf="item.faicon" [class]="item.faicon" style="height: 18px; width: 18px; font-size: 18px; margin-left: 4px; margin-right: 16px"></span> {{item?.name}}
         </button>
     </ng-container>
     <ng-container *ngIf="mode == 'icon' && item.subMenu">
         <button mat-icon-button class="d-inline mr-1" [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item, menu)" [matTooltip]="item.name" [matMenuTriggerFor]="subMenu">
-            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon><span *ngIf="item.faicon" [class]="item.faicon" style="height: 18px; width: 18px; font-size: 18px"></span>
         </button>
         <mat-menu #subMenu="matMenu">
             <ng-container *ngFor="let child of item.subMenu">
@@ -45,7 +45,7 @@
     </ng-container>
     <ng-container *ngIf="mode == 'menu' && item.subMenu">
         <button mat-menu-item [ngClass]="{'selected': item?.enabled}" (click)="clickWrapper(item, menu)" [matMenuTriggerFor]="subMenu">
-            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon> {{item?.name}}
+            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon><span *ngIf="item.faicon" [class]="item.faicon" style="height: 18px; width: 18px; font-size: 18px; margin-left: 4px; margin-right: 16px"></span> {{item?.name}}
         </button>
         <mat-menu #subMenu="matMenu">
             <ng-container *ngFor="let child of item.subMenu">

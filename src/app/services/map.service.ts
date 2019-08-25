@@ -115,7 +115,8 @@ export class MapService {
         if(this.weatherLayer) this.weatherLayer.layer.addTo(this.map);
     }
 
-    newCircle(latlng: LatLng, radius: number, opts: any={}) {
+    newCircle(latlng: LatLng, radius?: number, opts: any={}) {
+        if(!radius) radius = 100_000 / this.map.getZoom();
         opts.radius = radius;
         let circle = L.circle(latlng, opts).addTo(this.map);
         circle.on('click', e => this.click.next({event: e, symbol: circle}));

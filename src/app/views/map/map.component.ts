@@ -26,7 +26,6 @@ export class MapComponent implements OnInit {
     drawColor = '#ff4141';
     isNaN = isNaN;
     map: MapService;
-    markers = [];
     position;
     positionMarker = {arrow: null, circle: null};
     shareDialog = false;
@@ -37,6 +36,9 @@ export class MapComponent implements OnInit {
     menu: ToolbarItem[] = [
         {name: 'Marker', icon: 'room', toggle: true, click: () => { this.addMarker(); }},
         {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.stopDrawing()},
+        {name: 'Circle', faicon: 'far fa-circle', toggle: true, click: () => { this.addCircle(); }},
+        {name: 'Square', faicon: 'far fa-square', toggle: true},
+        {name: 'Polygon', faicon: 'fas fa-draw-polygon', toggle: true},
         {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: () => this.startMeasuring(), onDisabled: () => this.stopMeasuring()},
         {name: 'Delete', icon: 'delete', toggle: true},
         {name: 'Map Style', icon: 'terrain', subMenu: [
@@ -69,7 +71,7 @@ export class MapComponent implements OnInit {
 
         // Handle click actions
         this.map.click.pipe(filter(e => !!e)).subscribe(e => {
-            if(!!e.symbol && this.menu[3].enabled) return this.map.delete(e.symbol);
+            if(!!e.symbol && this.menu[6].enabled) return this.map.delete(e.symbol);
             if(e.symbol instanceof L.Marker) this.bottomSheet.open(MarkerComponent, {data: e.symbol});
         });
 
@@ -90,10 +92,16 @@ export class MapComponent implements OnInit {
         });
     }
 
+    addCircle() {
+        this.map.click.pipe(skip(1), take(1), filter(() => this.menu[2].enabled)).subscribe(e => {
+            this.menu[2].enabled = false;
+            this.map.newCircle(e.event.latlng);
+        });
+    }
+
     addMarker() {
         this.map.click.pipe(skip(1), take(1), filter(() => this.menu[0].enabled)).subscribe(e => {
             this.menu[0].enabled = false;
-            this.markers.push(e.event.latlng);
             this.map.newMarker(e.event.latlng);
         });
     }
@@ -120,13 +128,13 @@ export class MapComponent implements OnInit {
     }
 
     startCalibrating() {
-        this.menu[6].enabled = true;
+        this.menu[9].enabled = true;
         this.calibration = this.bottomSheet.open(CalibrateComponent, {
             hasBackdrop: false,
             disableClose: true
         });
         this.calibration.afterDismissed().subscribe(() => {
-            this.menu[6].enabled = false;
+            this.menu[9].enabled = false;
             this.calibration = null;
         });
     }
