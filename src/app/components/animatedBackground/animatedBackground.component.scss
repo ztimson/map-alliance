@@ -1148,7 +1148,10 @@
 
 /* 1/10 and 5/9 --- out of range*/
 @media screen and (min-aspect-ratio: 1/10) and (max-aspect-ratio: 5/9){
-  body{background: rgb(31, 60, 80);}
-  body:before{content:'Aspect ratio out of range - too narrow';color: white;text-align: center;width: 100%;height: 100%;display: block;position: absolute;top: 50%;}
-  #sky, #reflection, #sunMask, #landscape, #bottom, #stag, .controls, .stars, .sunMask, .clouds, .lighting, .vignette, .twinkleWrap,.spriteWrap{display: none;}
+  .twinkles{top: 62%; width: 3%;}
+  #reflection, #sunMask{height: 8%;}
+  #landscape{bottom: 20%;}
+  #bottom{top: 80%;}
+  #stag{bottom: 21.5%;}
+  .sun{top: -55%;}
 }
