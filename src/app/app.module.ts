@@ -18,6 +18,7 @@ import {ToolbarComponent} from "./components/toolbar/toolbar.component";
 import {PaletteComponent} from "./components/palette/palette.component";
 import {MarkerComponent} from "./components/marker/marker.component";
 import {AnimatedBackgroundComponent} from "./components/animatedBackground/animatedBackground.component";
+import {ClickOutsideModule} from "ng-click-outside";
 
 @NgModule({
     declarations: [
@@ -37,6 +38,7 @@ import {AnimatedBackgroundComponent} from "./components/animatedBackground/anima
         AppRouting,
         BrowserAnimationsModule,
         BrowserModule,
+        ClickOutsideModule,
         FormsModule,
         MaterialModule,
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),

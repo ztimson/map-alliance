@@ -1,3 +1,14 @@
+export function copyToClipboard(value: string) {
+    let el = document.createElement('textarea');
+    el.value = value;
+    el.setAttribute('readonly', '');
+    (el.style as any) = {position: 'absolute', left: '-9999px'};
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+}
+
 export function deg2rad(deg) {
     return deg * (Math.PI/180);
 }

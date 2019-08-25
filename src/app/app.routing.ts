@@ -4,7 +4,7 @@ import {MapComponent} from "./views/map/map.component";
 import {HomeComponent} from "./views/home/home.component";
 
 const routes: Routes = [
-    {path: ':id', component: MapComponent},
+    {path: ':code', component: MapComponent},
     {path: '**', pathMatch: 'full', component: HomeComponent},
 ];
 

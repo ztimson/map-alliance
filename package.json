@@ -36,6 +36,7 @@
     "leaflet-openweathermap": "^1.0.0",
     "leaflet-polylinedecorator": "^1.6.0",
     "leaflet-rotatedmarker": "^0.2.0",
+    "ng-click-outside": "^5.0.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.9.0",
     "web-animations-js": "^2.3.2",

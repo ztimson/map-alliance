@@ -3,6 +3,14 @@
 <div *ngIf="showPalette" [@flyInRight] [@flyOutRight] class="palette">
     <palette [(selected)]="drawColor" (selectedChange)="map.drawingColor = $event"></palette>
 </div>
+<div *ngIf="shareDialog" class="share" [@flyInRight] [@flyOutRight]>
+    <div class="input-group">
+        <input type="text" class="form-control" [ngModel]="code" style="width: 120px" readonly>
+        <div class="input-group-append">
+            <button class="btn btn-danger" (click)="copyUrl()">Copy</button>
+        </div>
+    </div>
+</div>
 <div class="info p-2">
     <span *ngIf="!position" class="text-danger">No GPS</span>
     <div *ngIf="position" class="text-white">

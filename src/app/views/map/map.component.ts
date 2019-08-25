@@ -9,6 +9,8 @@ import {ARROW, MapLayers, MapService, MEASURE, WeatherLayers} from "../../servic
 import {Subscription} from "rxjs";
 import {MarkerComponent} from "../../components/marker/marker.component";
 import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
+import {copyToClipboard} from "../../utils";
+import {ActivatedRoute} from "@angular/router";
 
 declare const L;
 
@@ -20,12 +22,14 @@ declare const L;
 })
 export class MapComponent implements OnInit {
     calibration: MatBottomSheetRef;
+    code: string;
     drawColor = '#ff4141';
     isNaN = isNaN;
     map: MapService;
     markers = [];
     position;
     positionMarker = {arrow: null, circle: null};
+    shareDialog = false;
     showPalette = false;
     lastMeasuringPoint;
     measuringSubscription: Subscription;
@@ -48,12 +52,17 @@ export class MapComponent implements OnInit {
                 {name: 'Clouds', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.CLOUDS_NEW)},
         ]},
         {name: 'Calibrate', icon: 'explore', toggle: true, onEnabled: () => this.startCalibrating(), onDisabled: () => this.stopCalibrating()},
+        {name: 'Share', icon: 'share', toggle: true, onEnabled: () => this.share(), onDisabled: () => this.shareDialog = false},
         {name: 'Messages', icon: 'chat', hidden: true},
         {name: 'Identity', icon: 'perm_identity', hidden: true},
         {name: 'Settings', icon: 'settings', hidden: true}
     ];
 
-    constructor(public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet) { }
+    constructor(public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private route: ActivatedRoute) {
+        this.route.params.subscribe(params => {
+            this.code = params['code'];
+        })
+    }
 
     ngOnInit() {
         this.map = new MapService('map');
@@ -92,6 +101,22 @@ export class MapComponent implements OnInit {
     center(pos?) {
         if(!pos) pos = {lat: this.position.latitude, lng: this.position.longitude};
         this.map.centerOn(pos);
+    }
+
+    copyUrl() {
+        copyToClipboard(window.location.href);
+        this.snackBar.open('Copied to your clipboard! 📋', null, {duration: 3000})
+    }
+
+    share() {
+        this.shareDialog = true;
+        if(navigator['share']) {
+            navigator['share']({
+                title: 'Map Alliance',
+                text: 'A map alliance has been requested!',
+                url: window.location.href,
+            })
+        }
     }
 
     startCalibrating() {
