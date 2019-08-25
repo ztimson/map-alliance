@@ -36,7 +36,7 @@ export class MapService {
     map;
 
     constructor(private elementId: string) {
-        this.map = L.map(elementId, {attributionControl: false, tap: true, zoomControl: false, maxBoundsViscosity: 1, doubleClickZoom: false}).setView({lat: 0, lng: 0}, 10);
+        this.map = L.map(elementId, {attributionControl: false, editable: true, tap: true, zoomControl: false, maxBoundsViscosity: 1, doubleClickZoom: false}).setView({lat: 0, lng: 0}, 10);
         this.map.on('click', (e) => this.click.next({event: e}));
         this.setMapLayer();
     }
