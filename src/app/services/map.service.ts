@@ -74,6 +74,7 @@ export class MapService {
 
     setMapLayer(layer?: MapLayers) {
         if(this.mapLayer) this.map.removeLayer(this.mapLayer);
+        if(layer == null) layer = MapLayers.ESRI_IMAGERY;
         switch(layer) {
             case MapLayers.ESRI_TOPOGRAPHIC:
                 this.mapLayer = L.esri.basemapLayer('Topographic');
@@ -81,8 +82,9 @@ export class MapService {
             case MapLayers.ESRI_IMAGERY:
                 this.mapLayer = L.esri.basemapLayer('Imagery');
                 break;
-            default:
+            case MapLayers.ESRI_IMAGERY_CLARITY:
                 this.mapLayer = L.esri.basemapLayer('ImageryClarity');
+                break;
         }
         this.mapLayer.addTo(this.map);
         if(this.weatherLayer) this.setWeatherLayer(this.weatherLayer.name);
