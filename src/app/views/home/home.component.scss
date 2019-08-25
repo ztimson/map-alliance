@@ -1,0 +1,15 @@
+.badge {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  z-index: 500;
+  transform: translateX(-50%);
+}
+
+.controls {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  z-index: 500;
+  transform: translateX(-50%);
+}

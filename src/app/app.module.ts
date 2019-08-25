@@ -17,9 +17,11 @@ import {AngularFirestoreModule} from "@angular/fire/firestore";
 import {ToolbarComponent} from "./components/toolbar/toolbar.component";
 import {PaletteComponent} from "./components/palette/palette.component";
 import {MarkerComponent} from "./components/marker/marker.component";
+import {AnimatedBackgroundComponent} from "./components/animatedBackground/animatedBackground.component";
 
 @NgModule({
     declarations: [
+        AnimatedBackgroundComponent,
         AppComponent,
         CalibrateComponent,
         HomeComponent,

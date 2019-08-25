@@ -9,8 +9,10 @@ html, body {
   height: 100vh;
   overflow: hidden;
 }
+
 body {
   margin: 0;
   overscroll-behavior: none;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: black;
 }

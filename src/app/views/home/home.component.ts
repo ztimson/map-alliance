@@ -8,7 +8,8 @@ const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 @Component({
     selector: 'home',
-    templateUrl: 'home.component.html'
+    templateUrl: 'home.component.html',
+    styleUrls: ['home.component.scss']
 })
 export class HomeComponent {
     phrase = 'If you\'re into that';

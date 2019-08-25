@@ -30,6 +30,7 @@
     "esri-leaflet": "^2.3.0",
     "firebase": "^6.3.0",
     "hammerjs": "^2.0.8",
+    "jquery": "^3.4.1",
     "leaflet": "^1.5.1",
     "leaflet-openweathermap": "^1.0.0",
     "leaflet-polylinedecorator": "^1.6.0",

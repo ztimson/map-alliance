@@ -26,7 +26,7 @@ export const fadeIn = trigger('fadeIn', [
 export const fadeOut = trigger('fadeOut', [
     transition(':leave', [
         style({ opacity: 1 }),
-        animate(defaultTiming, style({ opacity: 0 }))
+        animate(1500, style({ opacity: 0 }))
     ])
 ]);
 
