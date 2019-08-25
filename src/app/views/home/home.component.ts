@@ -17,7 +17,7 @@ export class HomeComponent {
     async new() {
         let mapCode: string;
         do {
-            mapCode = Array(16).fill(0).map(() => chars[Math.round(Math.random() * chars.length)]).join('');
+            mapCode = Array(8).fill(0).map(() => chars[Math.round(Math.random() * chars.length)]).join('');
         } while (await this.syncService.exists(mapCode));
         return this.router.navigate(['/', mapCode]);
     }
