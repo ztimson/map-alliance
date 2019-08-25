@@ -2,7 +2,7 @@
     <button mat-icon-button routerLink="/">
         <img src="/assets/images/logo.png" height="35px" width="auto">
     </button>
-    <small class="ml-1 text-muted">{{version}}</small>
+    <small class="ml-1">{{version}}</small>
     <div class="ml-auto">
         <ng-container *ngFor="let item of displayMenuItems; let i = index">
             <ng-container *ngIf="i < maxMenuItems">
