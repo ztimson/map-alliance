@@ -6,10 +6,12 @@
     <button mat-flat-button class="w-100 text-white" style="background-color: #dd0330" (click)="new()">
         <mat-icon>add</mat-icon> New Map
     </button>
-    <div class="input-group w-100 mt-3">
-        <input type="text" #code class="form-control" placeholder="Code">
-        <div class="input-group-append">
-            <button class="btn btn-danger" [routerLink]="[code.value]" style="background-color: #dd0330">Open</button>
-        </div>
+    <div class="w-100 mt-3">
+        <form class="input-group">
+            <input type="text" class="form-control" [(ngModel)]="code" name="code" placeholder="Code">
+            <div class="input-group-append">
+                <button class="btn btn-danger" [routerLink]="['/', code]" style="background-color: #dd0330">Open</button>
+            </div>
+        </form>
     </div>
 </div>
