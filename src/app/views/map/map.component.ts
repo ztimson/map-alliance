@@ -8,6 +8,7 @@ import {flyInRight, flyOutRight} from "../../animations";
 import {ARROW, MapLayers, MapService, MEASURE, WeatherLayers} from "../../services/map.service";
 import {Subscription} from "rxjs";
 import {MarkerComponent} from "../../components/marker/marker.component";
+import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 
 declare const L;
 
@@ -18,6 +19,7 @@ declare const L;
     animations: [flyInRight, flyOutRight]
 })
 export class MapComponent implements OnInit {
+    calibration: MatBottomSheetRef;
     drawColor = '#ff4141';
     isNaN = isNaN;
     map: MapService;
@@ -30,7 +32,7 @@ export class MapComponent implements OnInit {
 
     menu: ToolbarItem[] = [
         {name: 'Marker', icon: 'room', toggle: true, click: () => { this.addMarker(); }},
-        {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.endDrawing()},
+        {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.stopDrawing()},
         {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: () => this.startMeasuring(), onDisabled: () => this.stopMeasuring()},
         {name: 'Delete', icon: 'delete', toggle: true},
         {name: 'Map Style', icon: 'terrain', subMenu: [
@@ -45,7 +47,7 @@ export class MapComponent implements OnInit {
                 {name: 'Sea Level Pressure', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)},
                 {name: 'Clouds', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.CLOUDS_NEW)},
         ]},
-        {name: 'Calibrate', icon: 'explore', click: () => this.calibrate()},
+        {name: 'Calibrate', icon: 'explore', toggle: true, onEnabled: () => this.calibrate(), onDisabled: () => this.calibration.dismiss()},
         {name: 'Messages', icon: 'chat', hidden: true},
         {name: 'Identity', icon: 'perm_identity', hidden: true},
         {name: 'Settings', icon: 'settings', hidden: true}
@@ -58,12 +60,8 @@ export class MapComponent implements OnInit {
 
         // Handle click actions
         this.map.click.pipe(filter(e => !!e)).subscribe(e => {
-            const event = e.event;
-            const symbol = e.symbol;
-
-            if(!!symbol && this.menu[3].enabled) return this.map.delete(symbol);
-
-            if(symbol instanceof L.Marker) this.bottomSheet.open(MarkerComponent, {data: symbol});
+            if(!!e.symbol && this.menu[3].enabled) return this.map.delete(e.symbol);
+            if(e.symbol instanceof L.Marker) this.bottomSheet.open(MarkerComponent, {data: e.symbol});
         });
 
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
@@ -83,11 +81,6 @@ export class MapComponent implements OnInit {
         });
     }
 
-    center(pos?) {
-        if(!pos) pos = {lat: this.position.latitude, lng: this.position.longitude};
-        this.map.centerOn(pos);
-    }
-
     addMarker() {
         this.map.click.pipe(skip(1), take(1), filter(() => this.menu[0].enabled)).subscribe(e => {
             this.menu[0].enabled = false;
@@ -96,8 +89,23 @@ export class MapComponent implements OnInit {
         });
     }
 
-    draw() {
-        this.markers.forEach(marker => this.map.newMarker(marker));
+    calibrate() {
+        this.menu[6].enabled = true;
+        this.calibration = this.bottomSheet.open(CalibrateComponent, {
+            hasBackdrop: false,
+            disableClose: true
+        });
+        this.calibration.afterDismissed().subscribe(() => this.menu[6].enabled = false);
+    }
+
+    center(pos?) {
+        if(!pos) pos = {lat: this.position.latitude, lng: this.position.longitude};
+        this.map.centerOn(pos);
+    }
+
+    startDrawing() {
+        this.showPalette = true;
+        this.map.startDrawing();
     }
 
     startMeasuring() {
@@ -110,6 +118,11 @@ export class MapComponent implements OnInit {
         })
     }
 
+    stopDrawing() {
+        this.showPalette = false;
+        this.map.stopDrawing()
+    }
+
     stopMeasuring() {
         if(this.measuringSubscription) {
             this.measuringSubscription.unsubscribe();
@@ -119,22 +132,5 @@ export class MapComponent implements OnInit {
             this.map.delete(this.lastMeasuringPoint);
             this.lastMeasuringPoint = null;
         }
-    }
-
-    calibrate() {
-        this.bottomSheet.open(CalibrateComponent, {
-            hasBackdrop: false,
-            disableClose: true
-        });
-    }
-
-    startDrawing() {
-        this.showPalette = true;
-        this.map.startDrawing();
-    }
-
-    endDrawing() {
-        this.showPalette = false;
-        this.map.stopDrawing()
     }
 }
