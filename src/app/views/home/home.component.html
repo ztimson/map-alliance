@@ -10,8 +10,9 @@
         <form class="input-group">
             <input type="text" class="form-control" [(ngModel)]="code" name="code" placeholder="Code">
             <div class="input-group-append">
-                <button class="btn btn-danger" [routerLink]="['/', code]" style="background-color: #dd0330" [disabled]="!code">Open</button>
+                <button class="btn btn-danger" [routerLink]="['/', code]" style="background-color: #dd0330" [disabled]="code">Open</button>
             </div>
         </form>
     </div>
 </div>
+<span class="credits text-white">Created By <a href="https://zakscode.com">Zak Timson</a></span>
