@@ -10,7 +10,7 @@ const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     styleUrls: ['home.component.scss']
 })
 export class HomeComponent {
-    code: string;
+    code: string = '';
 
     constructor(private syncService: SyncService, private router: Router) { }
 
