@@ -8,8 +8,9 @@
 
 .controls {
   position: absolute;
-  bottom: 10%;
+  bottom: 15%;
   left: 50%;
+  width: 200px;
   z-index: 500;
   transform: translateX(-50%);
 }
