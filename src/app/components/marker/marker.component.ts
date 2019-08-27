@@ -9,4 +9,8 @@ import {MAT_BOTTOM_SHEET_DATA} from "@angular/material/bottom-sheet";
 export class MarkerComponent {
 
     constructor(private bottomSheetRef: MatBottomSheetRef, @Inject(MAT_BOTTOM_SHEET_DATA) public marker) { }
+
+    close() {
+        this.bottomSheetRef.dismiss();
+    }
 }

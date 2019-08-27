@@ -1,0 +1,7 @@
+<div class="d-relative">
+    <div [(colorPicker)]="color" [cpToggle]="true" [cpCloseClickOutside]="false" cpDialogDisplay="inline"></div>
+    <div class="text-right p-1">
+        <button mat-button color="warn" [mat-dialog-close]="originalColor">Cancel</button>
+        <button mat-button [mat-dialog-close]="color">Ok</button>
+    </div>
+</div>

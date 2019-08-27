@@ -1,7 +1,7 @@
 import {BehaviorSubject} from "rxjs";
 import {distanceInM} from "../utils";
 import {environment} from "../../environments/environment";
-import {LatLng} from "../models/latlng";
+import {Circle, LatLng, Marker, Measurement} from "../models/mapSymbol";
 
 declare const L;
 
@@ -39,6 +39,8 @@ export class MapService {
         this.map = L.map(elementId, {attributionControl: false, editable: true, tap: true, zoomControl: false, maxBoundsViscosity: 1, doubleClickZoom: false}).setView({lat: 0, lng: 0}, 10);
         this.map.on('click', (e) => this.click.next({event: e}));
         this.setMapLayer();
+
+        this.map.on('editable:drag', e => console.log(e));
     }
 
     centerOn(latlng: LatLng, zoom=14) {
@@ -115,34 +117,36 @@ export class MapService {
         if(this.weatherLayer) this.weatherLayer.layer.addTo(this.map);
     }
 
-    newCircle(latlng: LatLng, radius?: number, opts: any={}) {
-        if(!radius) radius = 100_000 / this.map.getZoom();
-        opts.radius = radius;
-        let circle = L.circle(latlng, opts).addTo(this.map);
+    newCircle(c: Circle) {
+        if(!c.radius) c.radius = 10000;
+        if(!c.color) c.color = '#ff4141';
+        let circle = L.circle(c.latlng, c).addTo(this.map);
+        circle.symbol = c;
         circle.on('click', e => this.click.next({event: e, symbol: circle}));
         return circle;
     }
 
-    newMarker(latlng: LatLng, opts: any={}) {
-        if(!opts.icon) opts.icon = MARKER;
-        let marker = L.marker(latlng, opts).addTo(this.map);
-        if(opts.label) marker.bindTooltip(opts.label, {permanent: true, direction: 'bottom'});
-        this.markers.push(marker);
+    newMarker(m: Marker) {
+        if(!m.icon) m.icon = MARKER;
+        let marker = L.marker(m.latlng, m).addTo(this.map);
+        if(m.label) marker.bindTooltip(m.label, {permanent: true, direction: 'bottom'});
+        marker.symbol = m;
         marker.on('click', e => this.click.next({event: e, symbol: marker}));
         return marker;
     }
 
-    newMeasurement(latlng1: LatLng, latlng2: LatLng) {
-        let line = L.polyline([latlng1, latlng2], {color: '#ff4141', weight: 10});
+    newMeasurement(m: Measurement) {
+        if(!m.color) m.color = '#ff4141';
+        if(!m.weight) m.weight = 8;
+        let line = L.polyline([m.latlng, m.latlng2], m);
         let decoration = L.polylineDecorator(line, {patterns: [
-            {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', weight: 10, stroke: true}})},
-            {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, headAngle: 180, pathOptions: {color: '#ff4141', weight: 10, stroke: true}})}
+            {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, headAngle: 180, pathOptions: m})},
+            {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, headAngle: 180, pathOptions: m})}
         ]});
-        this.measurements.push({line: line, decoration: decoration});
-        let distance = distanceInM(latlng1.lat, latlng1.lng, latlng2.lat, latlng2.lng);
-        let group = L.layerGroup([line, decoration]);
+        let group = L.layerGroup([line, decoration]).addTo(this.map);
+        group.symbol = m;
         line.on('click', e => this.click.next({event: e, symbol: group}));
-        group.addTo(this.map);
+        let distance = distanceInM(m.latlng.lat, m.latlng.lng, m.latlng2.lat, m.latlng2.lng);
         line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`, {autoClose: false, closeOnClick: false}).openPopup();
         return group;
     }

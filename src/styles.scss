@@ -16,3 +16,18 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   background-color: black;
 }
+
+.d-relative {
+  position: relative;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.cdk-overlay-pane.p-0 {
+  .mat-dialog-container {
+    padding: 0;
+    overflow: hidden;
+  }
+}

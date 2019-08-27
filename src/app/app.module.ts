@@ -19,12 +19,17 @@ import {PaletteComponent} from "./components/palette/palette.component";
 import {MarkerComponent} from "./components/marker/marker.component";
 import {AnimatedBackgroundComponent} from "./components/animatedBackground/animatedBackground.component";
 import {ClickOutsideModule} from "ng-click-outside";
+import {CircleComponent} from "./components/circle/circle.component";
+import {ColorPickerModule} from "ngx-color-picker";
+import {ColorPickerDialogComponent} from "./components/colorPickerDialog/colorPickerDialog.component";
 
 @NgModule({
     declarations: [
         AnimatedBackgroundComponent,
         AppComponent,
         CalibrateComponent,
+        CircleComponent,
+        ColorPickerDialogComponent,
         HomeComponent,
         MapComponent,
         MarkerComponent,
@@ -39,13 +44,14 @@ import {ClickOutsideModule} from "ng-click-outside";
         BrowserAnimationsModule,
         BrowserModule,
         ClickOutsideModule,
+        ColorPickerModule,
         FormsModule,
         MaterialModule,
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
         MatInputModule,
     ],
     providers: [],
-    entryComponents: [CalibrateComponent, MarkerComponent, PermissionsComponent],
+    entryComponents: [CalibrateComponent, CircleComponent, ColorPickerDialogComponent, MarkerComponent, PermissionsComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {

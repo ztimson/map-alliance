@@ -11,6 +11,7 @@ import {MarkerComponent} from "../../components/marker/marker.component";
 import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {copyToClipboard} from "../../utils";
 import {ActivatedRoute} from "@angular/router";
+import {CircleComponent} from "../../components/circle/circle.component";
 
 declare const L;
 
@@ -70,17 +71,30 @@ export class MapComponent implements OnInit {
         this.map = new MapService('map');
 
         // Handle click actions
-        this.map.click.pipe(filter(e => !!e)).subscribe(e => {
-            if(!!e.symbol && this.menu[6].enabled) return this.map.delete(e.symbol);
-            if(e.symbol instanceof L.Marker) this.bottomSheet.open(MarkerComponent, {data: e.symbol});
+        this.map.click.pipe(filter(e => !!e && e.symbol)).subscribe(e => {
+            let symbol = e.symbol.symbol;
+            if(this.menu[6].enabled) {
+                if(!!symbol && symbol.noDelete) return;
+                return this.map.delete(e.symbol);
+            } else if(e.symbol instanceof L.Marker) {
+                if(symbol.noSelect) return;
+                /*this.bottomSheet.open(MarkerComponent, {data: e.symbol, hasBackdrop: false, disableClose: true});*/
+            } else if(e.symbol instanceof L.Circle) {
+                if(symbol.noSelect) return;
+                /*this.bottomSheet.open(CircleComponent, {data: e.symbol, hasBackdrop: false, disableClose: true}).afterDismissed().subscribe(c => {
+                    let circle = c['_symbol'];
+                    this.map.delete(c);
+                    this.map.newCircle(circle);
+                });*/
+            }
         });
 
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
             if(!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
             if(this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
             if(this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
-            this.positionMarker.arrow = this.map.newMarker({lat: pos.latitude, lng: pos.longitude}, {noDelete: true, icon: ARROW, rotationAngle: pos.heading, rotationOrigin: 'center'});
-            this.positionMarker.circle = this.map.newCircle({lat: pos.latitude, lng: pos.longitude}, pos.accuracy, {interactive: false});
+            this.positionMarker.arrow = this.map.newMarker({latlng: {lat: pos.latitude, lng: pos.longitude}, noSelect: true, noDelete: true, icon: ARROW, rotationAngle: pos.heading, rotationOrigin: 'center'});
+            this.positionMarker.circle = this.map.newCircle({latlng: {lat: pos.latitude, lng: pos.longitude}, color: '#2873d8', radius: pos.accuracy, interactive: false});
             this.position = pos;
         });
 
@@ -95,14 +109,14 @@ export class MapComponent implements OnInit {
     addCircle() {
         this.map.click.pipe(skip(1), take(1), filter(() => this.menu[2].enabled)).subscribe(e => {
             this.menu[2].enabled = false;
-            this.map.newCircle(e.event.latlng);
+            this.map.newCircle({latlng: e.event.latlng});
         });
     }
 
     addMarker() {
         this.map.click.pipe(skip(1), take(1), filter(() => this.menu[0].enabled)).subscribe(e => {
             this.menu[0].enabled = false;
-            this.map.newMarker(e.event.latlng);
+            this.map.newMarker({latlng: e.event.latlng});
         });
     }
 
@@ -147,10 +161,10 @@ export class MapComponent implements OnInit {
     startMeasuring() {
         this.measuringSubscription = this.map.click.pipe(skip(1)).subscribe(e => {
             if(this.lastMeasuringPoint) {
-                this.map.newMeasurement(this.lastMeasuringPoint.getLatLng(), e.event.latlng);
+                this.map.newMeasurement({latlng: this.lastMeasuringPoint.getLatLng(), latlng2: e.event.latlng});
                 this.map.delete(this.lastMeasuringPoint);
             }
-            this.lastMeasuringPoint = this.map.newMarker(e.event.latlng, {icon: MEASURE});
+            this.lastMeasuringPoint = this.map.newMarker({latlng: e.event.latlng, icon: MEASURE});
         })
     }
 
