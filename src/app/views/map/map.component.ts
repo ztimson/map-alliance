@@ -7,11 +7,9 @@ import {ToolbarItem} from "../../models/toolbarItem";
 import {flyInRight, flyOutRight} from "../../animations";
 import {ARROW, MapLayers, MapService, MEASURE, WeatherLayers} from "../../services/map.service";
 import {Subscription} from "rxjs";
-import {MarkerComponent} from "../../components/marker/marker.component";
 import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {copyToClipboard} from "../../utils";
 import {ActivatedRoute} from "@angular/router";
-import {CircleComponent} from "../../components/circle/circle.component";
 
 declare const L;
 
@@ -37,9 +35,9 @@ export class MapComponent implements OnInit {
     menu: ToolbarItem[] = [
         {name: 'Marker', icon: 'room', toggle: true, click: () => { this.addMarker(); }},
         {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.stopDrawing()},
-        {name: 'Circle', faicon: 'far fa-circle', toggle: true, click: () => { this.addCircle(); }},
-        {name: 'Square', faicon: 'far fa-square', toggle: true},
-        {name: 'Polygon', faicon: 'fas fa-draw-polygon', toggle: true},
+        {name: 'Circle', icon: 'panorama_fish_eye', toggle: true, click: () => { this.addCircle(); }},
+        {name: 'Square', icon: 'crop_square', toggle: true},
+        {name: 'Polygon', icon: 'details', toggle: true},
         {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: () => this.startMeasuring(), onDisabled: () => this.stopMeasuring()},
         {name: 'Delete', icon: 'delete', toggle: true},
         {name: 'Map Style', icon: 'terrain', subMenu: [
