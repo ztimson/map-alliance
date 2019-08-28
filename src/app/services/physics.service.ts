@@ -19,6 +19,7 @@ export class PhysicsService {
     constructor(permissionsService: PermissionsService) {
 
         navigator.geolocation.watchPosition(e => console.log(e), err => console.error(err));
+        window.addEventListener('devicemotion', e => console.log(e));
 
         permissionsService.requestPermission('geolocation', 'gps_fixed', 'Can we use your location?').then(granted => {
             if(granted) {
