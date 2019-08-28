@@ -17,6 +17,9 @@ export class PhysicsService {
     position = new BehaviorSubject<Position>(null);
 
     constructor(permissionsService: PermissionsService) {
+
+        navigator.geolocation.watchPosition(e => console.log(e), err => console.error(err));
+
         permissionsService.requestPermission('geolocation', 'gps_fixed', 'Can we use your location?').then(granted => {
             if(granted) {
                 // Gather physical data
