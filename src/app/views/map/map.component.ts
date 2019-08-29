@@ -10,6 +10,8 @@ import {Subscription} from "rxjs";
 import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {copyToClipboard} from "../../utils";
 import {ActivatedRoute} from "@angular/router";
+import {DimensionsDialogComponent} from "../../components/dimensionsDialog/dimensionsDialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 declare const L;
 
@@ -59,7 +61,7 @@ export class MapComponent implements OnInit {
         {name: 'Settings', icon: 'settings', hidden: true}
     ];
 
-    constructor(public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private route: ActivatedRoute) {
+    constructor(public physicsService: PhysicsService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
         this.route.params.subscribe(params => {
             this.code = params['code'];
         })
@@ -105,9 +107,10 @@ export class MapComponent implements OnInit {
     }
 
     addCircle() {
-        this.map.click.pipe(skip(1), take(1), filter(() => this.menu[2].enabled)).subscribe(e => {
+        this.map.click.pipe(skip(1), take(1), filter(() => this.menu[2].enabled)).subscribe(async e => {
+            let dimensions = await this.dialog.open(DimensionsDialogComponent, {data: ['Radius (m)'], disableClose: true, panelClass: 'pb-0'}).afterClosed().toPromise();
             this.menu[2].enabled = false;
-            this.map.newCircle({latlng: e.event.latlng});
+            this.map.newCircle({latlng: e.event.latlng, radius: dimensions[0]});
         });
     }
 

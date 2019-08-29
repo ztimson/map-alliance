@@ -22,6 +22,7 @@ import {ClickOutsideModule} from "ng-click-outside";
 import {CircleComponent} from "./components/circle/circle.component";
 import {ColorPickerModule} from "ngx-color-picker";
 import {ColorPickerDialogComponent} from "./components/colorPickerDialog/colorPickerDialog.component";
+import {DimensionsDialogComponent} from "./components/dimensionsDialog/dimensionsDialog.component";
 
 @NgModule({
     declarations: [
@@ -30,6 +31,7 @@ import {ColorPickerDialogComponent} from "./components/colorPickerDialog/colorPi
         CalibrateComponent,
         CircleComponent,
         ColorPickerDialogComponent,
+        DimensionsDialogComponent,
         HomeComponent,
         MapComponent,
         MarkerComponent,
@@ -51,7 +53,7 @@ import {ColorPickerDialogComponent} from "./components/colorPickerDialog/colorPi
         MatInputModule,
     ],
     providers: [],
-    entryComponents: [CalibrateComponent, CircleComponent, ColorPickerDialogComponent, MarkerComponent, PermissionsComponent],
+    entryComponents: [CalibrateComponent, CircleComponent, ColorPickerDialogComponent, DimensionsDialogComponent, MarkerComponent, PermissionsComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {

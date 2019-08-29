@@ -118,7 +118,7 @@ export class MapService {
     }
 
     newCircle(c: Circle) {
-        if(!c.radius) c.radius = 10000;
+        if(!c.radius) c.radius = 500;
         if(!c.color) c.color = '#ff4141';
         let circle = L.circle(c.latlng, c).addTo(this.map);
         circle.symbol = c;

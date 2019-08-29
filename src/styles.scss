@@ -28,3 +28,10 @@ body {
     overflow: hidden;
   }
 }
+
+.cdk-overlay-pane.pb-0 {
+  .mat-dialog-container {
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+}
