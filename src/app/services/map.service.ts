@@ -1,5 +1,5 @@
 import {BehaviorSubject} from "rxjs";
-import {distanceInM} from "../utils";
+import {latLngDistance} from "../utils";
 import {environment} from "../../environments/environment";
 import {Circle, LatLng, Marker, Measurement} from "../models/mapSymbol";
 
@@ -146,7 +146,7 @@ export class MapService {
         let group = L.layerGroup([line, decoration]).addTo(this.map);
         group.symbol = m;
         line.on('click', e => this.click.next({event: e, symbol: group}));
-        let distance = distanceInM(m.latlng.lat, m.latlng.lng, m.latlng2.lat, m.latlng2.lng);
+        let distance = latLngDistance(m.latlng, m.latlng2);
         line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`, {autoClose: false, closeOnClick: false}).openPopup();
         return group;
     }

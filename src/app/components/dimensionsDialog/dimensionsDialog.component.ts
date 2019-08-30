@@ -10,7 +10,7 @@ export class DimensionsDialogComponent {
     dimensionsOut: number[];
 
     constructor(private ref: MatDialogRef<DimensionsDialogComponent>, @Inject(MAT_DIALOG_DATA) public dimensions: string[]) {
-        this.dimensionsOut = Array(dimensions.length).fill(0);
+        this.dimensionsOut = Array(dimensions.length).fill(null);
     }
 
     close() {
