@@ -2,7 +2,7 @@
   "name": "Map Alliance",
   "short_name": "Map Alliance",
   "theme_color": "#000000",
-  "background_color": "#1976d2",
+  "background_color": "#000000",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
