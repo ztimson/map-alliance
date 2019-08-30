@@ -35,10 +35,10 @@ export class MapComponent implements OnInit {
     measuringSubscription: Subscription;
 
     menu: ToolbarItem[] = [
-        {name: 'Marker', icon: 'room', toggle: true, click: () => { this.addMarker(); }},
+        {name: 'Marker', icon: 'room', toggle: true, click: () => this.addMarker()},
         {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.stopDrawing()},
-        {name: 'Circle', icon: 'panorama_fish_eye', toggle: true, click: () => { this.addCircle(); }},
-        {name: 'Square', icon: 'crop_square', toggle: true},
+        {name: 'Circle', icon: 'panorama_fish_eye', toggle: true, click: () => this.addCircle()},
+        {name: 'Square', icon: 'crop_square', toggle: true, click: () => this.addRectangle()},
         {name: 'Polygon', icon: 'details', toggle: true},
         {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: () => this.startMeasuring(), onDisabled: () => this.stopMeasuring()},
         {name: 'Delete', icon: 'delete', toggle: true},
@@ -119,6 +119,20 @@ export class MapComponent implements OnInit {
             this.menu[0].enabled = false;
             this.map.newMarker({latlng: e.event.latlng});
         });
+    }
+
+    addRectangle() {
+        let lastPoint;
+        this.map.click.pipe(skip(1), take(2)).subscribe(e => {
+            if(lastPoint) {
+                this.menu[3].enabled = false;
+                console.log({latlng: lastPoint.getLatLng(), latlng2: e.event.latlng});
+                this.map.newRectangle({latlng: lastPoint.getLatLng(), latlng2: e.event.latlng});
+                this.map.delete(lastPoint);
+                return;
+            }
+            lastPoint = this.map.newMarker({latlng: e.event.latlng});
+        })
     }
 
     center(pos?) {

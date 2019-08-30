@@ -21,7 +21,7 @@ export interface Circle extends MapSymbol {
     radius?: number;
 }
 
-export interface Square extends MapSymbol {
+export interface Rectangle extends MapSymbol {
     latlng: LatLng;
     latlng2: LatLng;
 }

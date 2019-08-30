@@ -1,7 +1,7 @@
 import {BehaviorSubject} from "rxjs";
 import {latLngDistance} from "../utils";
 import {environment} from "../../environments/environment";
-import {Circle, LatLng, Marker, Measurement} from "../models/mapSymbol";
+import {Circle, LatLng, Marker, Measurement, Rectangle} from "../models/mapSymbol";
 
 declare const L;
 
@@ -149,6 +149,14 @@ export class MapService {
         let distance = latLngDistance(m.latlng, m.latlng2);
         line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`, {autoClose: false, closeOnClick: false}).openPopup();
         return group;
+    }
+
+    newRectangle(r: Rectangle) {
+        if(!r.color) r.color = '#ff4141';
+        let rect = new L.Rectangle([r.latlng, r.latlng2], r).addTo(this.map);
+        rect.symbol = r;
+        rect.on('click', e => this.click.next({event: e, symbol: rect}));
+        return rect;
     }
 
     startDrawing() {
