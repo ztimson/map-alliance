@@ -41,11 +41,11 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
             this.menuItemsChange.emit(this.displayMenuItems);
 
             if(item.enabled) {
-                if(item.onEnabled) item.onEnabled();
+                if(item.onEnabled) item.onEnabled(item);
             } else {
-                if(item.onDisabled) item.onDisabled();
+                if(item.onDisabled) item.onDisabled(item);
             }
         }
-        if(item.click) item.click();
+        if(item.click) item.click(item);
     }
 }

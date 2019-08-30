@@ -5,9 +5,9 @@ export interface ToolbarItem {
     hidden?: boolean;
     toggle?: boolean;
     individualToggle?: boolean;
-    click?: () => void;
+    click?: (item?: ToolbarItem) => void;
     enabled?: boolean;
-    onEnabled?: () => void;
-    onDisabled?: () => void;
+    onEnabled?: (item?: ToolbarItem) => void;
+    onDisabled?: (item?: ToolbarItem) => void;
     subMenu?: ToolbarItem[];
 }
