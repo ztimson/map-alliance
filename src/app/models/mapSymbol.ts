@@ -7,6 +7,7 @@ export interface MapData {
     circles?: Circle[];
     markers?: Marker[];
     measurements?: Measurement[];
+    polylines?: Polyline[];
     rectangles?: Rectangle[];
 }
 
@@ -35,6 +36,7 @@ export interface Rectangle extends MapSymbol {
 
 export interface Polyline extends MapSymbol {
     latlng: LatLng[];
+    weight?: number;
 }
 
 export interface Marker extends MapSymbol {

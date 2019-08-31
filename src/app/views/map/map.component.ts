@@ -40,7 +40,11 @@ export class MapComponent implements OnInit {
 
     startCircle = menuItem => {
         this.sub = this.map.click.pipe(skip(1), take(1)).subscribe(async e => {
-            let dimensions = await this.dialog.open(DimensionsDialogComponent, {data: ['Radius (m)'], disableClose: true, panelClass: 'pb-0'}).afterClosed().toPromise();
+            let dimensions = await this.dialog.open(DimensionsDialogComponent, {
+                data: ['Radius (m)'],
+                disableClose: true,
+                panelClass: 'pb-0'
+            }).afterClosed().toPromise();
             menuItem.enabled = false;
             let circle = {latlng: e.latlng, radius: dimensions[0] || 500, color: '#ff4141'};
             this.syncService.addCircle(circle);
@@ -49,9 +53,29 @@ export class MapComponent implements OnInit {
 
     startDelete = () => {
         this.sub = this.map.click.pipe(skip(1), filter(e => !!e.symbol)).subscribe(e => {
-            if(!!e.symbol && e.symbol.noDelete) return;
+            if (!!e.symbol && e.symbol.noDelete) return;
             this.syncService.delete(e.symbol)
         });
+    };
+
+    startDrawing = () => {
+        this.showPalette = true;
+        this.map.lock();
+        this.sub = this.map.touch.pipe(skip(1), filter(e => e.type == 'start'), finalize(() => {
+            this.showPalette = false;
+            this.map.lock(true);
+        })).subscribe(e => {
+            let p = {latlng: [e.latlng], noDelete: true, color: this.drawColor, weight: 8};
+            let polyline = this.map.newPolyline(p);
+            let drawingSub = this.map.touch.pipe(filter(e => e.type == 'move')).subscribe(e => polyline.addLatLng(e.latlng));
+            this.map.touch.pipe(filter(e => e.type == 'end'), take(1)).subscribe(() => {
+                drawingSub.unsubscribe();
+                p.noDelete = false;
+                p.latlng = polyline.getLatLngs().map(latlng => ({lat: latlng.lat, lng: latlng.lng}));
+                this.map.delete(polyline);
+                this.syncService.addPolyline(p);
+            });
+        })
     };
 
     startMarker = menuItem => {
@@ -65,9 +89,14 @@ export class MapComponent implements OnInit {
     startMeasuring = menuItem => {
         let lastPoint;
         this.sub = this.map.click.pipe(skip(1), take(2), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
-            if(lastPoint) {
+            if (lastPoint) {
                 menuItem.enabled = false;
-                let measurement = {latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng}, latlng2: e.latlng, color: '#ff4141', weight: 8};
+                let measurement = {
+                    latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng},
+                    latlng2: e.latlng,
+                    color: '#ff4141',
+                    weight: 8
+                };
                 this.syncService.addMeasurement(measurement);
                 return this.map.delete(lastPoint);
             }
@@ -78,9 +107,13 @@ export class MapComponent implements OnInit {
     startRectangle = menuItem => {
         let lastPoint;
         this.sub = this.map.click.pipe(skip(1), take(2), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
-            if(lastPoint) {
+            if (lastPoint) {
                 menuItem.enabled = false;
-                let rect = {latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng}, latlng2: e.latlng, color: '#ff4141'};
+                let rect = {
+                    latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng},
+                    latlng2: e.latlng,
+                    color: '#ff4141'
+                };
                 this.syncService.addRectangle(rect);
                 return this.map.delete(lastPoint);
             }
@@ -89,7 +122,7 @@ export class MapComponent implements OnInit {
     };
 
     unsub = () => {
-        if(this.sub) {
+        if (this.sub) {
             this.sub.unsubscribe();
             this.sub = null;
         }
@@ -97,26 +130,51 @@ export class MapComponent implements OnInit {
 
     menu: ToolbarItem[] = [
         {name: 'Marker', icon: 'room', toggle: true, onEnabled: this.startMarker, onDisabled: this.unsub},
-        {name: 'Draw', icon: 'create', toggle: true, onEnabled: () => this.startDrawing(), onDisabled: () => this.stopDrawing()},
+        {name: 'Draw', icon: 'create', toggle: true, onEnabled: this.startDrawing, onDisabled: this.unsub},
         {name: 'Circle', icon: 'panorama_fish_eye', toggle: true, onEnabled: this.startCircle, onDisabled: this.unsub},
         {name: 'Square', icon: 'crop_square', toggle: true, onEnabled: this.startRectangle, onDisabled: this.unsub},
         {name: 'Polygon', icon: 'details', toggle: true},
-        {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: this.startMeasuring, onDisabled: () => this.unsub},
+        {
+            name: 'Measure',
+            icon: 'straighten',
+            toggle: true,
+            onEnabled: this.startMeasuring,
+            onDisabled: () => this.unsub
+        },
         {name: 'Delete', icon: 'delete', toggle: true, onEnabled: this.startDelete, onDisabled: this.unsub},
-        {name: 'Map Style', icon: 'terrain', subMenu: [
-            {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
-            {name: 'ESRI:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY)},
-            {name: 'ESRI:Satellite Clear', toggle: true, enabled: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY_CLARITY)}
-        ]},
-        {name: 'Weather', icon: 'cloud', subMenu: [
+        {
+            name: 'Map Style', icon: 'terrain', subMenu: [
+                {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
+                {name: 'ESRI:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY)},
+                {
+                    name: 'ESRI:Satellite Clear',
+                    toggle: true,
+                    enabled: true,
+                    click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY_CLARITY)
+                }
+            ]
+        },
+        {
+            name: 'Weather', icon: 'cloud', subMenu: [
                 {name: 'None', toggle: true, enabled: true, click: () => this.map.setWeatherLayer()},
                 {name: 'Temperature', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.TEMP_NEW)},
                 {name: 'Wind', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.WIND_NEW)},
-                {name: 'Sea Level Pressure', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)},
+                {
+                    name: 'Sea Level Pressure',
+                    toggle: true,
+                    click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)
+                },
                 {name: 'Clouds', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.CLOUDS_NEW)},
-        ]},
+            ]
+        },
         {name: 'Calibrate', icon: 'explore', toggle: true, onEnabled: this.startCalibrating, onDisabled: this.unsub},
-        {name: 'Share', icon: 'share', toggle: true, onEnabled: () => this.share(), onDisabled: () => this.shareDialog = false},
+        {
+            name: 'Share',
+            icon: 'share',
+            toggle: true,
+            onEnabled: () => this.share(),
+            onDisabled: () => this.shareDialog = false
+        },
         {name: 'Messages', icon: 'chat', hidden: true},
         {name: 'Identity', icon: 'perm_identity', hidden: true},
         {name: 'Settings', icon: 'settings', hidden: true},
@@ -131,10 +189,11 @@ export class MapComponent implements OnInit {
             // Handle drawing the map after updates
             this.syncService.mapSymbols.pipe(filter(s => !!s)).subscribe((map: MapData) => {
                 this.map.deleteAll();
-                if(map.circles) map.circles.forEach(c => this.map.newCircle(c));
-                if(map.markers) map.markers.forEach(m => this.map.newMarker(m));
-                if(map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
-                if(map.rectangles) map.rectangles.forEach(r => this.map.newRectangle(r));
+                if (map.circles) map.circles.forEach(c => this.map.newCircle(c));
+                if (map.markers) map.markers.forEach(m => this.map.newMarker(m));
+                if (map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
+                if (map.polylines) map.polylines.forEach(p => this.map.newPolyline(p));
+                if (map.rectangles) map.rectangles.forEach(r => this.map.newRectangle(r));
             })
         })
     }
@@ -144,11 +203,11 @@ export class MapComponent implements OnInit {
 
         // Handle opening symbols
         this.map.click.pipe(filter(e => !!e && e.item)).subscribe(e => {
-            if(e.item instanceof L.Marker) {
-                if(e.symbol.noSelect) return;
+            if (e.item instanceof L.Marker) {
+                if (e.symbol.noSelect) return;
                 /*this.bottomSheet.open(MarkerComponent, {data: e.symbol, hasBackdrop: false, disableClose: true});*/
-            } else if(e.item instanceof L.Circle) {
-                if(e.symbol.noSelect) return;
+            } else if (e.item instanceof L.Circle) {
+                if (e.symbol.noSelect) return;
                 /*this.bottomSheet.open(CircleComponent, {data: e.symbol, hasBackdrop: false, disableClose: true}).afterDismissed().subscribe(c => {
                     let circle = c['_symbol'];
                     this.map.delete(c);
@@ -159,23 +218,40 @@ export class MapComponent implements OnInit {
 
         // Display location
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
-            if(!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
-            if(this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
-            if(this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
-            this.positionMarker.arrow = this.map.newMarker({latlng: {lat: pos.latitude, lng: pos.longitude}, noSelect: true, noDelete: true, icon: 'arrow', rotationAngle: pos.heading, rotationOrigin: 'center'});
-            this.positionMarker.circle = this.map.newCircle({latlng: {lat: pos.latitude, lng: pos.longitude}, color: '#2873d8', noSelect: true, noDelete: true, radius: pos.accuracy, interactive: false});
+            if (!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
+            if (this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
+            if (this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
+            this.positionMarker.arrow = this.map.newMarker({
+                latlng: {lat: pos.latitude, lng: pos.longitude},
+                noSelect: true,
+                noDelete: true,
+                icon: 'arrow',
+                rotationAngle: pos.heading,
+                rotationOrigin: 'center'
+            });
+            this.positionMarker.circle = this.map.newCircle({
+                latlng: {lat: pos.latitude, lng: pos.longitude},
+                color: '#2873d8',
+                noSelect: true,
+                noDelete: true,
+                radius: pos.accuracy,
+                interactive: false
+            });
             this.position = pos;
         });
 
         // Calibration popup
         this.physicsService.requireCalibration.subscribe(() => {
-            this.snackBar.open('Compass requires calibration', 'calibrate', {duration: 5000, panelClass: 'bg-warning,text-white'})
+            this.snackBar.open('Compass requires calibration', 'calibrate', {
+                duration: 5000,
+                panelClass: 'bg-warning,text-white'
+            })
                 .onAction().subscribe(() => this.startCalibrating());
         });
     }
 
     center(pos?) {
-        if(!pos) pos = {lat: this.position.latitude, lng: this.position.longitude};
+        if (!pos) pos = {lat: this.position.latitude, lng: this.position.longitude};
         this.map.centerOn(pos);
     }
 
@@ -186,22 +262,12 @@ export class MapComponent implements OnInit {
 
     share() {
         this.shareDialog = true;
-        if(navigator['share']) {
+        if (navigator['share']) {
             navigator['share']({
                 title: 'Map Alliance',
                 text: 'A map alliance has been requested!',
                 url: window.location.href,
             })
         }
-    }
-
-    startDrawing() {
-        this.showPalette = true;
-        this.map.startDrawing();
-    }
-
-    stopDrawing() {
-        this.showPalette = false;
-        this.map.stopDrawing()
     }
 }
