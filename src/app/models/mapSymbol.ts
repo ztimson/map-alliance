@@ -3,6 +3,13 @@ export interface LatLng {
     lng: number;
 }
 
+export interface MapData {
+    circles?: Circle[];
+    markers?: Marker[];
+    measurements?: Measurement[];
+    rectangles?: Rectangle[];
+}
+
 export interface MapSymbol {
     symbol?: any;
     latlng?: LatLng | LatLng[];

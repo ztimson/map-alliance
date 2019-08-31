@@ -33,7 +33,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
             if (!item.individualToggle) {
                 menu.filter(i => item.name != i.name && !i.individualToggle).forEach(item => {
                     item.enabled = false;
-                    if (item.onDisabled) item.onDisabled();
+                    if (item.onDisabled) item.onDisabled(item);
                 });
             }
 

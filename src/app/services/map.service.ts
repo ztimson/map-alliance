@@ -1,7 +1,7 @@
 import {BehaviorSubject} from "rxjs";
 import {latLngDistance} from "../utils";
 import {environment} from "../../environments/environment";
-import {Circle, LatLng, Marker, Measurement, Rectangle} from "../models/mapSymbol";
+import {Circle, LatLng, MapSymbol, Marker, Measurement, Rectangle} from "../models/mapSymbol";
 
 declare const L;
 
@@ -19,28 +19,39 @@ export enum WeatherLayers {
     TEMP_NEW
 }
 
-export const ARROW = L.icon({iconUrl: '/assets/images/arrow.png', iconSize: [40, 45], iconAnchor: [20, 23]});
-export const MARKER = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
-export const MEASURE = L.icon({iconUrl: '/assets/images/measure.png', iconSize: [75, 50], iconAnchor: [25, 25]});
+const ARROW = L.icon({iconUrl: '/assets/images/arrow.png', iconSize: [40, 45], iconAnchor: [20, 23]});
+const MARKER = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
+const MEASURE = L.icon({iconUrl: '/assets/images/measure.png', iconSize: [75, 50], iconAnchor: [25, 25]});
 
 export class MapService {
+    private circles = [];
     private drawListener;
     private markers = [];
     private measurements = [];
     private mapLayer;
+    private rectangles = [];
     private weatherLayer;
 
-    click = new BehaviorSubject<{event: any, symbol?: any}>(null);
+    click = new BehaviorSubject<{latlng: LatLng, symbol?: MapSymbol, item?: any}>(null);
     drawingColor = '#ff4141';
     drawingWeight = 10;
     map;
 
     constructor(private elementId: string) {
         this.map = L.map(elementId, {attributionControl: false, editable: true, tap: true, zoomControl: false, maxBoundsViscosity: 1, doubleClickZoom: false}).setView({lat: 0, lng: 0}, 10);
-        this.map.on('click', (e) => this.click.next({event: e}));
+        this.map.on('click', (e) => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}}));
         this.setMapLayer();
+    }
 
-        this.map.on('editable:drag', e => console.log(e));
+    private getIcon(name: string) {
+        switch(name) {
+            case 'arrow':
+                return ARROW;
+            case 'measure':
+                return MEASURE;
+            default:
+                return MARKER;
+        }
     }
 
     centerOn(latlng: LatLng, zoom=14) {
@@ -50,14 +61,18 @@ export class MapService {
     delete(...symbols) {
         symbols.forEach(s => {
             this.map.removeLayer(s);
+            this.circles = this.circles.filter(c => c != c);
             this.markers = this.markers.filter(m => m != s);
-            this.measurements = this.markers.filter(m => m != s);
+            this.measurements = this.measurements.filter(m => m != s);
+            this.rectangles = this.rectangles.filter(r => r != s);
         });
     }
 
     deleteAll() {
+        this.circles.forEach(c => this.delete(c));
         this.markers.forEach(m => this.delete(m));
-        this.measurements.forEach(m => this.delete(m.line, m.decoration));
+        this.measurements.forEach(m => this.delete(m));
+        this.rectangles.forEach(r => this.delete(r));
     }
 
     lock(unlock?: boolean) {
@@ -118,44 +133,41 @@ export class MapService {
     }
 
     newCircle(c: Circle) {
-        if(!c.radius) c.radius = 500;
-        if(!c.color) c.color = '#ff4141';
-        let circle = L.circle(c.latlng, c).addTo(this.map);
-        circle.symbol = c;
-        circle.on('click', e => this.click.next({event: e, symbol: circle}));
+        let circle = L.circle(c.latlng, Object.assign({}, c)).addTo(this.map);
+        if(c.label) circle.bindTooltip(c.label, {permanent: true, direction: 'center'});
+        circle.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: c, item: circle}));
+        if(!c.noDelete) this.circles.push(circle);
         return circle;
     }
 
     newMarker(m: Marker) {
-        if(!m.icon) m.icon = MARKER;
-        let marker = L.marker(m.latlng, m).addTo(this.map);
+        let marker = L.marker(m.latlng, Object.assign({}, m, {icon: m.icon ? this.getIcon(m.icon) : MARKER})).addTo(this.map);
         if(m.label) marker.bindTooltip(m.label, {permanent: true, direction: 'bottom'});
-        marker.symbol = m;
-        marker.on('click', e => this.click.next({event: e, symbol: marker}));
+        marker.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: m, item: marker}));
+        if(!m.noDelete) this.markers.push(marker);
         return marker;
     }
 
     newMeasurement(m: Measurement) {
-        if(!m.color) m.color = '#ff4141';
-        if(!m.weight) m.weight = 8;
-        let line = L.polyline([m.latlng, m.latlng2], m);
+        let line = L.polyline([m.latlng, m.latlng2], Object.assign({}, m));
         let decoration = L.polylineDecorator(line, {patterns: [
             {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, headAngle: 180, pathOptions: m})},
             {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, headAngle: 180, pathOptions: m})}
         ]});
-        let group = L.layerGroup([line, decoration]).addTo(this.map);
-        group.symbol = m;
-        line.on('click', e => this.click.next({event: e, symbol: group}));
+        let group = new L.LayerGroup([line, decoration]).addTo(this.map);
+        if(!m.noDelete) this.measurements.push(group);
+
         let distance = latLngDistance(m.latlng, m.latlng2);
         line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`, {autoClose: false, closeOnClick: false}).openPopup();
+        line.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: m, item: group}));
         return group;
     }
 
     newRectangle(r: Rectangle) {
-        if(!r.color) r.color = '#ff4141';
-        let rect = new L.Rectangle([r.latlng, r.latlng2], r).addTo(this.map);
-        rect.symbol = r;
-        rect.on('click', e => this.click.next({event: e, symbol: rect}));
+        let rect = new L.Rectangle([r.latlng, r.latlng2], Object.assign({}, r)).addTo(this.map);
+        if(r.label) rect.bindTooltip(r.label, {permanent: true, direction: 'center'});
+        rect.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: r, item: rect}));
+        if(!r.noDelete) this.rectangles.push(rect);
         return rect;
     }
 
@@ -163,7 +175,7 @@ export class MapService {
         this.lock();
         this.drawListener = e => {
             let poly = L.polyline([e.latlng], {interactive: true, color: this.drawingColor, weight: this.drawingWeight}).addTo(this.map);
-            poly.on('click', e => this.click.next({event: e, symbol: poly}));
+            poly.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, item: poly}));
             let pushLine = e => poly.addLatLng(e.latlng);
             this.map.on('touchmove', pushLine);
             this.map.on('touchend', () => this.map.off('touchmove', pushLine));
