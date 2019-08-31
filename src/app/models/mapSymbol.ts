@@ -7,6 +7,7 @@ export interface MapData {
     circles?: Circle[];
     markers?: Marker[];
     measurements?: Measurement[];
+    polygons?: Polygon[];
     polylines?: Polyline[];
     rectangles?: Rectangle[];
 }

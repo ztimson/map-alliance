@@ -1,7 +1,7 @@
 import {BehaviorSubject} from "rxjs";
 import {latLngDistance} from "../utils";
 import {environment} from "../../environments/environment";
-import {Circle, LatLng, MapSymbol, Marker, Measurement, Polyline, Rectangle} from "../models/mapSymbol";
+import {Circle, LatLng, MapSymbol, Marker, Measurement, Polygon, Polyline, Rectangle} from "../models/mapSymbol";
 
 declare const L;
 
@@ -27,11 +27,11 @@ export class MapService {
     private readonly map;
 
     private circles = [];
-    private drawListener;
     private markers = [];
     private measurements = [];
     private mapLayer;
-    private polyline = [];
+    private polygons = [];
+    private polylines = [];
     private rectangles = [];
     private weatherLayer;
 
@@ -68,7 +68,8 @@ export class MapService {
             this.circles = this.circles.filter(c => c != c);
             this.markers = this.markers.filter(m => m != s);
             this.measurements = this.measurements.filter(m => m != s);
-            this.polyline = this.polyline.filter(p => p != s);
+            this.polygons = this.polygons.filter(p => p != s);
+            this.polylines = this.polylines.filter(p => p != s);
             this.rectangles = this.rectangles.filter(r => r != s);
         });
     }
@@ -77,7 +78,8 @@ export class MapService {
         this.circles.forEach(c => this.delete(c));
         this.markers.forEach(m => this.delete(m));
         this.measurements.forEach(m => this.delete(m));
-        this.polyline.forEach(p => this.delete(p));
+        this.polygons.forEach(p => this.delete(p));
+        this.polylines.forEach(p => this.delete(p));
         this.rectangles.forEach(r => this.delete(r));
     }
 
@@ -126,10 +128,17 @@ export class MapService {
         return group;
     }
 
+    newPolygon(p: Polygon) {
+        let polygon = new L.Polygon(p.latlng, Object.assign({}, p)).addTo(this.map);
+        polygon.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: p, item: polygon}));
+        if(!p.noDelete) this.polygons.push(polygon);
+        return polygon;
+    }
+
     newPolyline(p: Polyline) {
         let polyline = new L.Polyline(p.latlng, Object.assign({}, p)).addTo(this.map);
         polyline.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: p, item: polyline}));
-        if(!p.noDelete) this.polyline.push(polyline);
+        if(!p.noDelete) this.polylines.push(polyline);
         return polyline;
     }
 

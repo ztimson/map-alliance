@@ -27,6 +27,7 @@ export class MapComponent implements OnInit {
     drawColor = '#ff4141';
     isNaN = isNaN;
     map: MapService;
+    polygon: any;
     position;
     positionMarker = {arrow: null, circle: null};
     shareDialog = false;
@@ -104,6 +105,20 @@ export class MapComponent implements OnInit {
         })
     };
 
+    startPolygon = () => {
+        let lastPoint;
+        this.sub = this.map.click.pipe(skip(1), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
+            if(!this.polygon) {
+                let p = {latlng: [e.latlng], noDelete: true, color: '#ff4141'};
+                this.polygon = this.map.newPolygon(p)
+            } else {
+                this.polygon.addLatLng(e.latlng);
+                this.map.delete(lastPoint);
+            }
+            lastPoint = this.map.newMarker({latlng: e.latlng, color: '#ff4141'});
+        })
+    };
+
     startRectangle = menuItem => {
         let lastPoint;
         this.sub = this.map.click.pipe(skip(1), take(2), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
@@ -121,6 +136,19 @@ export class MapComponent implements OnInit {
         })
     };
 
+    stopPolygon = () => {
+        if(this.polygon) {
+            let p = {latlng: this.polygon.getLatLngs()[0].map(latlng => ({lat: latlng.lat, lng: latlng.lng})), color: '#ff4141'};
+            this.map.delete(this.polygon);
+            this.polygon = null;
+            this.syncService.addPolygon(p);
+        }
+        if (this.sub) {
+            this.sub.unsubscribe();
+            this.sub = null;
+        }
+    };
+
     unsub = () => {
         if (this.sub) {
             this.sub.unsubscribe();
@@ -133,7 +161,7 @@ export class MapComponent implements OnInit {
         {name: 'Draw', icon: 'create', toggle: true, onEnabled: this.startDrawing, onDisabled: this.unsub},
         {name: 'Circle', icon: 'panorama_fish_eye', toggle: true, onEnabled: this.startCircle, onDisabled: this.unsub},
         {name: 'Square', icon: 'crop_square', toggle: true, onEnabled: this.startRectangle, onDisabled: this.unsub},
-        {name: 'Polygon', icon: 'details', toggle: true},
+        {name: 'Polygon', icon: 'details', toggle: true, onEnabled: this.startPolygon, onDisabled: this.stopPolygon},
         {
             name: 'Measure',
             icon: 'straighten',
@@ -192,6 +220,7 @@ export class MapComponent implements OnInit {
                 if (map.circles) map.circles.forEach(c => this.map.newCircle(c));
                 if (map.markers) map.markers.forEach(m => this.map.newMarker(m));
                 if (map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
+                if (map.polygons) map.polygons.forEach(p => this.map.newPolygon(p));
                 if (map.polylines) map.polylines.forEach(p => this.map.newPolyline(p));
                 if (map.rectangles) map.rectangles.forEach(r => this.map.newRectangle(r));
             })
