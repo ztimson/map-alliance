@@ -162,47 +162,22 @@ export class MapComponent implements OnInit {
         {name: 'Circle', icon: 'panorama_fish_eye', toggle: true, onEnabled: this.startCircle, onDisabled: this.unsub},
         {name: 'Square', icon: 'crop_square', toggle: true, onEnabled: this.startRectangle, onDisabled: this.unsub},
         {name: 'Polygon', icon: 'details', toggle: true, onEnabled: this.startPolygon, onDisabled: this.stopPolygon},
-        {
-            name: 'Measure',
-            icon: 'straighten',
-            toggle: true,
-            onEnabled: this.startMeasuring,
-            onDisabled: () => this.unsub
-        },
+        {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: this.startMeasuring, onDisabled: () => this.unsub},
         {name: 'Delete', icon: 'delete', toggle: true, onEnabled: this.startDelete, onDisabled: this.unsub},
-        {
-            name: 'Map Style', icon: 'terrain', subMenu: [
-                {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
-                {name: 'ESRI:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY)},
-                {
-                    name: 'ESRI:Satellite Clear',
-                    toggle: true,
-                    enabled: true,
-                    click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY_CLARITY)
-                }
-            ]
-        },
-        {
-            name: 'Weather', icon: 'cloud', subMenu: [
+        {name: 'Map Style', icon: 'terrain', subMenu: [
+            {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
+            {name: 'ESRI:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY)},
+            {name: 'ESRI:Satellite Clear', toggle: true, enabled: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY_CLARITY)}
+        ]},
+        {name: 'Weather', icon: 'cloud', subMenu: [
                 {name: 'None', toggle: true, enabled: true, click: () => this.map.setWeatherLayer()},
                 {name: 'Temperature', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.TEMP_NEW)},
                 {name: 'Wind', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.WIND_NEW)},
-                {
-                    name: 'Sea Level Pressure',
-                    toggle: true,
-                    click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)
-                },
+                {name: 'Sea Level Pressure', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)},
                 {name: 'Clouds', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.CLOUDS_NEW)},
-            ]
-        },
+        ]},
         {name: 'Calibrate', icon: 'explore', toggle: true, onEnabled: this.startCalibrating, onDisabled: this.unsub},
-        {
-            name: 'Share',
-            icon: 'share',
-            toggle: true,
-            onEnabled: () => this.share(),
-            onDisabled: () => this.shareDialog = false
-        },
+        {name: 'Share', icon: 'share', toggle: true, onEnabled: () => this.share(), onDisabled: () => this.shareDialog = false},
         {name: 'Messages', icon: 'chat', hidden: true},
         {name: 'Identity', icon: 'perm_identity', hidden: true},
         {name: 'Settings', icon: 'settings', hidden: true},
