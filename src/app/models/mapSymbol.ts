@@ -17,6 +17,7 @@ export interface MapSymbol {
     symbol?: any;
     latlng?: LatLng | LatLng[];
     noDelete?: boolean;
+    noDeleteTool?: boolean;
     noSelect?: boolean;
     label?: string;
     color?: string;

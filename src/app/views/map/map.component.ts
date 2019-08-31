@@ -1,6 +1,6 @@
 import {Component, HostListener, isDevMode, OnDestroy, OnInit} from "@angular/core";
 import {PhysicsService} from "../../services/physics.service";
-import {filter, finalize, flatMap, skip, take} from "rxjs/operators";
+import {filter, finalize, skip, take} from "rxjs/operators";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
 import {CalibrateComponent} from "../../components/calibrate/calibrate.component";
 import {ToolbarItem} from "../../models/toolbarItem";
@@ -63,7 +63,7 @@ export class MapComponent implements OnDestroy, OnInit {
 
     startDelete = () => {
         this.sub = this.map.click.pipe(skip(1), filter(e => !!e.symbol)).subscribe(e => {
-            if (!!e.symbol && e.symbol.noDelete) return;
+            if (!!e.symbol && e.symbol.noDeleteTool) return;
             this.syncService.delete(e.symbol)
         });
     };
@@ -244,11 +244,12 @@ export class MapComponent implements OnDestroy, OnInit {
             if (!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
             if (this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
             if (this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
-            this.syncService.addMyLocation({latlng: {lat: pos.latitude, lng: pos.longitude}, label: this.name});
+            this.syncService.addMyLocation({latlng: {lat: pos.latitude, lng: pos.longitude}, label: this.name, noDeleteTool: true});
             this.positionMarker.arrow = this.map.newMarker({
                 latlng: {lat: pos.latitude, lng: pos.longitude},
                 noSelect: true,
                 noDelete: true,
+                noDeleteTool: true,
                 icon: 'arrow',
                 rotationAngle: pos.heading,
                 rotationOrigin: 'center'
@@ -258,6 +259,7 @@ export class MapComponent implements OnDestroy, OnInit {
                 color: '#2873d8',
                 noSelect: true,
                 noDelete: true,
+                noDeleteTool: true,
                 radius: pos.accuracy,
                 interactive: false
             });
