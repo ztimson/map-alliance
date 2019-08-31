@@ -5,7 +5,7 @@ export interface LatLng {
 
 export interface MapData {
     circles?: Circle[];
-    locations?: {latlng: LatLng, name: string}[];
+    locations?: Marker[];
     markers?: Marker[];
     measurements?: Measurement[];
     polygons?: Polygon[];

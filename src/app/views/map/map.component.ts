@@ -1,4 +1,4 @@
-import {Component, isDevMode, OnInit} from "@angular/core";
+import {Component, HostListener, isDevMode, OnDestroy, OnInit} from "@angular/core";
 import {PhysicsService} from "../../services/physics.service";
 import {filter, finalize, flatMap, skip, take} from "rxjs/operators";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
@@ -13,6 +13,8 @@ import {DimensionsDialogComponent} from "../../components/dimensionsDialog/dimen
 import {MatDialog} from "@angular/material/dialog";
 import {SyncService} from "../../services/sync.service";
 import {MapData, Marker} from "../../models/mapSymbol";
+import {Adjectives} from "../../adjectives";
+import {Nouns} from "../../nounes";
 
 declare const L;
 
@@ -22,11 +24,12 @@ declare const L;
     styleUrls: ['map.component.scss'],
     animations: [flyInRight, flyOutRight]
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnDestroy, OnInit {
     code: string;
     drawColor = '#ff4141';
     isNaN = isNaN;
     map: MapService;
+    name: string;
     polygon: any;
     position;
     positionMarker = {arrow: null, circle: null};
@@ -198,13 +201,20 @@ export class MapComponent implements OnInit {
         })
     }
 
+    @HostListener('window:beforeunload', ['$event'])
+    ngOnDestroy(): void {
+        this.syncService.removeMyLocation();
+    }
+
     ngOnInit() {
+        this.name = Adjectives[Math.round(Math.random() * Adjectives.length)] + ' ' + Nouns[Math.round(Math.random() * Nouns.length)];
         this.map = new MapService('map');
 
         // Handle drawing the map after updates
         this.syncService.mapSymbols.pipe(filter(s => !!s)).subscribe((map: MapData) => {
             this.map.deleteAll();
             if (map.circles) map.circles.forEach(c => this.map.newCircle(c));
+            if (map.locations) map.locations.filter(l => l.label != this.name).forEach(l => this.map.newMarker(l));
             if (map.markers) map.markers.forEach(m => this.map.newMarker(m));
             if (map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
             if (map.polygons) map.polygons.forEach(p => this.map.newPolygon(p));
@@ -227,11 +237,14 @@ export class MapComponent implements OnInit {
             }
         });
 
+
+
         // Display location
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
             if (!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
             if (this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
             if (this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
+            this.syncService.addMyLocation({latlng: {lat: pos.latitude, lng: pos.longitude}, label: this.name});
             this.positionMarker.arrow = this.map.newMarker({
                 latlng: {lat: pos.latitude, lng: pos.longitude},
                 noSelect: true,

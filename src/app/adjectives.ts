@@ -1,0 +1,19 @@
+export const Adjectives = [
+    'strict',
+    'poor',
+    'old',
+    'hot',
+    'huge',
+    'scared',
+    'large',
+    'tall',
+    'antique',
+    'complete',
+    'offbeat',
+    'selective',
+    'unknown',
+    'unwilling',
+    'lively',
+    'nebulous',
+    'deranged'
+];

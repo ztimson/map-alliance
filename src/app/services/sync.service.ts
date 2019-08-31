@@ -12,9 +12,10 @@ export class SyncService {
     private changed = false;
     private collection: AngularFirestoreCollection;
     private mapSub: Subscription;
+    private name: string;
     private saveRate = 5_000;
 
-    mapSymbols = new BehaviorSubject<MapData>(null);
+    mapSymbols = new BehaviorSubject<MapData>({});
 
     constructor(private db: AngularFirestore) {
         this.collection = this.db.collection('Maps');
@@ -48,6 +49,18 @@ export class SyncService {
         this.changed = true;
     }
 
+    addMyLocation(location: Marker) {
+        let map = this.mapSymbols.value;
+        if(!map.locations) map.locations = [];
+        let markForSave = this.name == null;
+        this.name = location.label;
+        map.locations = map.locations.filter(l => l.label != location.label);
+        map.locations.push(location);
+        this.mapSymbols.next(map);
+        this.changed = true;
+        if(markForSave) this.save();
+    }
+
     addPolygon(polygon: Polygon) {
         let map = this.mapSymbols.value;
         if(!map.polygons) map.polygons = [];
@@ -75,6 +88,7 @@ export class SyncService {
     delete(...symbols) {
         let map = this.mapSymbols.value;
         if(map.circles) symbols.forEach(s => map.circles = map.circles.filter(c => !_.isEqual(s, c)));
+        if(map.locations) symbols.forEach(s => map.locations = map.locations.filter(m => !_.isEqual(s, m)));
         if(map.markers) symbols.forEach(s => map.markers = map.markers.filter(m => !_.isEqual(s, m)));
         if(map.measurements) symbols.forEach(s => map.measurements = map.measurements.filter(m => !_.isEqual(s, m)));
         if(map.polygons) symbols.forEach(s => map.polygons = map.polygons.filter(p => !_.isEqual(s , p)));
@@ -96,6 +110,14 @@ export class SyncService {
         });
 
         setInterval(() => this.save(), this.saveRate);
+    }
+
+    removeMyLocation() {
+        let map = this.mapSymbols.value;
+        if(map.locations) map.locations = map.locations.filter(l => l.label != this.name);
+        this.name = null;
+        this.changed = true;
+        this.save();
     }
 
     save() {
