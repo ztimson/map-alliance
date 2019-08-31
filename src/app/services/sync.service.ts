@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
 import {BehaviorSubject, Subscription} from "rxjs";
-import {Circle, MapData, Marker, Measurement, Polygon, Polyline, Rectangle} from "../models/mapSymbol";
+import {Circle, MapData, MapSymbol, Marker, Measurement, Polygon, Polyline, Rectangle} from "../models/mapSymbol";
 import * as _ from 'lodash';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class SyncService {
     private collection: AngularFirestoreCollection;
     private mapSub: Subscription;
     private name: string;
-    private saveRate = 5_000;
+    private saveInterval;
 
     mapSymbols = new BehaviorSubject<MapData>({});
 
@@ -104,12 +104,12 @@ export class SyncService {
             this.mapSub = null;
         }
         this.code = mapCode;
-        this.mapSub = this.collection.doc(this.code).valueChanges().subscribe(newMap => {
-            this.mapSymbols.next(Object.assign({}, newMap));
+        this.mapSub = this.collection.doc(this.code).valueChanges().subscribe((newMap: MapData) => {
+            this.mapSymbols.next(Object.assign({}, newMap)); // TODO: Add merge operation so pending changes arn't lost
             this.changed = false;
+            if(this.saveInterval) clearInterval(this.saveInterval);
+            this.saveInterval = setInterval(() => this.save(), (newMap.locations && newMap.locations.length > 1) ? 2_000 : 30_000)
         });
-
-        setInterval(() => this.save(), this.saveRate);
     }
 
     removeMyLocation() {
