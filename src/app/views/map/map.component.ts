@@ -188,22 +188,22 @@ export class MapComponent implements OnInit {
         this.route.params.subscribe(params => {
             this.code = params['code'];
             this.syncService.load(this.code);
-
-            // Handle drawing the map after updates
-            this.syncService.mapSymbols.pipe(filter(s => !!s)).subscribe((map: MapData) => {
-                this.map.deleteAll();
-                if (map.circles) map.circles.forEach(c => this.map.newCircle(c));
-                if (map.markers) map.markers.forEach(m => this.map.newMarker(m));
-                if (map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
-                if (map.polygons) map.polygons.forEach(p => this.map.newPolygon(p));
-                if (map.polylines) map.polylines.forEach(p => this.map.newPolyline(p));
-                if (map.rectangles) map.rectangles.forEach(r => this.map.newRectangle(r));
-            })
         })
     }
 
     ngOnInit() {
         this.map = new MapService('map');
+
+        // Handle drawing the map after updates
+        this.syncService.mapSymbols.pipe(filter(s => !!s)).subscribe((map: MapData) => {
+            this.map.deleteAll();
+            if (map.circles) map.circles.forEach(c => this.map.newCircle(c));
+            if (map.markers) map.markers.forEach(m => this.map.newMarker(m));
+            if (map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
+            if (map.polygons) map.polygons.forEach(p => this.map.newPolygon(p));
+            if (map.polylines) map.polylines.forEach(p => this.map.newPolyline(p));
+            if (map.rectangles) map.rectangles.forEach(r => this.map.newRectangle(r));
+        });
 
         // Handle opening symbols
         this.map.click.pipe(filter(e => !!e && e.item)).subscribe(e => {

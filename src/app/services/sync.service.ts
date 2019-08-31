@@ -9,8 +9,10 @@ import * as _ from 'lodash';
 })
 export class SyncService {
     private code: string;
+    private changed = false;
     private collection: AngularFirestoreCollection;
     private mapSub: Subscription;
+    private saveRate = 5_000;
 
     mapSymbols = new BehaviorSubject<MapData>(null);
 
@@ -26,42 +28,48 @@ export class SyncService {
         let map = this.mapSymbols.value;
         if(!map.circles) map.circles = [];
         map.circles.push(circle);
-        this.save();
+        this.mapSymbols.next(map);
+        this.changed = true;
     }
 
     addMarker(marker: Marker) {
         let map = this.mapSymbols.value;
         if(!map.markers) map.markers = [];
         map.markers.push(marker);
-        this.save();
+        this.mapSymbols.next(map);
+        this.changed = true;
     }
 
     addMeasurement(measurement: Measurement) {
         let map = this.mapSymbols.value;
         if(!map.measurements) map.measurements = [];
         map.measurements.push(measurement);
-        this.save();
+        this.mapSymbols.next(map);
+        this.changed = true;
     }
 
     addPolygon(polygon: Polygon) {
         let map = this.mapSymbols.value;
         if(!map.polygons) map.polygons = [];
         map.polygons.push(polygon);
-        this.save();
+        this.mapSymbols.next(map);
+        this.changed = true;
     }
 
     addPolyline(polyline: Polyline) {
         let map = this.mapSymbols.value;
         if(!map.polylines) map.polylines = [];
         map.polylines.push(polyline);
-        this.save();
+        this.mapSymbols.next(map);
+        this.changed = true;
     }
 
     addRectangle(rect: Rectangle) {
         let map = this.mapSymbols.value;
         if(!map.rectangles) map.rectangles = [];
         map.rectangles.push(rect);
-        this.save();
+        this.mapSymbols.next(map);
+        this.changed = true;
     }
 
     delete(...symbols) {
@@ -72,7 +80,8 @@ export class SyncService {
         if(map.polygons) symbols.forEach(s => map.polygons = map.polygons.filter(p => !_.isEqual(s , p)));
         if(map.polylines) symbols.forEach(s => map.polylines = map.polylines.filter(p => !_.isEqual(s, p)));
         if(map.rectangles) symbols.forEach(s => map.rectangles = map.rectangles.filter(r => !_.isEqual(s, r)));
-        this.save();
+        this.mapSymbols.next(map);
+        this.changed = true;
     }
 
     load(mapCode: string) {
@@ -81,12 +90,18 @@ export class SyncService {
             this.mapSub = null;
         }
         this.code = mapCode;
-        this.mapSub = this.collection.doc(this.code).valueChanges().subscribe(newMap => this.mapSymbols.next(Object.assign({}, newMap)));
+        this.mapSub = this.collection.doc(this.code).valueChanges().subscribe(newMap => {
+            this.mapSymbols.next(Object.assign({}, newMap));
+            this.changed = false;
+        });
+
+        setInterval(() => this.save(), this.saveRate);
     }
 
     save() {
-        if(this.code && this.mapSymbols.value) {
+        if(this.code && this.mapSymbols.value && this.changed) {
             this.collection.doc(this.code).set(this.mapSymbols.value);
+            this.changed = false;
         }
     }
 }
