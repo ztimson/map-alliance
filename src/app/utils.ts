@@ -41,7 +41,8 @@ export function relativeLatLng(latLng: LatLng, meters: number, deg: number) {
     let lat = deg2rad(latLng.lat);
     let lng = deg2rad(latLng.lng);
 
-    let latOut = Math.asin(Math.sign(lat) * Math.cos(d / R) + Math.cos(lat) * Math.sin(d / R) * Math.cos(brng));
+    // lat2 = math.asin( math.sin(lat1)*math.cos(d/R) + math.cos(lat1)*math.sin(d/R)*math.cos(brng))
+    let latOut = Math.asin(Math.sin(lat) * Math.cos(d / R) + Math.cos(lat) * Math.sin(d / R) * Math.cos(brng));
     let lngOut = lng + Math.atan2(Math.sin(brng) * Math.sin(d / R) * Math.cos(lat), Math.cos(d / R) - Math.sin(lat) * Math.sin(latOut));
     latOut = rad2deg(latOut);
     lngOut = rad2deg(lngOut);

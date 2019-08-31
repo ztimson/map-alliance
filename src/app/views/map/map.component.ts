@@ -1,13 +1,13 @@
 import {Component, isDevMode, OnInit} from "@angular/core";
 import {PhysicsService} from "../../services/physics.service";
-import {filter, finalize, skip, take} from "rxjs/operators";
+import {filter, finalize, flatMap, skip, take} from "rxjs/operators";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
 import {CalibrateComponent} from "../../components/calibrate/calibrate.component";
 import {ToolbarItem} from "../../models/toolbarItem";
 import {flyInRight, flyOutRight} from "../../animations";
 import {MapLayers, MapService, WeatherLayers} from "../../services/map.service";
 import {Subscription} from "rxjs";
-import {copyToClipboard} from "../../utils";
+import {copyToClipboard, relativeLatLng} from "../../utils";
 import {ActivatedRoute} from "@angular/router";
 import {DimensionsDialogComponent} from "../../components/dimensionsDialog/dimensionsDialog.component";
 import {MatDialog} from "@angular/material/dialog";
@@ -33,6 +33,14 @@ export class MapComponent implements OnInit {
     shareDialog = false;
     showPalette = false;
     sub: Subscription;
+
+    placeRelative = () => {
+        this.dialog.open(DimensionsDialogComponent, {data: ['Distance (m)', 'Baring']}).afterClosed().subscribe(dimensions => {
+            let latlng = relativeLatLng({lat: this.position.latitude, lng: this.position.longitude}, dimensions[0], dimensions[1]);
+            let marker: Marker = {latlng: latlng, color: '#ff4141'};
+            this.syncService.addMarker(marker);
+        })
+    };
 
     startCalibrating = () => {
         let calibration = this.bottomSheet.open(CalibrateComponent, {hasBackdrop: false, disableClose: true});
@@ -162,7 +170,8 @@ export class MapComponent implements OnInit {
         {name: 'Circle', icon: 'panorama_fish_eye', toggle: true, onEnabled: this.startCircle, onDisabled: this.unsub},
         {name: 'Square', icon: 'crop_square', toggle: true, onEnabled: this.startRectangle, onDisabled: this.unsub},
         {name: 'Polygon', icon: 'details', toggle: true, onEnabled: this.startPolygon, onDisabled: this.stopPolygon},
-        {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: this.startMeasuring, onDisabled: () => this.unsub},
+        {name: 'Measure', icon: 'straighten', toggle: true, onEnabled: this.startMeasuring, onDisabled: this.unsub},
+        {name: 'Place Relative', icon: 'control_camera', click: this.placeRelative},
         {name: 'Delete', icon: 'delete', toggle: true, onEnabled: this.startDelete, onDisabled: this.unsub},
         {name: 'Map Style', icon: 'terrain', subMenu: [
             {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
