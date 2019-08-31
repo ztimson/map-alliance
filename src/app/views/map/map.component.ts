@@ -35,7 +35,8 @@ export class MapComponent implements OnInit {
     sub: Subscription;
 
     placeRelative = () => {
-        this.dialog.open(DimensionsDialogComponent, {data: ['Distance (m)', 'Baring']}).afterClosed().subscribe(dimensions => {
+        this.dialog.open(DimensionsDialogComponent, {data: ['Distance (m)', 'Baring'], panelClass: 'pb-0'}).afterClosed().subscribe(dimensions => {
+            if(!dimensions) return;
             let latlng = relativeLatLng({lat: this.position.latitude, lng: this.position.longitude}, dimensions[0], dimensions[1]);
             let marker: Marker = {latlng: latlng, color: '#ff4141'};
             this.syncService.addMarker(marker);
@@ -49,11 +50,8 @@ export class MapComponent implements OnInit {
 
     startCircle = menuItem => {
         this.sub = this.map.click.pipe(skip(1), take(1)).subscribe(async e => {
-            let dimensions = await this.dialog.open(DimensionsDialogComponent, {
-                data: ['Radius (m)'],
-                disableClose: true,
-                panelClass: 'pb-0'
-            }).afterClosed().toPromise();
+            let dimensions = await this.dialog.open(DimensionsDialogComponent, {data: ['Radius (m)'], panelClass: 'pb-0'}).afterClosed().toPromise();
+            if(!dimensions) return;
             menuItem.enabled = false;
             let circle = {latlng: e.latlng, radius: dimensions[0] || 500, color: '#ff4141'};
             this.syncService.addCircle(circle);
