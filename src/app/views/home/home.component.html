@@ -8,10 +8,11 @@
     </button>
     <div class="w-100 mt-3">
         <form class="input-group">
-            <input type="text" class="form-control" [(ngModel)]="code" name="code" placeholder="Code">
+            <input type="text" class="form-control" [(ngModel)]="code" name="code" placeholder="Code" (keyup)="isValid()">
             <div class="input-group-append">
-                <button class="btn btn-danger" [routerLink]="['/', code]" style="background-color: #dd0330" [disabled]="code.length != 8">Open</button>
+                <button class="btn btn-danger" [routerLink]="['/', code]" style="background-color: #dd0330" [disabled]="!valid || code.length < 4">Open</button>
             </div>
+            <small *ngIf="!valid && code.length > 3" class="mt-2 text-danger">Codes can only be made up of letters and numbers!</small>
         </form>
     </div>
 </div>

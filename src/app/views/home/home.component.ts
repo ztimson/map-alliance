@@ -11,6 +11,7 @@ const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 })
 export class HomeComponent {
     code: string = '';
+    valid = false;
 
     constructor(private syncService: SyncService, private router: Router) { }
 
@@ -20,5 +21,9 @@ export class HomeComponent {
             mapCode = Array(8).fill(0).map(() => chars[Math.round(Math.random() * chars.length)]).join('');
         } while (await this.syncService.exists(mapCode));
         return this.router.navigate(['/', mapCode]);
+    }
+
+    isValid() {
+        this.valid = !this.code.split('').filter(c => chars.indexOf(c) == -1).length
     }
 }
