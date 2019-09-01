@@ -73,7 +73,7 @@ export class SyncService {
     delete(...symbols) {
         let map = this.mapData.value;
         [map.circles, map.markers, map.measurements, map.polygons, map.polylines, map.rectangles]
-            .forEach((storage: MapSymbol[]) => symbols.forEach(s => storage = storage.filter(ss => !_.isEqual(s, ss))));
+            .forEach((storage: MapSymbol[]) => symbols.forEach(s => storage = (storage || []).filter(ss => !_.isEqual(s, ss))));
         this.mapData.next(map);
         this.mapChanged = true;
     }
@@ -127,7 +127,7 @@ export class SyncService {
 
         if(!locationOnly && this.mapDoc && this.mapChanged) {
             let map = this.mapData.value;
-            Object.values(map).forEach(val => val.filter(s => s.new).forEach(s => delete s.new));
+            Object.values(map).filter(val => Array.isArray(val)).forEach(val => val.filter(s => s.new).forEach(s => delete s.new));
             delete map.locations;
             let ignore = this.mapDoc.set(map);
             this.mapChanged = false;
