@@ -72,8 +72,14 @@ export class SyncService {
 
     delete(...symbols) {
         let map = this.mapData.value;
-        [map.circles, map.markers, map.measurements, map.polygons, map.polylines, map.rectangles]
-            .forEach((storage: MapSymbol[]) => symbols.forEach(s => storage = (storage || []).filter(ss => !_.isEqual(s, ss))));
+        symbols.forEach(s => {
+            if(map.circles) map.circles = map.circles.filter(r => !_.isEqual(s, r));
+            if(map.markers) map.markers = map.markers.filter(r => !_.isEqual(s, r));
+            if(map.measurements) map.measurements = map.measurements.filter(r => !_.isEqual(s, r));
+            if(map.polygons) map.polygons = map.polygons.filter(r => !_.isEqual(s, r));
+            if(map.polylines) map.polylines = map.polylines.filter(r => !_.isEqual(s, r));
+            if(map.rectangles) map.rectangles = map.rectangles.filter(r => !_.isEqual(s, r));
+        });
         this.mapData.next(map);
         this.mapChanged = true;
     }
