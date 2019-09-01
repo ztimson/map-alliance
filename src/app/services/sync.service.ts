@@ -1,129 +1,157 @@
 import {Injectable} from "@angular/core";
-import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
-import {BehaviorSubject, Subscription} from "rxjs";
+import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/firestore";
+import {BehaviorSubject, combineLatest, Subscription} from "rxjs";
 import {Circle, MapData, MapSymbol, Marker, Measurement, Polygon, Polyline, Rectangle} from "../models/mapSymbol";
 import * as _ from 'lodash';
+import {map} from "rxjs/operators";
+
+export const LOCATION_COLLECTION = 'Users';
+export const MAP_COLLECTION = 'Maps';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SyncService {
-    private code: string;
-    private changed = false;
-    private collection: AngularFirestoreCollection;
+    private
+
+    private location;
+    private locationChanged = false;
+    private locationDoc: AngularFirestoreDocument;
+    private mapDoc: AngularFirestoreDocument;
+    private mapChanged = false;
     private mapSub: Subscription;
-    private name: string;
-    private saveInterval;
+    private saveInterval: number;
 
-    mapSymbols = new BehaviorSubject<MapData>({});
+    mapData = new BehaviorSubject<MapData>({});
 
-    constructor(private db: AngularFirestore) {
-        this.collection = this.db.collection('Maps');
+    constructor(private db: AngularFirestore) { }
+
+    private addMapSymbol(s: MapSymbol, key: string) {
+        s.new = true;
+        let map = this.mapData.value;
+        if(!map[key]) map[key] = [];
+        map[key].push(s);
+        this.mapData.next(map);
+        this.mapChanged = true;
     }
 
     async exists(mapCode: string) {
-        return (await this.collection.doc(mapCode).ref.get()).exists;
+        return (await this.db.collection(MAP_COLLECTION).doc(mapCode).ref.get()).exists;
     }
 
     addCircle(circle: Circle) {
-        let map = this.mapSymbols.value;
-        if(!map.circles) map.circles = [];
-        map.circles.push(circle);
-        this.mapSymbols.next(map);
-        this.changed = true;
+        this.addMapSymbol(circle, 'circles');
     }
 
     addMarker(marker: Marker) {
-        let map = this.mapSymbols.value;
-        if(!map.markers) map.markers = [];
-        map.markers.push(marker);
-        this.mapSymbols.next(map);
-        this.changed = true;
+        this.addMapSymbol(marker, 'markers');
     }
 
     addMeasurement(measurement: Measurement) {
-        let map = this.mapSymbols.value;
-        if(!map.measurements) map.measurements = [];
-        map.measurements.push(measurement);
-        this.mapSymbols.next(map);
-        this.changed = true;
+        this.addMapSymbol(measurement, 'measurements');
     }
 
     addMyLocation(location: Marker) {
-        let map = this.mapSymbols.value;
-        if(!map.locations) map.locations = [];
-        let markForSave = this.name == null;
-        this.name = location.label;
-        map.locations = map.locations.filter(l => l.label != location.label);
-        map.locations.push(location);
-        this.mapSymbols.next(map);
-        this.changed = true;
-        if(markForSave) this.save();
+        let markForSave = this.location == null;
+        if(!this.locationChanged) this.locationChanged = !_.isEqual(this.location, location);
+        if(this.locationChanged) this.location = location;
+        if(markForSave) this.save(true);
     }
 
     addPolygon(polygon: Polygon) {
-        let map = this.mapSymbols.value;
-        if(!map.polygons) map.polygons = [];
-        map.polygons.push(polygon);
-        this.mapSymbols.next(map);
-        this.changed = true;
+        this.addMapSymbol(polygon, 'polygons');
     }
 
     addPolyline(polyline: Polyline) {
-        let map = this.mapSymbols.value;
-        if(!map.polylines) map.polylines = [];
-        map.polylines.push(polyline);
-        this.mapSymbols.next(map);
-        this.changed = true;
+        this.addMapSymbol(polyline, 'polylines')
     }
 
     addRectangle(rect: Rectangle) {
-        let map = this.mapSymbols.value;
-        if(!map.rectangles) map.rectangles = [];
-        map.rectangles.push(rect);
-        this.mapSymbols.next(map);
-        this.changed = true;
+        this.addMapSymbol(rect, 'rectangles')
     }
 
     delete(...symbols) {
-        let map = this.mapSymbols.value;
-        if(map.circles) symbols.forEach(s => map.circles = map.circles.filter(c => !_.isEqual(s, c)));
-        if(map.locations) symbols.forEach(s => map.locations = map.locations.filter(m => !_.isEqual(s, m)));
-        if(map.markers) symbols.forEach(s => map.markers = map.markers.filter(m => !_.isEqual(s, m)));
-        if(map.measurements) symbols.forEach(s => map.measurements = map.measurements.filter(m => !_.isEqual(s, m)));
-        if(map.polygons) symbols.forEach(s => map.polygons = map.polygons.filter(p => !_.isEqual(s , p)));
-        if(map.polylines) symbols.forEach(s => map.polylines = map.polylines.filter(p => !_.isEqual(s, p)));
-        if(map.rectangles) symbols.forEach(s => map.rectangles = map.rectangles.filter(r => !_.isEqual(s, r)));
-        this.mapSymbols.next(map);
-        this.changed = true;
+        let map = this.mapData.value;
+        [map.circles, map.markers, map.measurements, map.polygons, map.polylines, map.rectangles]
+            .forEach((storage: MapSymbol[]) => symbols.forEach(s => storage = storage.filter(ss => !_.isEqual(s, ss))));
+        this.mapData.next(map);
+        this.mapChanged = true;
     }
 
-    load(mapCode: string) {
+    load(mapCode: string, username: string) {
+        this.unload();
+        this.mapDoc = this.db.collection(MAP_COLLECTION).doc(mapCode);
+        this.locationDoc = this.mapDoc.collection(LOCATION_COLLECTION).doc(username);
+
+        this.mapSub = combineLatest(this.mapDoc.valueChanges(), this.mapDoc.collection(LOCATION_COLLECTION).snapshotChanges())
+            .pipe(map(data => {
+                let newMap = data[0];
+                let oldMap = this.mapData.value;
+                let mergedMap = this.mergeMaps(newMap, oldMap);
+
+                let locations = data[1].map(doc => ({id: doc.payload.doc.id, data: <Marker>doc.payload.doc.data()}));
+                locations.filter(l => l.id != username).forEach(l => {
+                    if(!mergedMap.locations) mergedMap.locations = {};
+                    mergedMap.locations[l.id] = l.data;
+                });
+
+                return mergedMap;
+            })).subscribe((mapData: MapData) => {
+                this.mapData.next(mapData);
+                if(this.saveInterval) clearInterval(this.saveInterval);
+                this.saveInterval = setInterval(() => this.save(), (mapData.locations && Object.keys(mapData.locations).length > 0) ? 5_000 : 30_000)
+            });
+    }
+
+    mergeMaps(newMap: MapData, oldMap: MapData) {
+        let map = Object.assign({}, newMap);
+        Object.keys(oldMap).forEach(key => {
+            if(Array.isArray(map[key])) {
+                if(!map[key]) map[key] = [];
+                oldMap[key].filter(s => !_.find(map[key], s) && s.new).forEach(s => map[key].push(s));
+            }
+        });
+        if(!map.locations) map.locations = {};
+        return map;
+    }
+
+    removeMyLocation() {
+        this.location = null;
+        return this.locationDoc.delete();
+    }
+
+    save(locationOnly?) {
+        if(this.locationDoc && this.locationChanged) {
+            let ignore = this.locationDoc.set(this.location);
+        }
+
+        if(!locationOnly && this.mapDoc && this.mapChanged) {
+            let map = this.mapData.value;
+            Object.values(map).forEach(val => val.filter(s => s.new).forEach(s => delete s.new));
+            delete map.locations;
+            let ignore = this.mapDoc.set(map);
+            this.mapChanged = false;
+        }
+    }
+
+    async unload() {
+        if(this.saveInterval) clearInterval(this.saveInterval);
+        this.mapData.next({});
+
         if(this.mapSub) {
             this.mapSub.unsubscribe();
             this.mapSub = null;
         }
-        this.code = mapCode;
-        this.mapSub = this.collection.doc(this.code).valueChanges().subscribe((newMap: MapData) => {
-            this.mapSymbols.next(Object.assign({}, newMap)); // TODO: Add merge operation so pending changes arn't lost
-            this.changed = false;
-            if(this.saveInterval) clearInterval(this.saveInterval);
-            this.saveInterval = setInterval(() => this.save(), (newMap.locations && newMap.locations.length > 1) ? 2_000 : 30_000)
-        });
-    }
 
-    removeMyLocation() {
-        let map = this.mapSymbols.value;
-        if(map.locations) map.locations = map.locations.filter(l => l.label != this.name);
-        this.name = null;
-        this.changed = true;
-        this.save();
-    }
+        if(this.mapDoc) {
+            this.mapDoc = null;
+            this.mapChanged = false;
+        }
 
-    save() {
-        if(this.code && this.mapSymbols.value && this.changed) {
-            this.collection.doc(this.code).set(this.mapSymbols.value);
-            this.changed = false;
+        if(this.locationDoc) {
+            this.locationChanged = false;
+            await this.removeMyLocation();
+            this.locationDoc = null;
         }
     }
 }

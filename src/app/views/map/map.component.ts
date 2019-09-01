@@ -1,4 +1,4 @@
-import {Component, HostListener, isDevMode, OnDestroy, OnInit} from "@angular/core";
+import {Component, isDevMode, OnDestroy, OnInit} from "@angular/core";
 import {PhysicsService} from "../../services/physics.service";
 import {filter, finalize, skip, take} from "rxjs/operators";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
@@ -195,26 +195,26 @@ export class MapComponent implements OnDestroy, OnInit {
     ];
 
     constructor(public physicsService: PhysicsService, private syncService: SyncService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
+        this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + ' ' + Nouns[Math.floor(Math.random() * Nouns.length)];
+        (window.onbeforeunload as any) = this.ngOnDestroy();
         this.route.params.subscribe(params => {
             this.code = params['code'];
-            this.syncService.load(this.code);
+            this.syncService.load(this.code, this.name);
         })
     }
 
-    @HostListener('window:beforeunload', ['$event'])
     ngOnDestroy(): void {
-        this.syncService.removeMyLocation();
+        let ignore = this.syncService.unload();
     }
 
     ngOnInit() {
-        this.name = Adjectives[Math.round(Math.random() * Adjectives.length)] + ' ' + Nouns[Math.round(Math.random() * Nouns.length)];
         this.map = new MapService('map');
 
         // Handle drawing the map after updates
-        this.syncService.mapSymbols.pipe(filter(s => !!s)).subscribe((map: MapData) => {
+        this.syncService.mapData.pipe(filter(s => !!s)).subscribe((map: MapData) => {
             this.map.deleteAll();
             if (map.circles) map.circles.forEach(c => this.map.newCircle(c));
-            if (map.locations) map.locations.filter(l => l.label != this.name).forEach(l => this.map.newMarker(l));
+            if (map.locations) Object.values(map.locations).forEach(l => this.map.newMarker(l));
             if (map.markers) map.markers.forEach(m => this.map.newMarker(m));
             if (map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
             if (map.polygons) map.polygons.forEach(p => this.map.newPolygon(p));
@@ -236,8 +236,6 @@ export class MapComponent implements OnDestroy, OnInit {
                 });*/
             }
         });
-
-
 
         // Display location
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {

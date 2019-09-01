@@ -5,7 +5,7 @@ export interface LatLng {
 
 export interface MapData {
     circles?: Circle[];
-    locations?: Marker[];
+    locations?: {[key: string]: Marker};
     markers?: Marker[];
     measurements?: Measurement[];
     polygons?: Polygon[];
@@ -16,6 +16,7 @@ export interface MapData {
 export interface MapSymbol {
     symbol?: any;
     latlng?: LatLng | LatLng[];
+    new?: boolean;
     noDelete?: boolean;
     noDeleteTool?: boolean;
     noSelect?: boolean;

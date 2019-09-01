@@ -11,7 +11,6 @@ export const Adjectives = [
     'complete',
     'offbeat',
     'selective',
-    'unknown',
     'unwilling',
     'lively',
     'nebulous',
