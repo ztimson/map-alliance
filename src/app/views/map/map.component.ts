@@ -38,7 +38,7 @@ export class MapComponent implements OnDestroy, OnInit {
     menu: ToolbarItem[];
 
     constructor(public physicsService: PhysicsService, private syncService: SyncService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
-        this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + ' ' + Nouns[Math.floor(Math.random() * Nouns.length)];
+        this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + Nouns[Math.floor(Math.random() * Nouns.length)];
 
         this.menu = [
             {name: 'Marker', icon: 'room', toggle: true, onEnabled: this.startMarker, onDisabled: this.unsub},
