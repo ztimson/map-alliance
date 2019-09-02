@@ -21,12 +21,22 @@ export class PhysicsService {
         permissionsService.requestPermission('geolocation', 'gps_fixed', 'Can we use your location?').then(granted => {
             if(granted) {
                 // Gather physical data
-                window.addEventListener('deviceorientation', orientation => this.orientation.next(orientation));
-                window.addEventListener('devicemotion', motion => this.motion.next(motion));
-                navigator.geolocation.watchPosition(position => this.position.next(position));
+                window.addEventListener('deviceorientation', orientation => {
+                    console.log('Orientation:', orientation);
+                    this.orientation.next(orientation);
+                });
+                window.addEventListener('devicemotion', motion => {
+                    console.log('Motion:', motion);
+                    this.motion.next(motion);
+                });
+                navigator.geolocation.watchPosition(position => {
+                    console.log('GPS:', position);
+                    this.position.next(position);
+                });
 
                 // Combine data into one nice package
                 combineLatest(this.position, this.orientation, this.calibrate).subscribe(data => {
+                    console.log('Combine:', data);
                     if(!data[0]) return;
 
                     let info = {
@@ -51,6 +61,7 @@ export class PhysicsService {
                     }
 
                     this.info.next(info);
+                    console.log('Out:', info);
                 })
             }
         });
