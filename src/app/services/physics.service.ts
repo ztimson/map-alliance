@@ -1,13 +1,12 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject, combineLatest} from "rxjs";
 import {PermissionsService} from "../components/permissions/permissions.service";
+import {debounceTime} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
 })
 export class PhysicsService {
-    private motionTimestamp;
-
     requireCalibration = new EventEmitter();
     calibrate = new BehaviorSubject<number>(Infinity);
 
@@ -21,6 +20,7 @@ export class PhysicsService {
         permissionsService.requestPermission('geolocation', 'gps_fixed', 'Can we use your location?').then(granted => {
             if(granted) {
                 // Gather physical data
+                window.addEventListener('devicemotion', motion => this.motion.next(motion));
                 window.addEventListener('deviceorientation', orientation => {
                     console.log('Orientation:', orientation);
                     this.orientation.next(orientation);
@@ -31,7 +31,7 @@ export class PhysicsService {
                 });
 
                 // Combine data into one nice package
-                combineLatest(this.position, this.orientation, this.calibrate).subscribe(data => {
+                combineLatest(this.position.pipe(debounceTime(100)), this.orientation.pipe(debounceTime(100)), this.calibrate).subscribe(data => {
                     console.log('Combine:', data);
                     if(!data[0]) return;
 

@@ -115,6 +115,7 @@ export class MapComponent implements OnDestroy, OnInit {
 
         // Display location information & submit it
         this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
+            console.log('painting');
             if (!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
             if (this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
             if (this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
