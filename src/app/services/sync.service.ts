@@ -4,7 +4,6 @@ import {BehaviorSubject, combineLatest, Subscription} from "rxjs";
 import {Circle, MapData, MapSymbol, Marker, Measurement, Polygon, Polyline, Position, Rectangle} from "../models/mapSymbol";
 import * as _ from 'lodash';
 import {map} from "rxjs/operators";
-import * as firebase from "firebase";
 
 export const LOCATION_COLLECTION = 'Users';
 export const MAP_COLLECTION = 'Maps';
@@ -16,14 +15,18 @@ export class SyncService {
     private location;
     private locationChanged = false;
     private locationDoc: AngularFirestoreDocument;
+    private mapCode: string;
     private mapDoc: AngularFirestoreDocument;
     private mapChanged = false;
     private mapSub: Subscription;
     private saveInterval: number;
+    private username: string;
 
     mapData = new BehaviorSubject<MapData>({});
 
-    constructor(private db: AngularFirestore) { }
+    constructor(private db: AngularFirestore) {
+        window.addEventListener('beforeunload', () => this.unload());
+    }
 
     private addMapSymbol(s: MapSymbol, key: string) {
         s.new = true;
@@ -80,9 +83,10 @@ export class SyncService {
     }
 
     load(mapCode: string, username: string) {
+        this.mapCode = mapCode;
+        this.username = username;
         this.mapDoc = this.db.collection(MAP_COLLECTION).doc(mapCode);
         this.locationDoc = this.mapDoc.collection(LOCATION_COLLECTION).doc(username);
-        firebase.database().ref(`${MAP_COLLECTION}/mapCode/${LOCATION_COLLECTION}/username`).onDisconnect().remove();
 
         this.mapSub = combineLatest(this.mapDoc.valueChanges(), this.mapDoc.collection(LOCATION_COLLECTION).snapshotChanges())
             .pipe(map(data => {
@@ -131,8 +135,8 @@ export class SyncService {
     }
 
     async unload() {
+        this.save();
         if(this.saveInterval) clearInterval(this.saveInterval);
-        this.mapData.next({});
 
         if(this.mapSub) {
             this.mapSub.unsubscribe();
@@ -148,6 +152,11 @@ export class SyncService {
             this.location = null;
             this.locationChanged = false;
             this.locationDoc = null;
+            navigator.sendBeacon(`https://us-central1-mapalliance-ab38a.cloudfunctions.net/closeSession/?mapCode=${this.mapCode}&username=${this.username}`);
         }
+
+        this.mapCode = null;
+        this.username = null;
+        this.mapData.next({});
     }
 }

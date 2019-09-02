@@ -1,10 +1,15 @@
+import * as admin from "firebase-admin";
 import * as functions from 'firebase-functions';
-import * as cor from 'cors';
 
-const cors = cor({origin: true});
+const cors = require('cors')({origin: true});
 
-exports.helloWorld = functions.https.onRequest((req, res) => {
-    return cors(req, res, () => {
-        res.status(200).send('Hello World!');
+admin.initializeApp();
+const db = admin.firestore();
+
+exports.closeSession = functions.https.onRequest((req, resp) => {
+    return cors(req, resp, () => {
+        const code = req.query.mapCode;
+        const username = req.query.username;
+        return db.collection('Maps').doc(code).collection('Users').doc(username).delete();
     });
 });
