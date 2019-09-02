@@ -135,6 +135,9 @@ export class SyncService {
     }
 
     async unload() {
+        // Hack to delete doc on page close
+        navigator.sendBeacon(`https://us-central1-mapalliance-ab38a.cloudfunctions.net/closeSession/?mapCode=${this.mapCode}&username=${this.username}`);
+
         this.save();
         if(this.saveInterval) clearInterval(this.saveInterval);
 
@@ -152,7 +155,6 @@ export class SyncService {
             this.location = null;
             this.locationChanged = false;
             this.locationDoc = null;
-            navigator.sendBeacon(`https://us-central1-mapalliance-ab38a.cloudfunctions.net/closeSession/?mapCode=${this.mapCode}&username=${this.username}`);
         }
 
         this.mapCode = null;
