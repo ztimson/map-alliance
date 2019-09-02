@@ -12,8 +12,6 @@ export const MAP_COLLECTION = 'Maps';
     providedIn: 'root'
 })
 export class SyncService {
-    private
-
     private location;
     private locationChanged = false;
     private locationDoc: AngularFirestoreDocument;
@@ -72,20 +70,15 @@ export class SyncService {
 
     delete(...symbols) {
         let map = this.mapData.value;
-        symbols.forEach(s => {
-            if(map.circles) map.circles = map.circles.filter(r => !_.isEqual(s, r));
-            if(map.markers) map.markers = map.markers.filter(r => !_.isEqual(s, r));
-            if(map.measurements) map.measurements = map.measurements.filter(r => !_.isEqual(s, r));
-            if(map.polygons) map.polygons = map.polygons.filter(r => !_.isEqual(s, r));
-            if(map.polylines) map.polylines = map.polylines.filter(r => !_.isEqual(s, r));
-            if(map.rectangles) map.rectangles = map.rectangles.filter(r => !_.isEqual(s, r));
+        Object.keys(map).filter(key => Array.isArray(map[key])).forEach(key => {
+            symbols.forEach(s => map[key] = map[key].filter(ss => !_.isEqual(s, ss)))
         });
         this.mapData.next(map);
         this.mapChanged = true;
     }
 
     load(mapCode: string, username: string) {
-        this.unload();
+        let ignore = this.unload();
         this.mapDoc = this.db.collection(MAP_COLLECTION).doc(mapCode);
         this.locationDoc = this.mapDoc.collection(LOCATION_COLLECTION).doc(username);
 
@@ -121,11 +114,6 @@ export class SyncService {
         return map;
     }
 
-    removeMyLocation() {
-        this.location = null;
-        return this.locationDoc.delete();
-    }
-
     save(locationOnly?) {
         if(this.locationDoc && this.locationChanged) {
             let ignore = this.locationDoc.set(this.location);
@@ -155,8 +143,8 @@ export class SyncService {
         }
 
         if(this.locationDoc) {
+            this.location = null;
             this.locationChanged = false;
-            await this.removeMyLocation();
             this.locationDoc = null;
         }
     }
