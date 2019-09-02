@@ -7,6 +7,7 @@ import {
 } from "@angular/material";
 import {NgModule} from "@angular/core";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 export const materialModules = [
     MatBottomSheetModule,
@@ -17,6 +18,7 @@ export const materialModules = [
     MatIconModule,
     MatInputModule,
     MatMenuModule,
+    MatProgressSpinnerModule,
     MatSliderModule,
     MatSnackBarModule,
     MatToolbarModule,

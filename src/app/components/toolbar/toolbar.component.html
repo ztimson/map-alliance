@@ -3,6 +3,8 @@
         <img src="/assets/images/logo.png" height="35px" width="auto">
     </button>
     <small class="ml-1">{{version}}</small>
+    <mat-progress-spinner *ngIf="(status | async) == 'staving'" color="primary" class="text-muted pl-2"></mat-progress-spinner>
+    <button mat-icon-button *ngIf="(status | async) == 'modified'" class="ml-2" (click)="save.emit()"><mat-icon class="text-muted">autorenew</mat-icon></button>
     <div class="ml-auto">
         <ng-container *ngFor="let item of displayMenuItems; let i = index">
             <ng-container *ngIf="i < maxMenuItems">

@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, HostListener, Input, OnInit, Output,} from "@angular/core";
 import {ToolbarItem} from "../../models/toolbarItem";
 import {version} from '../../../../package.json';
+import {Observable} from "rxjs";
 
 @Component({
     selector: 'toolbar',
@@ -9,8 +10,10 @@ import {version} from '../../../../package.json';
 })
 export class ToolbarComponent implements OnInit, AfterViewInit {
     @Input() menuItems: ToolbarItem[];
+    @Input() status: Observable<string>;
 
     @Output() menuItemsChange = new EventEmitter<ToolbarItem[]>();
+    @Output() save = new EventEmitter<void>();
 
     readonly version = version;
 

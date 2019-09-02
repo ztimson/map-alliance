@@ -20,6 +20,7 @@ export enum WeatherLayers {
 }
 
 const ARROW = L.icon({iconUrl: '/assets/images/arrow.png', iconSize: [40, 45], iconAnchor: [20, 23]});
+const DOT = L.icon({iconUrl: '/assets/images/dot.png', iconSize: [25, 25], iconAnchor: [13, 13]});
 const MARKER = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
 const MEASURE = L.icon({iconUrl: '/assets/images/measure.png', iconSize: [75, 50], iconAnchor: [25, 25]});
 
@@ -51,6 +52,8 @@ export class MapService {
         switch(name) {
             case 'arrow':
                 return ARROW;
+            case 'dot':
+                return DOT;
             case 'measure':
                 return MEASURE;
             default:
@@ -98,7 +101,7 @@ export class MapService {
     }
 
     newCircle(c: Circle) {
-        let circle = L.circle(c.latlng, Object.assign({}, c)).addTo(this.map);
+        let circle = L.circle(c.latlng, Object.assign({color: '#ff4141'}, c)).addTo(this.map);
         if(c.label) circle.bindTooltip(c.label, {permanent: true, direction: 'center'});
         circle.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: c, item: circle}));
         if(!c.noDelete) this.circles.push(circle);
@@ -106,7 +109,7 @@ export class MapService {
     }
 
     newMarker(m: Marker) {
-        let marker = L.marker(m.latlng, Object.assign({}, m, {icon: m.icon ? this.getIcon(m.icon) : MARKER})).addTo(this.map);
+        let marker = L.marker(m.latlng, Object.assign({color: '#ff4141'}, m, {icon: m.icon ? this.getIcon(m.icon) : MARKER})).addTo(this.map);
         if(m.label) marker.bindTooltip(m.label, {permanent: true, direction: 'bottom'});
         marker.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: m, item: marker}));
         if(!m.noDelete) this.markers.push(marker);
@@ -114,10 +117,10 @@ export class MapService {
     }
 
     newMeasurement(m: Measurement) {
-        let line = L.polyline([m.latlng, m.latlng2], Object.assign({}, m));
+        let line = L.polyline([m.latlng, m.latlng2], Object.assign({color: '#ff4141', weight: 8}, m));
         let decoration = L.polylineDecorator(line, {patterns: [
-            {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, headAngle: 180, pathOptions: m})},
-            {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, headAngle: 180, pathOptions: m})}
+            {offset: '100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, headAngle: 180, pathOptions: Object.assign({color: '#ff4141', weight: 8}, m)})},
+            {offset: '-100%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: false, headAngle: 180, pathOptions: Object.assign({color: '#ff4141', weight: 8}, m)})}
         ]});
         let group = new L.LayerGroup([line, decoration]).addTo(this.map);
         if(!m.noDelete) this.measurements.push(group);
@@ -129,21 +132,21 @@ export class MapService {
     }
 
     newPolygon(p: Polygon) {
-        let polygon = new L.Polygon(p.latlng, Object.assign({}, p)).addTo(this.map);
+        let polygon = new L.Polygon(p.latlng, Object.assign({color: '#ff4141'}, p)).addTo(this.map);
         polygon.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: p, item: polygon}));
         if(!p.noDelete) this.polygons.push(polygon);
         return polygon;
     }
 
     newPolyline(p: Polyline) {
-        let polyline = new L.Polyline(p.latlng, Object.assign({}, p)).addTo(this.map);
+        let polyline = new L.Polyline(p.latlng, Object.assign({color: '#ff4141', weight: 10}, p)).addTo(this.map);
         polyline.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: p, item: polyline}));
         if(!p.noDelete) this.polylines.push(polyline);
         return polyline;
     }
 
     newRectangle(r: Rectangle) {
-        let rect = new L.Rectangle([r.latlng, r.latlng2], Object.assign({}, r)).addTo(this.map);
+        let rect = new L.Rectangle([r.latlng, r.latlng2], Object.assign({color: '#ff4141'}, r)).addTo(this.map);
         if(r.label) rect.bindTooltip(r.label, {permanent: true, direction: 'center'});
         rect.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: r, item: rect}));
         if(!r.noDelete) this.rectangles.push(rect);

@@ -3,7 +3,7 @@ import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/firestor
 import {BehaviorSubject, combineLatest, Subscription} from "rxjs";
 import {Circle, MapData, MapSymbol, Marker, Measurement, Polygon, Polyline, Position, Rectangle} from "../models/mapSymbol";
 import * as _ from 'lodash';
-import {map} from "rxjs/operators";
+import {filter, map} from "rxjs/operators";
 
 export const LOCATION_COLLECTION = 'Users';
 export const MAP_COLLECTION = 'Maps';
@@ -23,9 +23,19 @@ export class SyncService {
     private username: string;
 
     mapData = new BehaviorSubject<MapData>({});
+    status = new BehaviorSubject<string>(null);
 
     constructor(private db: AngularFirestore) {
-        window.addEventListener('beforeunload', () => this.unload());
+        // Handle prompting the user before exit if there are changes
+        this.status.pipe(filter(s => !s)).subscribe(() => window.onbeforeunload = () => this.unload());
+        this.status.pipe(filter(s => !!s)).subscribe(() => {
+            window.onbeforeunload = e => {
+                this.removeLocation();
+                let ignore = this.save();
+                e.returnValue = 'Please wait for us to finish saving!';
+                return e.returnValue;
+            }
+        });
     }
 
     private addMapSymbol(s: MapSymbol, key: string) {
@@ -35,6 +45,7 @@ export class SyncService {
         map[key].push(s);
         this.mapData.next(map);
         this.mapChanged = true;
+        this.status.next('modified');
     }
 
     async exists(mapCode: string) {
@@ -58,7 +69,7 @@ export class SyncService {
         let markForSave = this.location == null;
         if(!this.locationChanged) this.locationChanged = !_.isEqual(this.location, location);
         if(this.locationChanged) this.location = location;
-        if(markForSave) this.save(true);
+        if(markForSave) return this.save(false, true);
     }
 
     addPolygon(polygon: Polygon) {
@@ -80,6 +91,7 @@ export class SyncService {
         });
         this.mapData.next(map);
         this.mapChanged = true;
+        this.status.next('modified');
     }
 
     load(mapCode: string, username: string) {
@@ -88,7 +100,12 @@ export class SyncService {
         this.mapDoc = this.db.collection(MAP_COLLECTION).doc(mapCode);
         this.locationDoc = this.mapDoc.collection(LOCATION_COLLECTION).doc(username);
 
-        this.mapSub = combineLatest(this.mapDoc.valueChanges(), this.mapDoc.collection(LOCATION_COLLECTION).snapshotChanges())
+
+        this.mapSub = combineLatest(this.mapDoc.valueChanges(), this.mapDoc.collection(LOCATION_COLLECTION, ref => {
+            let aMinuteAgo = new Date();
+            aMinuteAgo.setMinutes(aMinuteAgo.getMinutes() - 1);
+            return ref.where('timestamp', '>=', aMinuteAgo);
+        }).snapshotChanges())
             .pipe(map(data => {
                 let newMap = data[0];
                 let oldMap = this.mapData.value;
@@ -103,8 +120,9 @@ export class SyncService {
                 return mergedMap;
             })).subscribe((mapData: MapData) => {
                 this.mapData.next(mapData);
+                this.status.next(null);
                 if(this.saveInterval) clearInterval(this.saveInterval);
-                this.saveInterval = setInterval(() => this.save(), (mapData.locations && Object.keys(mapData.locations).length > 0) ? 5_000 : 30_000)
+                this.saveInterval = setInterval(() => this.save(), (mapData.locations && Object.keys(mapData.locations).length > 0) ? 5_000 : 30_000);
             });
     }
 
@@ -120,26 +138,35 @@ export class SyncService {
         return map;
     }
 
-    save(locationOnly?) {
-        if(this.locationDoc && this.locationChanged) {
-            let ignore = this.locationDoc.set(this.location);
+    removeLocation() {
+        // Hack to delete doc even if page is closed
+        navigator.sendBeacon(`https://us-central1-mapalliance-ab38a.cloudfunctions.net/closeSession/?mapCode=${this.mapCode}&username=${this.username}`);
+    }
+
+    save(map=true, location=true) {
+        this.status.next('saving');
+        let promises = [];
+
+        if(location && this.locationDoc && this.locationChanged) {
+            promises.push(this.locationDoc.set(this.location));
         }
 
-        if(!locationOnly && this.mapDoc && this.mapChanged) {
+        if(map && this.mapDoc && this.mapChanged) {
             let map = this.mapData.value;
             Object.values(map).filter(val => Array.isArray(val)).forEach(val => val.filter(s => s.new).forEach(s => delete s.new));
             delete map.locations;
-            let ignore = this.mapDoc.set(map);
+            promises.push(this.mapDoc.set(map));
             this.mapChanged = false;
         }
+
+        return Promise.all(promises)
     }
 
-    async unload() {
-        // Hack to delete doc on page close
-        navigator.sendBeacon(`https://us-central1-mapalliance-ab38a.cloudfunctions.net/closeSession/?mapCode=${this.mapCode}&username=${this.username}`);
+    unload() {
+        this.removeLocation();
 
-        this.save();
         if(this.saveInterval) clearInterval(this.saveInterval);
+        let saving = this.save(true, false);
 
         if(this.mapSub) {
             this.mapSub.unsubscribe();
@@ -160,5 +187,6 @@ export class SyncService {
         this.mapCode = null;
         this.username = null;
         this.mapData.next({});
+        return saving;
     }
 }

@@ -37,7 +37,7 @@ export class MapComponent implements OnDestroy, OnInit {
 
     menu: ToolbarItem[];
 
-    constructor(public physicsService: PhysicsService, private syncService: SyncService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
+    constructor(public physicsService: PhysicsService, public syncService: SyncService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
         this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + Nouns[Math.floor(Math.random() * Nouns.length)];
 
         this.menu = [
@@ -86,7 +86,7 @@ export class MapComponent implements OnDestroy, OnInit {
         this.syncService.mapData.pipe(filter(s => !!s)).subscribe((map: MapData) => {
             this.map.deleteAll();
             if (map.circles) map.circles.forEach(c => this.map.newCircle(c));
-            if (map.locations) Object.values(map.locations).forEach(l => this.map.newMarker(l));
+            if (map.locations) Object.values(map.locations).forEach(l => this.map.newMarker(Object.assign(l, {icon: 'dot'})));
             if (map.markers) map.markers.forEach(m => this.map.newMarker(m));
             if (map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
             if (map.polygons) map.polygons.forEach(p => this.map.newPolygon(p));
@@ -116,7 +116,7 @@ export class MapComponent implements OnDestroy, OnInit {
             if (this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
             this.positionMarker.arrow = this.map.newMarker({latlng: {lat: pos.latitude, lng: pos.longitude}, noSelect: true, noDelete: true, noDeleteTool: true, icon: 'arrow', rotationAngle: pos.heading, rotationOrigin: 'center'});
             this.positionMarker.circle = this.map.newCircle({latlng: {lat: pos.latitude, lng: pos.longitude}, color: '#2873d8', noSelect: true, noDelete: true, noDeleteTool: true, radius: pos.accuracy, interactive: false});
-            this.syncService.addMyLocation({latlng: {lat: pos.latitude, lng: pos.longitude}, label: this.name, noDeleteTool: true});
+            let ignore = this.syncService.addMyLocation({latlng: {lat: pos.latitude, lng: pos.longitude}, label: this.name, noDeleteTool: true});
             this.position = pos;
         });
 
@@ -169,7 +169,7 @@ export class MapComponent implements OnDestroy, OnInit {
             let dimensions = await this.dialog.open(DimensionsDialogComponent, {data: ['Radius (m)'], panelClass: 'pb-0'}).afterClosed().toPromise();
             if(!dimensions) return;
             menuItem.enabled = false;
-            let circle = {latlng: e.latlng, radius: dimensions[0] || 500, color: '#ff4141'};
+            let circle = {latlng: e.latlng, radius: dimensions[0]};
             this.syncService.addCircle(circle);
         });
     };
@@ -204,7 +204,7 @@ export class MapComponent implements OnDestroy, OnInit {
     startMarker = menuItem => {
         this.sub = this.map.click.pipe(skip(1), take(1)).subscribe(e => {
             menuItem.enabled = false;
-            let marker: Marker = {latlng: e.latlng, color: '#ff4141'};
+            let marker: Marker = {latlng: e.latlng};
             this.syncService.addMarker(marker);
         });
     };
@@ -214,12 +214,7 @@ export class MapComponent implements OnDestroy, OnInit {
         this.sub = this.map.click.pipe(skip(1), take(2), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
             if (lastPoint) {
                 menuItem.enabled = false;
-                let measurement = {
-                    latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng},
-                    latlng2: e.latlng,
-                    color: '#ff4141',
-                    weight: 8
-                };
+                let measurement = {latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng}, latlng2: e.latlng};
                 this.syncService.addMeasurement(measurement);
                 return this.map.delete(lastPoint);
             }
@@ -231,13 +226,13 @@ export class MapComponent implements OnDestroy, OnInit {
         let lastPoint;
         this.sub = this.map.click.pipe(skip(1), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
             if(!this.polygon) {
-                let p = {latlng: [e.latlng], noDelete: true, color: '#ff4141'};
+                let p = {latlng: [e.latlng], noDelete: true};
                 this.polygon = this.map.newPolygon(p)
             } else {
                 this.polygon.addLatLng(e.latlng);
                 this.map.delete(lastPoint);
             }
-            lastPoint = this.map.newMarker({latlng: e.latlng, color: '#ff4141'});
+            lastPoint = this.map.newMarker({latlng: e.latlng});
         })
     };
 
@@ -246,11 +241,7 @@ export class MapComponent implements OnDestroy, OnInit {
         this.sub = this.map.click.pipe(skip(1), take(2), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
             if (lastPoint) {
                 menuItem.enabled = false;
-                let rect = {
-                    latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng},
-                    latlng2: e.latlng,
-                    color: '#ff4141'
-                };
+                let rect = {latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng}, latlng2: e.latlng};
                 this.syncService.addRectangle(rect);
                 return this.map.delete(lastPoint);
             }
@@ -260,7 +251,7 @@ export class MapComponent implements OnDestroy, OnInit {
 
     stopPolygon = () => {
         if(this.polygon) {
-            let p = {latlng: this.polygon.getLatLngs()[0].map(latlng => ({lat: latlng.lat, lng: latlng.lng})), color: '#ff4141'};
+            let p = {latlng: this.polygon.getLatLngs()[0].map(latlng => ({lat: latlng.lat, lng: latlng.lng}))};
             this.map.delete(this.polygon);
             this.polygon = null;
             this.syncService.addPolygon(p);
