@@ -38,7 +38,11 @@ export class MapComponent implements OnDestroy, OnInit {
     menu: ToolbarItem[];
 
     constructor(public physicsService: PhysicsService, public syncService: SyncService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
-        this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + Nouns[Math.floor(Math.random() * Nouns.length)];
+        this.name = localStorage.getItem('callSign');
+        if(!this.name) {
+            this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + Nouns[Math.floor(Math.random() * Nouns.length)];
+            localStorage.setItem('callSign', this.name);
+        }
 
         this.menu = [
             {name: 'Marker', icon: 'room', toggle: true, onEnabled: this.startMarker, onDisabled: this.unsub},
