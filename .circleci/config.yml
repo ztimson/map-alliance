@@ -17,7 +17,7 @@ jobs:
 
       - run:
           name: Install Dependancies
-          command: npm install
+          command: yarn
 
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
@@ -26,7 +26,7 @@ jobs:
 
       - run:
           name: Build
-          command: npm run build --prod
+          command: yarn build --prod
 
       - persist_to_workspace:
           root: ~/repo
@@ -51,7 +51,7 @@ jobs:
 
       - run:
           name: Deploy
-          command: npm run deploy
+          command: yarn deploy
 
 workflows:
   version: 2
