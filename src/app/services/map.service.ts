@@ -68,7 +68,7 @@ export class MapService {
     delete(...symbols) {
         symbols.forEach(s => {
             this.map.removeLayer(s);
-            this.circles = this.circles.filter(c => c != c);
+            this.circles = this.circles.filter(c => c != s);
             this.markers = this.markers.filter(m => m != s);
             this.measurements = this.measurements.filter(m => m != s);
             this.polygons = this.polygons.filter(p => p != s);
