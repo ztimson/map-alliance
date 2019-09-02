@@ -16,7 +16,7 @@
     <div *ngIf="position" class="text-white">
         Heading:
         <span *ngIf="position.heading == null" class="text-danger">No Heading</span>
-        <span *ngIf="!isNaN(position.heading)">{{position.heading | number : '1.0-0'}}°</span>
+        <span *ngIf="position.heading != null">{{position.heading | number : '1.0-0'}}°</span>
         <br>
         Latitude: {{position.latitude | number : '0.0-5'}}
         <br>
