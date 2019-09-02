@@ -1,9 +1,10 @@
 import {Injectable} from "@angular/core";
 import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/firestore";
 import {BehaviorSubject, combineLatest, Subscription} from "rxjs";
-import {Circle, MapData, MapSymbol, Marker, Measurement, Polygon, Polyline, Rectangle} from "../models/mapSymbol";
+import {Circle, MapData, MapSymbol, Marker, Measurement, Polygon, Polyline, Position, Rectangle} from "../models/mapSymbol";
 import * as _ from 'lodash';
 import {map} from "rxjs/operators";
+import * as firebase from "firebase";
 
 export const LOCATION_COLLECTION = 'Users';
 export const MAP_COLLECTION = 'Maps';
@@ -49,7 +50,8 @@ export class SyncService {
         this.addMapSymbol(measurement, 'measurements');
     }
 
-    addMyLocation(location: Marker) {
+    addMyLocation(location: Position) {
+        location.timestamp = new Date();
         let markForSave = this.location == null;
         if(!this.locationChanged) this.locationChanged = !_.isEqual(this.location, location);
         if(this.locationChanged) this.location = location;
@@ -78,9 +80,9 @@ export class SyncService {
     }
 
     load(mapCode: string, username: string) {
-        let ignore = this.unload();
         this.mapDoc = this.db.collection(MAP_COLLECTION).doc(mapCode);
         this.locationDoc = this.mapDoc.collection(LOCATION_COLLECTION).doc(username);
+        firebase.database().ref(`${MAP_COLLECTION}/mapCode/${LOCATION_COLLECTION}/username`).onDisconnect().remove();
 
         this.mapSub = combineLatest(this.mapDoc.valueChanges(), this.mapDoc.collection(LOCATION_COLLECTION).snapshotChanges())
             .pipe(map(data => {

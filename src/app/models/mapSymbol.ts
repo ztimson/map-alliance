@@ -53,6 +53,10 @@ export interface Polyline extends MapSymbol {
     weight?: number;
 }
 
+export interface Position extends Marker {
+    timestamp?: Date;
+}
+
 export interface Rectangle extends MapSymbol {
     latlng: LatLng;
     latlng2: LatLng;
