@@ -25,10 +25,6 @@ export class PhysicsService {
                     console.log('Orientation:', orientation);
                     this.orientation.next(orientation);
                 });
-                window.addEventListener('devicemotion', motion => {
-                    console.log('Motion:', motion);
-                    this.motion.next(motion);
-                });
                 navigator.geolocation.watchPosition(position => {
                     console.log('GPS:', position);
                     this.position.next(position);
