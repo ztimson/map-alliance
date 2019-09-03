@@ -25,7 +25,6 @@ import {Nouns} from "../../nounes";
 export class MapComponent implements OnDestroy, OnInit {
     code: string;
     drawColor = '#ff4141';
-    isNaN = isNaN;
     map: MapService;
     name: string;
     polygon: any;
@@ -114,15 +113,14 @@ export class MapComponent implements OnDestroy, OnInit {
         });
 
         // Display location information & submit it
-        this.physicsService.position.pipe(filter(coord => !!coord)).subscribe(pos => {
-            console.log('painting', pos);
-            if (!this.position) this.center({lat: pos.coords.latitude, lng: pos.coords.longitude});
+        this.physicsService.info.pipe(filter(coord => !!coord)).subscribe(pos => {
+            if (!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
             if (this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
             if (this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
-            this.positionMarker.arrow = this.map.newMarker({latlng: {lat: pos.coords.latitude, lng: pos.coords.longitude}, noSelect: true, noDelete: true, noDeleteTool: true, icon: 'arrow', rotationAngle: pos.coords.heading, rotationOrigin: 'center'});
-            this.positionMarker.circle = this.map.newCircle({latlng: {lat: pos.coords.latitude, lng: pos.coords.longitude}, color: '#2873d8', noSelect: true, noDelete: true, noDeleteTool: true, radius: pos.coords.accuracy, interactive: false});
-            let ignore = this.syncService.addMyLocation({latlng: {lat: pos.coords.latitude, lng: pos.coords.longitude}, label: this.name, noDeleteTool: true});
-            this.position = pos.coords;
+            this.positionMarker.arrow = this.map.newMarker({latlng: {lat: pos.latitude, lng: pos.longitude}, noSelect: true, noDelete: true, noDeleteTool: true, icon: 'arrow', rotationAngle: pos.heading, rotationOrigin: 'center'});
+            this.positionMarker.circle = this.map.newCircle({latlng: {lat: pos.latitude, lng: pos.longitude}, color: '#2873d8', noSelect: true, noDelete: true, noDeleteTool: true, radius: pos.accuracy, interactive: false});
+            let ignore = this.syncService.addMyLocation({latlng: {lat: pos.latitude, lng: pos.longitude}, label: this.name, noDeleteTool: true});
+            this.position = pos;
         });
 
         // Request calibration if needed

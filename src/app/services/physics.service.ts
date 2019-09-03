@@ -1,12 +1,19 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import {BehaviorSubject, combineLatest} from "rxjs";
 import {PermissionsService} from "../components/permissions/permissions.service";
-import {debounceTime} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
 })
 export class PhysicsService {
+    private _mode: string;
+    get mode() { return this._mode; }
+    set mode(mode: string) {
+        this._mode = mode;
+        localStorage.setItem('headingMode', mode);
+        this.calibrate.next(this.calibrate.value);
+    }
+
     requireCalibration = new EventEmitter();
     calibrate = new BehaviorSubject<number>(Infinity);
 
@@ -16,23 +23,16 @@ export class PhysicsService {
     position = new BehaviorSubject<Position>(null);
 
     constructor(permissionsService: PermissionsService) {
-
+        this.mode = localStorage.getItem('headingMode');
         permissionsService.requestPermission('geolocation', 'gps_fixed', 'Can we use your location?').then(granted => {
             if(granted) {
                 // Gather physical data
                 window.addEventListener('devicemotion', motion => this.motion.next(motion));
-                window.addEventListener('deviceorientation', orientation => {
-                    console.log('Orientation:', orientation);
-                    this.orientation.next(orientation);
-                });
-                navigator.geolocation.watchPosition(position => {
-                    console.log('GPS:', position);
-                    this.position.next(position);
-                });
+                window.addEventListener('deviceorientation', orientation => this.orientation.next(orientation));
+                navigator.geolocation.watchPosition(position => this.position.next(position));
 
                 // Combine data into one nice package
-                combineLatest(this.position.pipe(debounceTime(100)), this.orientation.pipe(debounceTime(100)), this.calibrate).subscribe(data => {
-                    console.log('Combine:', data);
+                combineLatest(this.position, this.orientation, this.calibrate).subscribe(data => {
                     if(!data[0]) return;
 
                     let info = {
@@ -45,7 +45,8 @@ export class PhysicsService {
                         speed: data[0].coords.speed
                     };
 
-                    if(info.heading == null && data[1]) {
+                    if(this.mode == null) this.mode = info.heading ? 'gps' : 'orientation';
+                    if(this.mode == 'orientation' && data[1]) {
                         if(!data[1].absolute && data[2] == Infinity) {
                             this.calibrate.next(0);
                             this.requireCalibration.emit();
@@ -57,7 +58,6 @@ export class PhysicsService {
                     }
 
                     this.info.next(info);
-                    console.log('Out:', info);
                 })
             }
         });

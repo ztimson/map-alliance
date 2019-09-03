@@ -1,25 +1,31 @@
 <div>
-    <div class="row mt-2">
-        <div class="col-5 pr-0">
-            <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Shift +/-</mat-label>
-                <input matInput type="number" min="-180" max="180" [(ngModel)]="calibration">
-            </mat-form-field>
+    <mat-button-toggle-group class="mb-2" (change)="physicsService.mode = $event.value">
+        <mat-button-toggle value="gps" [checked]="physicsService.mode == 'gps'">GPS</mat-button-toggle>
+        <mat-button-toggle value="orientation" [checked]="physicsService.mode == 'orientation'">Compass</mat-button-toggle>
+    </mat-button-toggle-group>
+    <div *ngIf="physicsService.mode == 'orientation'" [@expand] [@collapse]>
+        <div class="row mt-2">
+            <div class="col-5 pr-0">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Shift +/-</mat-label>
+                    <input matInput type="number" min="-180" max="180" [(ngModel)]="calibration">
+                </mat-form-field>
+            </div>
+            <div class="col-2 text-center"><h1> = </h1></div>
+            <div class="col-5 pl-0">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Heading</mat-label>
+                    <input matInput type="number" [value]="(physicsService.info | async)?.heading | number : '1.0-0'" readonly>
+                </mat-form-field>
+            </div>
         </div>
-        <div class="col-2 text-center"><h1> = </h1></div>
-        <div class="col-5 pl-0">
-            <mat-form-field appearance="fill" class="w-100">
-                <mat-label>Heading</mat-label>
-                <input matInput type="number" [value]="(physicsService.info | async)?.heading | number : '1.0-0'" readonly>
-            </mat-form-field>
+        <div>
+            <mat-slider class="w-100" [max]="180" [min]="-180" [step]="1" [tickInterval]="90" [thumbLabel]="true" [(ngModel)]="calibration" (input)="calibration = $event.value"></mat-slider>
         </div>
-    </div>
-    <div>
-        <mat-slider class="w-100" [max]="180" [min]="-180" [step]="1" [tickInterval]="90" [thumbLabel]="true" [(ngModel)]="calibration" (input)="calibration = $event.value"></mat-slider>
     </div>
     <mat-divider class="mb-1"></mat-divider>
     <div>
-        <button mat-button class="float-left" (click)="setN()">Set 0°</button>
+        <button mat-button *ngIf="physicsService.mode == 'orientation'" class="float-left" (click)="setN()">Set 0°</button>
         <button mat-button class="float-right" (click)="close()">Close</button>
     </div>
 </div>

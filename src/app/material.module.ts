@@ -8,10 +8,12 @@ import {
 import {NgModule} from "@angular/core";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 export const materialModules = [
     MatBottomSheetModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatDialogModule,
     MatDividerModule,
     MatFormFieldModule,
