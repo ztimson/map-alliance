@@ -144,7 +144,6 @@ export class SyncService {
     }
 
     save(map=true, location=true) {
-        this.status.next('saving');
         let promises = [];
 
         if(location && this.locationDoc && this.locationChanged) {
@@ -152,6 +151,7 @@ export class SyncService {
         }
 
         if(map && this.mapDoc && this.mapChanged) {
+            this.status.next('saving');
             let map = this.mapData.value;
             Object.values(map).filter(val => Array.isArray(val)).forEach(val => val.filter(s => s.new).forEach(s => delete s.new));
             delete map.locations;
