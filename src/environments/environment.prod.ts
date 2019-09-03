@@ -1,4 +1,5 @@
 export const environment = {
+  bing: 'Ah3zXeKgjcCebkqxGBZ4zROLJ_NJm7djhArju4--__5Jg9p19VgCtPkLmv-FxS_C',
   firebaseConfig: {
     apiKey: "AIzaSyDFtvCY6nH_HUoTBNf_5b-E8nRweSLYtxE",
     authDomain: "mapalliance-ab38a.firebaseapp.com",

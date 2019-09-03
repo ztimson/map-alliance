@@ -6,6 +6,7 @@ import {Circle, LatLng, MapSymbol, Marker, Measurement, Polygon, Polyline, Recta
 declare const L;
 
 export enum MapLayers {
+    BING,
     ESRI_TOPOGRAPHIC,
     ESRI_IMAGERY,
     ESRI_IMAGERY_CLARITY
@@ -155,8 +156,11 @@ export class MapService {
 
     setMapLayer(layer?: MapLayers) {
         if(this.mapLayer) this.map.removeLayer(this.mapLayer);
-        if(layer == null) layer = MapLayers.ESRI_IMAGERY;
+        if(layer == null) layer = MapLayers.BING;
         switch(layer) {
+            case MapLayers.BING:
+                this.mapLayer = L.tileLayer.bing(environment.bing);
+                break;
             case MapLayers.ESRI_TOPOGRAPHIC:
                 this.mapLayer = L.esri.basemapLayer('Topographic');
                 break;
