@@ -46,13 +46,13 @@ export class PhysicsService {
                     };
 
                     if(this.mode == null) this.mode = info.heading ? 'gps' : 'orientation';
-                    if(this.mode == 'orientation' && data[1]) {
-                        if(!data[1].absolute && data[2] == Infinity) {
+                    if(this.mode == 'orientation') {
+                        if((!data[1] || !data[1].absolute) && data[2] == Infinity) {
                             this.calibrate.next(0);
                             this.requireCalibration.emit();
                         }
 
-                        info.heading = -data[1].alpha + (data[2] == Infinity ? 0 : data[2]);
+                        info.heading = -(data[1] ? data[1].alpha : 0) + (data[2] == Infinity ? 0 : data[2]);
                         if(info.heading < 0) info.heading += 360;
                         if(info.heading >= 360) info.heading -= 360;
                     }

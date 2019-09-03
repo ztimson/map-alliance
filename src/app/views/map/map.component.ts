@@ -119,7 +119,8 @@ export class MapComponent implements OnDestroy, OnInit {
             if (!this.position) this.center({lat: pos.latitude, lng: pos.longitude});
             if (this.positionMarker.arrow) this.map.delete(this.positionMarker.arrow);
             if (this.positionMarker.circle) this.map.delete(this.positionMarker.circle);
-            this.positionMarker.arrow = this.map.newMarker({latlng: {lat: pos.latitude, lng: pos.longitude}, noSelect: true, noDelete: true, noDeleteTool: true, icon: 'arrow', rotationAngle: pos.heading, rotationOrigin: 'center'});
+            console.log(pos.heading / 2);
+            this.positionMarker.arrow = this.map.newMarker({latlng: {lat: pos.latitude, lng: pos.longitude}, noSelect: true, noDelete: true, noDeleteTool: true, icon: 'arrow', rotationAngle: (pos.heading / 2), rotationOrigin: 'center'});
             this.positionMarker.circle = this.map.newCircle({latlng: {lat: pos.latitude, lng: pos.longitude}, color: '#2873d8', noSelect: true, noDelete: true, noDeleteTool: true, radius: pos.accuracy, interactive: false});
             let ignore = this.syncService.addMyLocation({latlng: {lat: pos.latitude, lng: pos.longitude}, label: this.name, noDeleteTool: true});
             this.position = pos;
