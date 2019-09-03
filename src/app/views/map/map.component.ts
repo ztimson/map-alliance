@@ -23,6 +23,8 @@ import {Nouns} from "../../nounes";
     animations: [flyInRight, flyOutRight]
 })
 export class MapComponent implements OnDestroy, OnInit {
+    private calibration;
+
     code: string;
     drawColor = '#ff4141';
     map: MapService;
@@ -125,7 +127,7 @@ export class MapComponent implements OnDestroy, OnInit {
 
         // Request calibration if needed
         this.physicsService.requireCalibration.subscribe(() => {
-            this.snackBar.open('Compass requires calibration', 'calibrate', {
+            if(!this.calibration) this.snackBar.open('Compass requires calibration', 'calibrate', {
                 duration: 5000,
                 panelClass: 'bg-warning,text-white'
             }).onAction().subscribe(() => this.startCalibrating());
@@ -163,8 +165,11 @@ export class MapComponent implements OnDestroy, OnInit {
     }
 
     startCalibrating = (menuItem?) => {
-        let calibration = this.bottomSheet.open(CalibrateComponent, {hasBackdrop: false, disableClose: true});
-        this.sub = calibration.afterDismissed().pipe(finalize(() => calibration.dismiss()), filter(menuItem => !!menuItem)).subscribe(() => menuItem.enabled = false);
+        this.calibration = this.bottomSheet.open(CalibrateComponent, {hasBackdrop: false, disableClose: true});
+        this.sub = this.calibration.afterDismissed().pipe(finalize(() => {
+            this.calibration.dismiss();
+            this.calibration = null;
+        }), filter(menuItem => !!menuItem)).subscribe(() => menuItem.enabled = false);
     };
 
     startCircle = menuItem => {
