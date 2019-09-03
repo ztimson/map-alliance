@@ -16,8 +16,6 @@ export class CalibrateComponent {
         this.physicsService.calibrate.next(c);
     }
 
-    log = e => console.log(e);
-
     constructor(private bottomSheetRef: MatBottomSheetRef, public physicsService: PhysicsService) {
         this._calibration = this.physicsService.calibrate.value;
     }
@@ -28,7 +26,7 @@ export class CalibrateComponent {
 
     setN() {
         let currentHeading = Math.round(this.physicsService.orientation.value.alpha);
-        if(currentHeading < 180) {
+        if(currentHeading > 180) {
             this.calibration = -currentHeading;
         } else {
             this.calibration = 360 - currentHeading;
