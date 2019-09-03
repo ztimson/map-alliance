@@ -214,12 +214,12 @@ export class MapComponent implements OnDestroy, OnInit {
 
     startMeasuring = menuItem => {
         let lastPoint;
-        this.sub = this.map.click.pipe(skip(1), take(2), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
+        this.sub = this.map.click.pipe(skip(1), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
             if (lastPoint) {
                 menuItem.enabled = false;
                 let measurement = {latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng}, latlng2: e.latlng};
                 this.syncService.addMeasurement(measurement);
-                return this.map.delete(lastPoint);
+                this.map.delete(lastPoint);
             }
             lastPoint = this.map.newMarker({latlng: e.latlng, color: '#ff4141'});
         })
