@@ -162,9 +162,9 @@ export class MapComponent implements OnDestroy, OnInit {
         }
     }
 
-    startCalibrating = () => {
+    startCalibrating = (menuItem?) => {
         let calibration = this.bottomSheet.open(CalibrateComponent, {hasBackdrop: false, disableClose: true});
-        this.sub = calibration.afterDismissed().pipe(finalize(() => calibration.dismiss())).subscribe();
+        this.sub = calibration.afterDismissed().pipe(finalize(() => calibration.dismiss()), filter(menuItem => !!menuItem)).subscribe(() => menuItem.enabled = false);
     };
 
     startCircle = menuItem => {
