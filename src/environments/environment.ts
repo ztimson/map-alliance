@@ -13,6 +13,7 @@ export const environment = {
     messagingSenderId: "443222036375",
     appId: "1:443222036375:web:2e2906e3ca49aa63"
   },
+  googleMaps: 'AIzaSyDFtvCY6nH_HUoTBNf_5b-E8nRweSLYtxE',
   openWeather: 'e8391af54b6fc09dc82b019fc68b8409',
   production: false
 };

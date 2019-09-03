@@ -55,7 +55,11 @@ export class MapComponent implements OnDestroy, OnInit {
             {name: 'Place Relative', icon: 'control_camera', click: this.placeRelative},
             {name: 'Delete', icon: 'delete', toggle: true, onEnabled: this.startDelete, onDisabled: this.unsub},
             {name: 'Map Style', icon: 'terrain', subMenu: [
-                    {name: 'Bing:Satellite', toggle: true, enabled: true, click: () => this.map.setMapLayer(MapLayers.BING)},
+                    {name: 'Bing:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.BING)},
+                    {name: 'Google:Hybrid', toggle: true, enabled: true, click: () => this.map.setMapLayer(MapLayers.GOOGLE_HYBRID)},
+                    {name: 'Google:Road', toggle: true, click: () => this.map.setMapLayer(MapLayers.GOOGLE_ROAD)},
+                    {name: 'Google:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.GOOGLE_SATELLITE)},
+                    {name: 'Google:Terrain', toggle: true, click: () => this.map.setMapLayer(MapLayers.GOOGLE_TERRAIN)},
                     {name: 'ESRI:Topographic', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_TOPOGRAPHIC)},
                     {name: 'ESRI:Satellite', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY)},
                     {name: 'ESRI:Satellite Clear', toggle: true, click: () => this.map.setMapLayer(MapLayers.ESRI_IMAGERY_CLARITY)}

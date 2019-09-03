@@ -7,6 +7,10 @@ declare const L;
 
 export enum MapLayers {
     BING,
+    GOOGLE_HYBRID,
+    GOOGLE_ROAD,
+    GOOGLE_SATELLITE,
+    GOOGLE_TERRAIN,
     ESRI_TOPOGRAPHIC,
     ESRI_IMAGERY,
     ESRI_IMAGERY_CLARITY
@@ -156,10 +160,22 @@ export class MapService {
 
     setMapLayer(layer?: MapLayers) {
         if(this.mapLayer) this.map.removeLayer(this.mapLayer);
-        if(layer == null) layer = MapLayers.BING;
+        if(layer == null) layer = MapLayers.GOOGLE_HYBRID;
         switch(layer) {
             case MapLayers.BING:
                 this.mapLayer = L.tileLayer.bing(environment.bing);
+                break;
+            case MapLayers.GOOGLE_HYBRID:
+                this.mapLayer = L.gridLayer.googleMutant({type: 'hybrid'});
+                break;
+            case MapLayers.GOOGLE_ROAD:
+                this.mapLayer = L.gridLayer.googleMutant({type: 'roadmap'});
+                break;
+            case MapLayers.GOOGLE_SATELLITE:
+                this.mapLayer = L.gridLayer.googleMutant({type: 'satellite'});
+                break;
+            case MapLayers.GOOGLE_TERRAIN:
+                this.mapLayer = L.gridLayer.googleMutant({type: 'terrain'});
                 break;
             case MapLayers.ESRI_TOPOGRAPHIC:
                 this.mapLayer = L.esri.basemapLayer('Topographic');
