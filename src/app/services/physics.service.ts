@@ -52,7 +52,7 @@ export class PhysicsService {
                             this.requireCalibration.emit();
                         }
 
-                        info.heading = -(data[1] ? data[1].alpha : 0) - (data[2] == Infinity ? 0 : data[2]);
+                        info.heading = -(data[1] ? data[1].alpha : 0) + (data[2] == Infinity ? 0 : data[2]);
                         if(info.heading < 0) info.heading += 360;
                         if(info.heading >= 360) info.heading -= 360;
                     }
