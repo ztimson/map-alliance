@@ -27,7 +27,7 @@ export class CalibrateComponent {
     setN() {
         let currentHeading = Math.round(this.physicsService.orientation.value.alpha);
         if(currentHeading > 0) {
-            this.calibration = currentHeading;
+            this.calibration = currentHeading > 180 ? currentHeading - 360 : currentHeading;
         } else {
             this.calibration = -currentHeading;
         }
