@@ -78,8 +78,7 @@ export class MapComponent implements OnDestroy, OnInit {
             {name: 'Share', icon: 'share', toggle: true, onEnabled: () => this.share(), onDisabled: () => this.shareDialog = false},
             {name: 'Messages', icon: 'chat', hidden: true},
             {name: 'Identity', icon: 'perm_identity', hidden: true},
-            {name: 'Settings', icon: 'settings', hidden: true},
-            {name: 'delete all', icon: 'cancel', click: () => this.map.deleteAll(), hidden: !isDevMode()}
+            {name: 'Settings', icon: 'settings', hidden: true}
         ];
     }
 
