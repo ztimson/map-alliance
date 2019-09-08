@@ -132,6 +132,7 @@ export class MapService {
 
     newPolygon(p: Polygon) {
         let polygon = new L.Polygon(p.latlng, Object.assign({color: '#ff4141', autoPan: false}, p)).addTo(this.map);
+        if(p.label) polygon.bindTooltip(p.label, {permanent: true});
         polygon.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: p, item: polygon}));
         if(!p.noDelete) this.polygons.push(polygon);
         return polygon;

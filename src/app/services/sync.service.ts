@@ -131,11 +131,13 @@ export class SyncService {
 
     mergeMaps(newMap: MapData, oldMap: MapData) {
         let map: MapData = {locations: {}};
+        let twoMinAgo = new Date();
+        twoMinAgo.setMinutes(twoMinAgo.getMinutes() - 2);
         Object.keys(newMap).forEach(key => {
             if(!map[key]) map[key] = {};
-            Object.keys(newMap[key]).forEach(id => map[key][id] = newMap[key][id]);
+            Object.keys(newMap[key]).filter(id => !newMap[key][id].deleted || newMap[key][id].updated > twoMinAgo)
+                .forEach(id => map[key][id] = newMap[key][id]);
         });
-
         Object.keys(oldMap).filter(key => key != 'locations').forEach(key => {
             if(!map[key]) map[key] = {};
             Object.keys(oldMap[key]).filter(id => {

@@ -111,8 +111,15 @@ export class MapComponent implements OnDestroy, OnInit {
             if(this.sub == null && e.symbol) {
                 if(e.symbol.noClick) return;
                 this.syncService.freeze.next(true);
-                this.sub = this.bottomSheet.open(EditSymbolComponent, {data: e, disableClose: true, hasBackdrop: false}).afterDismissed().pipe(finalize(() => this.sub = null)).subscribe(symbol => {
-                    this.syncService.addCircle(symbol);
+                let ref = this.bottomSheet.open(EditSymbolComponent, {data: e, disableClose: true, hasBackdrop: false});
+                this.sub = ref.afterDismissed().pipe(finalize(() => {
+                    ref.dismiss();
+                    this.sub = null
+                })).subscribe(symbol => {
+                    if(e.item instanceof L.Circle) this.syncService.addCircle(symbol);
+                    else if(e.item instanceof L.Rectangle) this.syncService.addRectangle(symbol);
+                    else if(e.item instanceof L.Marker) this.syncService.addMarker(symbol);
+                    else if(e.item instanceof L.Polygon) this.syncService.addPolygon(symbol);
                     this.syncService.freeze.next(false);
                 });
             }
@@ -191,6 +198,7 @@ export class MapComponent implements OnDestroy, OnInit {
     };
 
     startDelete = () => {
+        if(this.sub) this.sub.unsubscribe();
         this.sub = this.map.click.pipe(skip(1), filter(e => !!e.symbol)).subscribe(e => {
             if (!!e.symbol && e.symbol.noDeleteTool) return;
             this.syncService.delete(e.symbol)

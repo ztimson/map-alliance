@@ -21,9 +21,22 @@ export class EditSymbolComponent {
     }
 
     close() {
-        let latlng = this.mapItem.getLatLng();
-        this.symbol.latlng = {lat: latlng.lat, lng: latlng.lng};
-        if(this.mapItem.getRadius) this.symbol['radius'] = this.mapItem.getRadius();
+        if(this.mapItem.getRadius) {
+            let latlng = this.mapItem.getLatLng();
+            this.symbol.latlng = {lat: latlng.lat, lng: latlng.lng};
+            this.symbol['radius'] = this.mapItem.getRadius();
+        } else if(this.mapItem.getLatLngs) {
+            let path = this.mapItem.getLatLngs();
+            this.symbol.latlng = path[0].map(latlng => ({lat: latlng.lat, lng: latlng.lng}));
+        } else if(this.mapItem.getBounds) {
+            let bounds = this.mapItem.getBounds();
+            this.symbol.latlng = {lat: bounds['_northEast'].lat, lng: bounds['_northEast'].lng};
+            this.symbol['latlng2'] = {lat: bounds['_southWest'].lat, lng: bounds['_southWest'].lng};
+        } else if(this.mapItem.getLatLng) {
+            let latlng = this.mapItem.getLatLng();
+            this.symbol.latlng = {lat: latlng.lat, lng: latlng.lng};
+        }
+
         this.ref.dismiss(this.symbol);
     }
 

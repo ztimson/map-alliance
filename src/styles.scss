@@ -60,6 +60,10 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
   background: rgba(0, 0, 0, 0.6) !important;
   border-color: rgba(0, 0, 0, 0.6) !important;
   color: white;
+
+  &:before {
+    border-right-color: rgba(0, 0, 0, 0.6) !important;
+  }
 }
 
 .leaflet-tooltip-bottom:before {
