@@ -110,6 +110,7 @@ export class MapComponent implements OnDestroy, OnInit {
         // Handle opening map symbols
         this.map.click.pipe(filter(e => !!e)).subscribe(e => {
             if(this.sub == null && e.symbol) {
+                if(e.symbol.noClick) return;
                 this.sub = this.bottomSheet.open(EditSymbolComponent, {data: e, disableClose: true, hasBackdrop: false}).afterDismissed().pipe(finalize(() => this.sub = null)).subscribe(symbol => {
                     this.syncService.delete(e.symbol);
                     if(e.item instanceof L.Circle) {
@@ -231,7 +232,7 @@ export class MapComponent implements OnDestroy, OnInit {
         let lastPoint;
         this.sub = this.map.click.pipe(skip(1), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
             if (lastPoint) {
-                let measurement = {latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng}, latlng2: e.latlng};
+                let measurement = {latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng}, latlng2: e.latlng, noClick: true};
                 this.syncService.addMeasurement(measurement);
                 this.map.delete(lastPoint);
             }
