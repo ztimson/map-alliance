@@ -106,7 +106,7 @@ export class MapService {
     }
 
     newCircle(c: Circle) {
-        let circle = L.circle(c.latlng, Object.assign({color: '#ff4141'}, c)).addTo(this.map);
+        let circle = L.circle(c.latlng, Object.assign({color: '#ff4141', autoPan: false}, c)).addTo(this.map);
         if(c.label) circle.bindTooltip(c.label, {permanent: true, direction: 'center'});
         circle.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: c, item: circle}));
         if(!c.noDelete) this.circles.push(circle);
@@ -114,7 +114,7 @@ export class MapService {
     }
 
     newMarker(m: Marker) {
-        let marker = L.marker(m.latlng, Object.assign({color: '#ff4141'}, m, {icon: m.icon ? this.getIcon(m.icon) : MARKER})).addTo(this.map);
+        let marker = L.marker(m.latlng, Object.assign({color: '#ff4141', autoPan: false}, m, {icon: m.icon ? this.getIcon(m.icon) : MARKER})).addTo(this.map);
         if(m.label) marker.bindTooltip(m.label, {permanent: true, direction: 'bottom'});
         marker.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: m, item: marker}));
         if(!m.noDelete) this.markers.push(marker);
@@ -122,7 +122,7 @@ export class MapService {
     }
 
     newMeasurement(m: Measurement) {
-        let line = L.polyline([m.latlng, m.latlng2], Object.assign({color: '#ff4141', weight: 8, lineCap: "square", dashArray: '10, 20'}, m)).addTo(this.map);
+        let line = L.polyline([m.latlng, m.latlng2], Object.assign({color: '#ff4141', autoPan: false, weight: 8, lineCap: "square", dashArray: '10, 20'}, m)).addTo(this.map);
         if(!m.noDelete) this.measurements.push(line);
         let distance = latLngDistance(m.latlng, m.latlng2);
         line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`, {autoClose: false, closeOnClick: false}).openPopup();
@@ -131,21 +131,21 @@ export class MapService {
     }
 
     newPolygon(p: Polygon) {
-        let polygon = new L.Polygon(p.latlng, Object.assign({color: '#ff4141'}, p)).addTo(this.map);
+        let polygon = new L.Polygon(p.latlng, Object.assign({color: '#ff4141', autoPan: false}, p)).addTo(this.map);
         polygon.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: p, item: polygon}));
         if(!p.noDelete) this.polygons.push(polygon);
         return polygon;
     }
 
     newPolyline(p: Polyline) {
-        let polyline = new L.Polyline(p.latlng, Object.assign({color: '#ff4141', weight: 10}, p)).addTo(this.map);
+        let polyline = new L.Polyline(p.latlng, Object.assign({color: '#ff4141', autoPan: false,  weight: 10}, p)).addTo(this.map);
         polyline.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: p, item: polyline}));
         if(!p.noDelete) this.polylines.push(polyline);
         return polyline;
     }
 
     newRectangle(r: Rectangle) {
-        let rect = new L.Rectangle([r.latlng, r.latlng2], Object.assign({color: '#ff4141'}, r)).addTo(this.map);
+        let rect = new L.Rectangle([r.latlng, r.latlng2], Object.assign({color: '#ff4141', autoPan: false}, r)).addTo(this.map);
         if(r.label) rect.bindTooltip(r.label, {permanent: true, direction: 'center'});
         rect.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: r, item: rect}));
         if(!r.noDelete) this.rectangles.push(rect);
