@@ -110,7 +110,7 @@ export class SyncService {
         }).snapshotChanges(), this.freeze)
             .pipe(map(data => {
                 let oldMap = this.mapData.value;
-                if(data[2]) return oldMap;
+                if(data[2]) return;
                 let newMap = data[0] || {};
                 let mergedMap = this.mergeMaps(newMap, oldMap);
 
@@ -121,6 +121,7 @@ export class SyncService {
 
                 return mergedMap;
             })).subscribe((mapData: MapData) => {
+                if(!mapData) return;
                 this.mapData.next(mapData);
                 this.status.next(null);
                 if(this.saveInterval) clearInterval(this.saveInterval);
