@@ -29,7 +29,7 @@ export class MapComponent implements OnDestroy, OnInit {
     private calibration;
 
     code: string;
-    drawColor = '#ff4141';
+    drawColor = '#e9403d';
     map: MapService;
     name: string;
     polygon: any;
@@ -159,7 +159,7 @@ export class MapComponent implements OnDestroy, OnInit {
         this.dialog.open(DimensionsDialogComponent, {data: ['Distance (m)', 'Baring'], panelClass: 'pb-0'}).afterClosed().subscribe(dimensions => {
             if(!dimensions) return;
             let latlng = relativeLatLng({lat: this.position.latitude, lng: this.position.longitude}, dimensions[0], dimensions[1]);
-            let marker: Marker = {latlng: latlng, color: '#ff4141'};
+            let marker: Marker = {latlng: latlng, color: '#e9403d'};
             this.syncService.addMarker(marker);
         })
     };
@@ -242,7 +242,7 @@ export class MapComponent implements OnDestroy, OnInit {
                 this.syncService.addMeasurement(measurement);
                 this.map.delete(lastPoint);
             }
-            lastPoint = this.map.newMarker({latlng: e.latlng, color: '#ff4141'});
+            lastPoint = this.map.newMarker({latlng: e.latlng, color: '#e9403d'});
         })
     };
 
@@ -270,7 +270,7 @@ export class MapComponent implements OnDestroy, OnInit {
                 this.syncService.addRectangle(rect);
                 return this.map.delete(lastPoint);
             }
-            lastPoint = this.map.newMarker({latlng: e.latlng, color: '#ff4141'});
+            lastPoint = this.map.newMarker({latlng: e.latlng, color: '#e9403d'});
         })
     };
 

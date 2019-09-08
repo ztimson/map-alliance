@@ -1,4 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {ColorPickerDialogComponent} from "../colorPickerDialog/colorPickerDialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
     selector: 'palette',
@@ -6,7 +8,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
     styleUrls: ['palette.component.scss']
 })
 export class PaletteComponent implements OnInit {
-    @Input() colors = ['#1d1d1a', '#ffffff', '#008dd5', '#1a891d', '#ff4141'];
+    @Input() colors = ['#1d1d1a', '#ffffff', '#f4f554', '#33abe3', '#5fd75a', '#e9403d'];
     @Input() vertical = false;
 
     @Output() selectedChange = new EventEmitter<string>();
@@ -18,9 +20,14 @@ export class PaletteComponent implements OnInit {
         this.selectedChange.emit(this._selected);
     };
 
-    constructor() { }
+    constructor(private dialog: MatDialog) { }
 
     ngOnInit() {
         if(!this.selected) this.selected = this.colors[0];
+    }
+
+    colorPicker() {
+        this.dialog.open(ColorPickerDialogComponent, {data: this.selected, hasBackdrop: false, panelClass: 'p-0'}).afterClosed()
+            .subscribe(color => this.selected = color);
     }
 }

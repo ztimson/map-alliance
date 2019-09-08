@@ -1,8 +1,6 @@
 import {Component, Inject} from "@angular/core";
-import {MatDialog} from "@angular/material/dialog";
 import {MapSymbol} from "../../models/mapSymbol";
 import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from "@angular/material/bottom-sheet";
-import {ColorPickerDialogComponent} from "../colorPickerDialog/colorPickerDialog.component";
 
 @Component({
     selector: 'edit-symbol',
@@ -12,8 +10,8 @@ export class EditSymbolComponent {
     symbol: MapSymbol;
     mapItem;
 
-    constructor(private dialog: MatDialog, private ref: MatBottomSheetRef, @Inject(MAT_BOTTOM_SHEET_DATA) data) {
-        this.symbol = Object.assign({color: '#ff4141'}, data.symbol);
+    constructor(private ref: MatBottomSheetRef, @Inject(MAT_BOTTOM_SHEET_DATA) data) {
+        this.symbol = Object.assign({color: '#e9403d'}, data.symbol);
         this.mapItem = data.item;
 
         this.mapItem.enableEdit();
@@ -38,12 +36,5 @@ export class EditSymbolComponent {
         }
 
         this.ref.dismiss(this.symbol);
-    }
-
-    colorPicker() {
-        this.dialog.open(ColorPickerDialogComponent, {data: this.symbol.color, hasBackdrop: false, panelClass: 'p-0'}).afterClosed()
-            .subscribe(color => {
-                this.symbol.color = color
-            });
     }
 }

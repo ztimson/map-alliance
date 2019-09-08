@@ -1,3 +1,4 @@
 <div [ngClass]="{'d-flex-column': vertical, 'd-flex': !vertical}">
     <div *ngFor="let c of colors" class="color-palette" [ngClass]="{'selected': selected == c, 'my-3 mx-auto': vertical, 'mx-2 my-auto': !vertical}" [style.backgroundColor]="c" (click)="selected = c"></div>
+    <div class="color-palette rainbow" [ngClass]="{'selected': colors.indexOf(selected) == -1, 'my-3 mx-auto': vertical, 'mx-2 my-auto': !vertical}" (click)="colorPicker()"></div>
 </div>

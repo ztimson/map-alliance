@@ -9,3 +9,7 @@
     height: 45px;
   }
 }
+
+.rainbow {
+  background: linear-gradient(-45deg, red, red, orange, yellow, green, cyan, blue, violet, violet);
+}
