@@ -24,10 +24,26 @@ export enum WeatherLayers {
     TEMP_NEW
 }
 
+function buildMarker(color?: string) {
+    const markerHtmlStyles = `
+      background-color: ${color || '#ff4141'};
+      width: 3rem;
+      height: 3rem;
+      display: block;
+      left: -1.5rem;
+      top: -1.5rem;
+      position: relative;
+      border-radius: 3rem 3rem 0;
+      transform: rotate(45deg);
+      border: 2px solid #FFFFFF`;
+    return L.divIcon({className: "my-custom-pin", iconAnchor: [0, 24], labelAnchor: [-6, 0], popupAnchor: [0, -36], html: `<span style="${markerHtmlStyles}" />`});
+}
+
+
+
 const ARROW = L.icon({iconUrl: '/assets/images/arrow.png', iconSize: [40, 45], iconAnchor: [20, 23]});
 const DOT = L.icon({iconUrl: '/assets/images/dot.png', iconSize: [25, 25], iconAnchor: [13, 13]});
-const MARKER = L.icon({iconUrl: '/assets/images/marker.png', iconSize: [40, 55], iconAnchor: [20, 55]});
-const MEASURE = L.icon({iconUrl: '/assets/images/measure.png', iconSize: [75, 50], iconAnchor: [25, 25]});
+const MARKER = buildMarker();
 
 export class MapService {
     private readonly map;
@@ -59,8 +75,6 @@ export class MapService {
                 return ARROW;
             case 'dot':
                 return DOT;
-            case 'measure':
-                return MEASURE;
             default:
                 return MARKER;
         }
@@ -114,7 +128,8 @@ export class MapService {
     }
 
     newMarker(m: Marker) {
-        let marker = L.marker(m.latlng, Object.assign({color: '#ff4141', autoPan: false}, m, {icon: m.icon ? this.getIcon(m.icon) : MARKER})).addTo(this.map);
+        let icon = m.icon ? m.icon : buildMarker(m.color);
+        let marker = L.marker(m.latlng, Object.assign({autoPan: false}, m, {icon: icon})).addTo(this.map);
         if(m.label) marker.bindTooltip(m.label, {permanent: true, direction: 'bottom'});
         marker.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: m, item: marker}));
         if(!m.noDelete) this.markers.push(marker);
