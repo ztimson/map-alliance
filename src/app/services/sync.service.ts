@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {AngularFirestore, AngularFirestoreDocument} from "@angular/fire/firestore";
 import {BehaviorSubject, combineLatest, Subscription} from "rxjs";
 import {Circle, MapData, MapSymbol, Marker, Measurement, Polygon, Polyline, Position, Rectangle} from "../models/mapSymbol";
-import * as _ from 'lodash';
+import {Md5} from 'ts-md5';
 import {filter, map} from "rxjs/operators";
 
 export const LOCATION_COLLECTION = 'Users';
@@ -22,6 +22,7 @@ export class SyncService {
     private saveInterval: number;
     private username: string;
 
+    freeze = new BehaviorSubject<boolean>(false);
     mapData = new BehaviorSubject<MapData>({});
     status = new BehaviorSubject<string>(null);
 
@@ -39,10 +40,13 @@ export class SyncService {
     }
 
     private addMapSymbol(s: MapSymbol, key: string) {
-        s.new = true;
         let map = this.mapData.value;
-        if(!map[key]) map[key] = [];
-        map[key].push(s);
+        if(!map[key]) map[key] = {};
+        do {
+            s.updated = new Date().getTime();
+            s.id = Md5.hashStr(s.updated.toString()).toString();
+        } while (!!map[key][s.id]);
+        map[key][s.id] = s;
         this.mapData.next(map);
         this.mapChanged = true;
         this.status.next('modified');
@@ -67,8 +71,8 @@ export class SyncService {
     addMyLocation(location: Position) {
         location.timestamp = new Date();
         let markForSave = this.location == null;
-        if(!this.locationChanged) this.locationChanged = !_.isEqual(this.location, location);
-        if(this.locationChanged) this.location = location;
+        this.locationChanged = true;
+        this.location = location;
         if(markForSave) return this.save(false, true);
     }
 
@@ -86,9 +90,7 @@ export class SyncService {
 
     delete(...symbols) {
         let map = this.mapData.value;
-        Object.keys(map).filter(key => Array.isArray(map[key])).forEach(key => {
-            symbols.forEach(s => map[key] = map[key].filter(ss => !_.isEqual(s, ss)))
-        });
+        Object.keys(map).forEach(key => symbols.filter(s => !!map[key][s.id]).forEach(s => map[key][s.id].deleted = true));
         this.mapData.next(map);
         this.mapChanged = true;
         this.status.next('modified');
@@ -105,15 +107,15 @@ export class SyncService {
             let aMinuteAgo = new Date();
             aMinuteAgo.setMinutes(aMinuteAgo.getMinutes() - 1);
             return ref.where('timestamp', '>=', aMinuteAgo);
-        }).snapshotChanges())
+        }).snapshotChanges(), this.freeze)
             .pipe(map(data => {
-                let newMap = data[0];
                 let oldMap = this.mapData.value;
+                if(data[2]) return oldMap;
+                let newMap = data[0] || {};
                 let mergedMap = this.mergeMaps(newMap, oldMap);
 
                 let locations = data[1].map(doc => ({id: doc.payload.doc.id, data: <Marker>doc.payload.doc.data()}));
                 locations.filter(l => l.id != username).forEach(l => {
-                    if(!mergedMap.locations) mergedMap.locations = {};
                     mergedMap.locations[l.id] = l.data;
                 });
 
@@ -127,14 +129,20 @@ export class SyncService {
     }
 
     mergeMaps(newMap: MapData, oldMap: MapData) {
-        let map = Object.assign({}, newMap);
-        Object.keys(oldMap).forEach(key => {
-            if(Array.isArray(map[key])) {
-                if(!map[key]) map[key] = [];
-                oldMap[key].filter(s => !_.find(map[key], s) && s.new).forEach(s => map[key].push(s));
-            }
+        let map: MapData = {locations: {}};
+        Object.keys(newMap).forEach(key => {
+            if(!map[key]) map[key] = {};
+            Object.keys(newMap[key]).filter(id => !newMap[key][id].deleted)
+                .forEach(id => map[key][id] = newMap[key][id]);
         });
-        if(!map.locations) map.locations = {};
+
+        Object.keys(oldMap).filter(key => key != 'locations').forEach(key => {
+            if(!map[key]) map[key] = {};
+            Object.keys(oldMap[key]).filter(id => {
+                let newS = map[key][id] || false;
+                return newS && newS.updated > map[key][id].updated;
+            }).forEach(id => map[key][id] = oldMap[key][id]);
+        });
         return map;
     }
 
@@ -153,7 +161,6 @@ export class SyncService {
         if(map && this.mapDoc && this.mapChanged) {
             this.status.next('saving');
             let map = this.mapData.value;
-            Object.values(map).filter(val => Array.isArray(val)).forEach(val => val.filter(s => s.new).forEach(s => delete s.new));
             delete map.locations;
             promises.push(this.mapDoc.set(map));
             this.mapChanged = false;

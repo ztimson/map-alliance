@@ -4,14 +4,14 @@
 
 .palette {
   position: fixed;
-  z-index: 500;
+  z-index: 5000;
   top: 60px;
   right: 15px;
 }
 
 .share {
   position: fixed;
-  z-index: 500;
+  z-index: 5000;
   top: 60px;
   right: 15px;
 }
@@ -19,14 +19,14 @@
 .info {
   background-color: #00000050;
   position: fixed;
-  z-index: 500;
+  z-index: 5000;
   bottom: 15px;
   left: 15px;
 }
 
 .gps {
   position: fixed;
-  z-index: 500;
+  z-index: 5000;
   bottom: 15px;
   right: 15px;
 }
@@ -50,7 +50,7 @@
 ::ng-deep .mat-toolbar {
   position: absolute;
   height: 45px !important;
-  z-index: 500;
+  z-index: 5000;
   color: rgba(255, 255, 255, 0.54);
   background-color: rgba(0, 0, 0, 0.8);
 

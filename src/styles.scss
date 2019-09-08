@@ -14,6 +14,10 @@ body {
   background-color: black;
 }
 
+.curs-pointer {
+  cursor: pointer;
+}
+
 .d-relative {
   position: relative;
 }
@@ -46,4 +50,23 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 .gmnoprint div {
   background: none !important;
 
+}
+
+.cdk-overlay-container {
+  z-index: 5500 !important;
+}
+
+.leaflet-tooltip {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-color: rgba(0, 0, 0, 0.6) !important;
+  color: white;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: white !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(0, 0, 0, 0.6) !important;
 }

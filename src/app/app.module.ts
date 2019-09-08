@@ -15,26 +15,24 @@ import {PermissionsComponent} from "./components/permissions/permissions.compone
 import {AngularFireModule} from "@angular/fire";
 import {AngularFirestoreModule} from "@angular/fire/firestore";
 import {ToolbarComponent} from "./components/toolbar/toolbar.component";
-import {PaletteComponent} from "./components/palette/palette.component";
-import {MarkerComponent} from "./components/marker/marker.component";
+import {PaletteComponent} from "./components/palette/palette.component"
 import {AnimatedBackgroundComponent} from "./components/animatedBackground/animatedBackground.component";
 import {ClickOutsideModule} from "ng-click-outside";
-import {CircleComponent} from "./components/circle/circle.component";
 import {ColorPickerModule} from "ngx-color-picker";
 import {ColorPickerDialogComponent} from "./components/colorPickerDialog/colorPickerDialog.component";
 import {DimensionsDialogComponent} from "./components/dimensionsDialog/dimensionsDialog.component";
+import {EditSymbolComponent} from "./components/editSymbol/editSymbol.component";
 
 @NgModule({
     declarations: [
         AnimatedBackgroundComponent,
         AppComponent,
         CalibrateComponent,
-        CircleComponent,
         ColorPickerDialogComponent,
         DimensionsDialogComponent,
+        EditSymbolComponent,
         HomeComponent,
         MapComponent,
-        MarkerComponent,
         PaletteComponent,
         PermissionsComponent,
         ToolbarComponent
@@ -53,7 +51,7 @@ import {DimensionsDialogComponent} from "./components/dimensionsDialog/dimension
         MatInputModule,
     ],
     providers: [],
-    entryComponents: [CalibrateComponent, CircleComponent, ColorPickerDialogComponent, DimensionsDialogComponent, MarkerComponent, PermissionsComponent],
+    entryComponents: [CalibrateComponent, ColorPickerDialogComponent, DimensionsDialogComponent, EditSymbolComponent, PermissionsComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {

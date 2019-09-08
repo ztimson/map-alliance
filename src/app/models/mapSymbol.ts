@@ -4,19 +4,21 @@ export interface LatLng {
 }
 
 export interface MapData {
-    circles?: Circle[];
+    circles?: {[key: string]: Circle};
     locations?: {[key: string]: Marker};
-    markers?: Marker[];
-    measurements?: Measurement[];
-    polygons?: Polygon[];
-    polylines?: Polyline[];
-    rectangles?: Rectangle[];
+    markers?: {[key: string]: Marker};
+    measurements?: {[key: string]: Measurement};
+    polygons?: {[key: string]: Polygon};
+    polylines?: {[key: string]: Polyline};
+    rectangles?: {[key: string]: Rectangle};
 }
 
 export interface MapSymbol {
+    deleted?: boolean;
+    id?: string;
     symbol?: any;
     latlng?: LatLng | LatLng[];
-    new?: boolean;
+    noClick?: boolean;
     noDelete?: boolean;
     noDeleteTool?: boolean;
     noSelect?: boolean;
@@ -26,6 +28,7 @@ export interface MapSymbol {
     interactive?: boolean;
     rotationAngle?: number;
     rotationOrigin?: string;
+    updated?: number;
 }
 
 export interface Circle extends MapSymbol {

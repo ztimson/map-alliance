@@ -12,9 +12,12 @@ import {ActivatedRoute} from "@angular/router";
 import {DimensionsDialogComponent} from "../../components/dimensionsDialog/dimensionsDialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {SyncService} from "../../services/sync.service";
-import {MapData, Marker} from "../../models/mapSymbol";
+import {MapData, MapSymbol, Marker} from "../../models/mapSymbol";
 import {Adjectives} from "../../adjectives";
 import {Nouns} from "../../nounes";
+import {EditSymbolComponent} from "../../components/editSymbol/editSymbol.component";
+
+declare const L;
 
 @Component({
     selector: 'map',
@@ -95,28 +98,25 @@ export class MapComponent implements OnDestroy, OnInit {
         // Setup map repainting on updates
         this.syncService.mapData.pipe(filter(s => !!s)).subscribe((map: MapData) => {
             this.map.deleteAll();
-            if (map.circles) map.circles.forEach(c => this.map.newCircle(c));
-            if (map.locations) Object.values(map.locations).forEach(l => this.map.newMarker(Object.assign(l, {icon: 'dot'})));
-            if (map.markers) map.markers.forEach(m => this.map.newMarker(m));
-            if (map.measurements) map.measurements.forEach(m => this.map.newMeasurement(m));
-            if (map.polygons) map.polygons.forEach(p => this.map.newPolygon(p));
-            if (map.polylines) map.polylines.forEach(p => this.map.newPolyline(p));
-            if (map.rectangles) map.rectangles.forEach(r => this.map.newRectangle(r));
+            if (map.circles) Object.values(map.circles).filter(c => !c.deleted).forEach(c => this.map.newCircle(c));
+            if (map.locations) Object.values(map.locations).forEach(l => this.map.newMarker(Object.assign(l, {icon: 'dot', noDeleteTool: true})));
+            if (map.markers) Object.values(map.markers).filter(m => !m.deleted).forEach(m => this.map.newMarker(m));
+            if (map.measurements) Object.values(map.measurements).filter(m => !m.deleted).forEach(m => this.map.newMeasurement(m));
+            if (map.polygons) Object.values(map.polygons).filter(p => !p.deleted).forEach(p => this.map.newPolygon(p));
+            if (map.polylines) Object.values(map.polylines).filter(p => !p.deleted).forEach(p => this.map.newPolyline(p));
+            if (map.rectangles) Object.values(map.rectangles).filter(r => !r.deleted).forEach(r => this.map.newRectangle(r));
         });
 
         // Handle opening map symbols
-        this.map.click.pipe(filter(e => !!e && e.item)).subscribe(ignore => {
-            /*if (e.item instanceof L.Marker) {
-                if (e.symbol.noSelect) return;
-                this.bottomSheet.open(MarkerComponent, {data: e.symbol, hasBackdrop: false, disableClose: true});
-            } else if (e.item instanceof L.Circle) {
-                if (e.symbol.noSelect) return;
-                this.bottomSheet.open(CircleComponent, {data: e.symbol, hasBackdrop: false, disableClose: true}).afterDismissed().subscribe(c => {
-                    let circle = c['_symbol'];
-                    this.map.delete(c);
-                    this.map.newCircle(circle);
+        this.map.click.pipe(filter(e => !!e)).subscribe(e => {
+            if(this.sub == null && e.symbol) {
+                this.sub = this.bottomSheet.open(EditSymbolComponent, {data: e, disableClose: true, hasBackdrop: false}).afterDismissed().pipe(finalize(() => this.sub = null)).subscribe(symbol => {
+                    this.syncService.delete(e.symbol);
+                    if(e.item instanceof L.Circle) {
+                        this.syncService.addCircle(symbol);
+                    }
                 });
-            }*/
+            }
         });
 
         // Display location information & submit it
@@ -172,9 +172,12 @@ export class MapComponent implements OnDestroy, OnInit {
     startCalibrating = (menuItem?) => {
         this.calibration = this.bottomSheet.open(CalibrateComponent, {hasBackdrop: false, disableClose: true});
         this.sub = this.calibration.afterDismissed().pipe(finalize(() => {
+            menuItem.enabled = false;
+        })).subscribe(() => {
             this.calibration.dismiss();
             this.calibration = null;
-        }), filter(menuItem => !!menuItem)).subscribe(() => menuItem.enabled = false);
+            this.sub = null;
+        });
     };
 
     startCircle = menuItem => {
@@ -182,6 +185,7 @@ export class MapComponent implements OnDestroy, OnInit {
             let dimensions = await this.dialog.open(DimensionsDialogComponent, {data: ['Radius (m)'], panelClass: 'pb-0'}).afterClosed().toPromise();
             if(!dimensions) return;
             menuItem.enabled = false;
+            this.sub = null;
             let circle = {latlng: e.latlng, radius: dimensions[0]};
             this.syncService.addCircle(circle);
         });
@@ -201,7 +205,7 @@ export class MapComponent implements OnDestroy, OnInit {
             this.showPalette = false;
             this.map.lock(true);
         })).subscribe(e => {
-            let p = {latlng: [e.latlng], noDelete: true, color: this.drawColor, weight: 8};
+            let p = {latlng: [e.latlng], noClick: true, noDelete: true, color: this.drawColor, weight: 8};
             let polyline = this.map.newPolyline(p);
             let drawingSub = this.map.touch.pipe(filter(e => e.type == 'move')).subscribe(e => polyline.addLatLng(e.latlng));
             this.map.touch.pipe(filter(e => e.type == 'end'), take(1)).subscribe(() => {
@@ -217,12 +221,13 @@ export class MapComponent implements OnDestroy, OnInit {
     startMarker = menuItem => {
         this.sub = this.map.click.pipe(skip(1), take(1)).subscribe(e => {
             menuItem.enabled = false;
+            this.sub = null;
             let marker: Marker = {latlng: e.latlng};
             this.syncService.addMarker(marker);
         });
     };
 
-    startMeasuring = menuItem => {
+    startMeasuring = () => {
         let lastPoint;
         this.sub = this.map.click.pipe(skip(1), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
             if (lastPoint) {
@@ -253,6 +258,7 @@ export class MapComponent implements OnDestroy, OnInit {
         this.sub = this.map.click.pipe(skip(1), take(2), finalize(() => this.map.delete(lastPoint))).subscribe(e => {
             if (lastPoint) {
                 menuItem.enabled = false;
+                this.sub = null;
                 let rect = {latlng: {lat: lastPoint.getLatLng().lat, lng: lastPoint.getLatLng().lng}, latlng2: e.latlng};
                 this.syncService.addRectangle(rect);
                 return this.map.delete(lastPoint);

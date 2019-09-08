@@ -2,14 +2,14 @@
     <div class="row">
         <mat-form-field appearance="fill" class="col-12 col-md-6">
             <mat-label>Label</mat-label>
-            <input matInput [(ngModel)]="circle.label">
+            <input matInput [(ngModel)]="symbol.label">
         </mat-form-field>
-        <div class="ml-auto mt-1 mr-3 rounded-circle border" (click)="colorPicker()" style="width: 46px; height: 46px;" [style.background]="circle.color"></div>
+        <div class="ml-auto mt-1 mr-3 rounded-circle border curs-pointer" (click)="colorPicker()" style="width: 46px; height: 46px;" [style.background]="symbol.color"></div>
     </div>
     <div class="row">
         <mat-form-field appearance="fill" class="col-12">
             <mat-label>Notes</mat-label>
-            <textarea matInput rows="3"></textarea>
+            <textarea matInput rows="3" [(ngModel)]="symbol.notes"></textarea>
         </mat-form-field>
     </div>
     <mat-divider></mat-divider>

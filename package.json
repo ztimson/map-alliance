@@ -44,6 +44,7 @@
     "ng-click-outside": "^5.0.0",
     "ngx-color-picker": "^8.1.0",
     "rxjs": "~6.4.0",
+    "ts-md5": "^1.2.5",
     "tslib": "^1.9.0",
     "web-animations-js": "^2.3.2",
     "whatwg-fetch": "^3.0.0",
