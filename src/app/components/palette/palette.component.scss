@@ -2,8 +2,10 @@
   border-radius: 50% 50%;
   width: 30px;
   height: 30px;
+  border: 2px solid #dddddd;
 
   &.selected {
-    border: 4px solid #3b5998;
+    width: 45px;
+    height: 45px;
   }
 }

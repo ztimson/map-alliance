@@ -1,3 +1,3 @@
-<div class="py-1">
-    <div *ngFor="let c of colors" class="m-3 color-palette" [ngClass]="{'selected': selected == c}" [style.backgroundColor]="c" (click)="selected = c"></div>
+<div [ngClass]="{'d-flex-column': vertical, 'd-flex': !vertical}">
+    <div *ngFor="let c of colors" class="color-palette" [ngClass]="{'selected': selected == c, 'my-3 mx-auto': vertical, 'mx-2 my-auto': !vertical}" [style.backgroundColor]="c" (click)="selected = c"></div>
 </div>

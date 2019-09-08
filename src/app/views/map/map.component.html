@@ -1,7 +1,7 @@
 <toolbar [(menuItems)]="menu" [status]="syncService.status" (save)="syncService.save()"></toolbar>
 <div id="map"></div>
 <div *ngIf="showPalette" [@flyInRight] [@flyOutRight] class="palette">
-    <palette [(selected)]="drawColor"></palette>
+    <palette [(selected)]="drawColor" [vertical]="true"></palette>
 </div>
 <div *ngIf="shareDialog" class="share" [@flyInRight] [@flyOutRight]>
     <div class="input-group">

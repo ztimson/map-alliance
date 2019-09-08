@@ -1,10 +1,14 @@
-<div>
-    <div class="row">
-        <mat-form-field appearance="fill" class="col-12 col-md-6">
-            <mat-label>Label</mat-label>
-            <input matInput [(ngModel)]="symbol.label">
-        </mat-form-field>
-        <div class="ml-auto mt-1 mr-3 rounded-circle border curs-pointer" (click)="colorPicker()" style="width: 46px; height: 46px;" [style.background]="symbol.color"></div>
+<div class="pt-sm-2">
+    <div class="d-flex flex-column-reverse flex-sm-row">
+        <div class="flex-grow-1">
+            <mat-form-field appearance="fill" class="w-100 pr-sm-3">
+                <mat-label>Label</mat-label>
+                <input matInput [(ngModel)]="symbol.label">
+            </mat-form-field>
+        </div>
+        <div class="flex-shrink-0 py-3 py-sm-1">
+            <palette [(selected)]="symbol.color"></palette>
+        </div>
     </div>
     <div class="row">
         <mat-form-field appearance="fill" class="col-12">
