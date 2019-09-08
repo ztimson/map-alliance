@@ -1,4 +1,4 @@
-import {Component, isDevMode, OnDestroy, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {PhysicsService} from "../../services/physics.service";
 import {filter, finalize, skip, take} from "rxjs/operators";
 import {MatBottomSheet, MatSnackBar} from "@angular/material";
@@ -12,7 +12,7 @@ import {ActivatedRoute} from "@angular/router";
 import {DimensionsDialogComponent} from "../../components/dimensionsDialog/dimensionsDialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {SyncService} from "../../services/sync.service";
-import {MapData, MapSymbol, Marker} from "../../models/mapSymbol";
+import {MapData, Marker} from "../../models/mapSymbol";
 import {Adjectives} from "../../adjectives";
 import {Nouns} from "../../nounes";
 import {EditSymbolComponent} from "../../components/editSymbol/editSymbol.component";
@@ -44,7 +44,7 @@ export class MapComponent implements OnDestroy, OnInit {
     constructor(public physicsService: PhysicsService, public syncService: SyncService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
         this.name = localStorage.getItem('callSign');
         if(!this.name) {
-            this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + Nouns[Math.floor(Math.random() * Nouns.length)];
+            this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + ' ' + Nouns[Math.floor(Math.random() * Nouns.length)];
             localStorage.setItem('callSign', this.name);
         }
 

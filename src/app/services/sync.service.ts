@@ -98,10 +98,9 @@ export class SyncService {
 
     load(mapCode: string, username: string) {
         this.mapCode = mapCode;
-        this.username = username;
+        this.username = username.replace(/\s/g, '');
         this.mapDoc = this.db.collection(MAP_COLLECTION).doc(mapCode);
         this.locationDoc = this.mapDoc.collection(LOCATION_COLLECTION).doc(username);
-
 
         this.mapSub = combineLatest(this.mapDoc.valueChanges(), this.mapDoc.collection(LOCATION_COLLECTION, ref => {
             let aMinuteAgo = new Date();

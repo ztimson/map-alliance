@@ -1,6 +1,6 @@
 export const Adjectives = [
     'Strict',
-    'poor',
+    'Poor',
     'Old',
     'Hot',
     'Huge',
