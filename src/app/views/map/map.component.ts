@@ -112,11 +112,8 @@ export class MapComponent implements OnDestroy, OnInit {
                 if(e.symbol.noClick) return;
                 this.syncService.freeze.next(true);
                 this.sub = this.bottomSheet.open(EditSymbolComponent, {data: e, disableClose: true, hasBackdrop: false}).afterDismissed().pipe(finalize(() => this.sub = null)).subscribe(symbol => {
+                    this.syncService.addCircle(symbol);
                     this.syncService.freeze.next(false);
-                    this.syncService.delete(e.symbol);
-                    if(e.item instanceof L.Circle) {
-                        this.syncService.addCircle(symbol);
-                    }
                 });
             }
         });

@@ -42,10 +42,8 @@ export class SyncService {
     private addMapSymbol(s: MapSymbol, key: string) {
         let map = this.mapData.value;
         if(!map[key]) map[key] = {};
-        do {
-            s.updated = new Date().getTime();
-            s.id = Md5.hashStr(s.updated.toString()).toString();
-        } while (!!map[key][s.id]);
+        s.updated = new Date().getTime();
+        if(!s.id) s.id = Md5.hashStr(s.updated.toString()).toString();
         map[key][s.id] = s;
         this.mapData.next(map);
         this.mapChanged = true;
@@ -90,7 +88,10 @@ export class SyncService {
 
     delete(...symbols) {
         let map = this.mapData.value;
-        Object.keys(map).forEach(key => symbols.filter(s => !!map[key][s.id]).forEach(s => map[key][s.id].deleted = true));
+        Object.keys(map).forEach(key => symbols.filter(s => !!map[key][s.id]).forEach(s => {
+            map[key][s.id].updated = new Date().getTime();
+            map[key][s.id].deleted = true
+        }));
         this.mapData.next(map);
         this.mapChanged = true;
         this.status.next('modified');
@@ -132,15 +133,14 @@ export class SyncService {
         let map: MapData = {locations: {}};
         Object.keys(newMap).forEach(key => {
             if(!map[key]) map[key] = {};
-            Object.keys(newMap[key]).filter(id => !newMap[key][id].deleted)
-                .forEach(id => map[key][id] = newMap[key][id]);
+            Object.keys(newMap[key]).forEach(id => map[key][id] = newMap[key][id]);
         });
 
         Object.keys(oldMap).filter(key => key != 'locations').forEach(key => {
             if(!map[key]) map[key] = {};
             Object.keys(oldMap[key]).filter(id => {
                 let newS = map[key][id] || false;
-                return newS && newS.updated > map[key][id].updated;
+                return !newS && !oldMap[key][id].deleted || newS && oldMap[key][id].updated > newS.updated;
             }).forEach(id => map[key][id] = oldMap[key][id]);
         });
         return map;
