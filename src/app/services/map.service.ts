@@ -125,7 +125,7 @@ export class MapService {
         let line = L.polyline([m.latlng, m.latlng2], Object.assign({color: '#ff4141', autoPan: false, weight: 8, lineCap: "square", dashArray: '10, 20'}, m)).addTo(this.map);
         if(!m.noDelete) this.measurements.push(line);
         let distance = latLngDistance(m.latlng, m.latlng2);
-        line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`, {autoClose: false, closeOnClick: false}).openPopup();
+        line.bindPopup(`${distance > 1000 ? Math.round(distance / 100) / 10 : Math.round(distance)} ${distance > 1000 ? 'k' : ''}m`, {autoPan: false, autoClose: false, closeOnClick: false}).openPopup();
         line.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: m, item: line}));
         return line;
     }
