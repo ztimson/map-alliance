@@ -61,8 +61,17 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
   border-color: rgba(0, 0, 0, 0.6) !important;
   color: white;
 
-  &:before {
+  &.leaflet-tooltip-right:before {
     border-right-color: rgba(0, 0, 0, 0.6) !important;
+  }
+  &.leaflet-tooltip-bottom:before {
+    border-bottom-color: rgba(0, 0, 0, 0.6) !important;
+  }
+  &.leaflet-tooltip-top:before {
+    border-top-color: rgba(0, 0, 0, 0.6) !important;
+  }
+  &.leaflet-tooltip-left:before {
+    border-left-color: rgba(0, 0, 0, 0.6) !important;
   }
 }
 
