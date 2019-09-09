@@ -103,6 +103,7 @@ export class SyncService {
         this.mapDoc = this.db.collection(MAP_COLLECTION).doc(mapCode);
         this.locationDoc = this.mapDoc.collection(LOCATION_COLLECTION).doc(username);
 
+        this.mapDoc.valueChanges().subscribe(() => this.status.next(null));
         this.mapSub = combineLatest(this.mapDoc.valueChanges(), this.mapDoc.collection(LOCATION_COLLECTION, ref => {
             let aMinuteAgo = new Date();
             aMinuteAgo.setMinutes(aMinuteAgo.getMinutes() - 1);
@@ -123,7 +124,6 @@ export class SyncService {
             })).subscribe((mapData: MapData) => {
                 if(!mapData) return;
                 this.mapData.next(mapData);
-                this.status.next(null);
                 if(this.saveInterval) clearInterval(this.saveInterval);
                 this.saveInterval = setInterval(() => this.save(), (mapData.locations && Object.keys(mapData.locations).length > 0) ? 5_000 : 30_000);
             });
