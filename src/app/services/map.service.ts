@@ -128,7 +128,7 @@ export class MapService {
     }
 
     newMarker(m: Marker) {
-        let icon = m.icon ? m.icon : buildMarker(m.color);
+        let icon = m.icon ? this.getIcon(m.icon) : buildMarker(m.color);
         let marker = L.marker(m.latlng, Object.assign({autoPan: false}, m, {icon: icon})).addTo(this.map);
         if(m.label) marker.bindTooltip(m.label, {permanent: true, direction: 'bottom'});
         marker.on('click', e => this.click.next({latlng: {lat: e.latlng.lat, lng: e.latlng.lng}, symbol: m, item: marker}));
