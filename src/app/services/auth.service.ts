@@ -18,7 +18,6 @@ export class AuthService {
 
     constructor(private afAuth: AngularFireAuth, private router: Router, private db: AngularFirestore) {
         this.user.subscribe(user => {
-            console.log(user, user instanceof Object);
             this.authenticated = user instanceof Object
         });
         this.afAuth.user.pipe(
