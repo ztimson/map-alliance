@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {MatBottomSheetRef} from "@angular/material";
+import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {PhysicsService} from "../../services/physics.service";
 import {collapse, expand} from "../../animations";
 

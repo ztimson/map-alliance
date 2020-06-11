@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {PhysicsService} from "../../services/physics.service";
 import {filter, finalize, skip, take} from "rxjs/operators";
-import {MatBottomSheet, MatSnackBar} from "@angular/material";
 import {CalibrateComponent} from "../../components/calibrate/calibrate.component";
 import {ToolbarItem} from "../../models/toolbarItem";
 import {flyInRight, flyOutRight} from "../../animations";
@@ -16,6 +15,8 @@ import {MapData, Marker} from "../../models/mapSymbol";
 import {Adjectives} from "../../adjectives";
 import {Nouns} from "../../nounes";
 import {EditSymbolComponent} from "../../components/editSymbol/editSymbol.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatBottomSheet} from "@angular/material/bottom-sheet";
 
 declare const L;
 
