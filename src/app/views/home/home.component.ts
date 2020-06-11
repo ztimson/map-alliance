@@ -2,13 +2,15 @@ import {Component} from "@angular/core";
 import {Router} from "@angular/router";
 import {SyncService} from "../../services/sync.service";
 import {AuthService} from "../../services/auth.service";
+import {fadeIn} from "../../animations";
 
 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 @Component({
     selector: 'home',
     templateUrl: 'home.component.html',
-    styleUrls: ['home.component.scss']
+    styleUrls: ['home.component.scss'],
+    animations: [fadeIn]
 })
 export class HomeComponent {
     code: string = '';
