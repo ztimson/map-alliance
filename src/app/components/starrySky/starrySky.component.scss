@@ -1,0 +1,75 @@
+@function stars ($n) {
+  $value: '#{random(2000)}px #{random(2000)}px #FFF';
+  @for $i from 2 through $n {
+    $value: '#{$value} , #{random(2000)}px #{random(2000)}px #FFF';
+  }
+  @return unquote($value)
+}
+
+.sky {
+  height: 100%;
+  width: 100%;
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  overflow: hidden
+}
+
+.shooting-star {
+  position: absolute;
+  top: 110%;
+  width: 30px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: white;
+  animation: shoot 20s linear infinite;
+  animation-delay: 1s;
+  transform: rotate(-30deg);
+}
+
+.stars {
+  background: transparent;
+  border-radius: 50%;
+
+  &.foreground {
+    width: 1px;
+    height: 1px;
+    box-shadow: stars(1000);
+    animation: spin 200s linear infinite;
+  }
+
+  &.midground {
+    width: 2px;
+    height: 2px;
+    box-shadow: stars(750);
+    animation: spin 300s linear infinite;
+  }
+
+  &.background {
+    width: 4px;
+    height: 4px;
+    box-shadow: stars(500);
+    animation: spin 350s linear infinite;
+  }
+}
+
+@keyframes shoot{
+  0%{
+    top: -10%;
+    left: 80%;
+  }
+  5%{
+    top: 110%;
+    left: 20%;
+  }
+  100% {
+    top: 110%;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}

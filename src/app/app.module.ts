@@ -9,7 +9,6 @@ import {CalibrateComponent} from "./components/calibrate/calibrate.component";
 import {PermissionsComponent} from "./components/permissions/permissions.component";
 import {ToolbarComponent} from "./components/toolbar/toolbar.component";
 import {PaletteComponent} from "./components/palette/palette.component"
-import {AnimatedBackgroundComponent} from "./components/animatedBackground/animatedBackground.component";
 import {ColorPickerDialogComponent} from "./components/colorPickerDialog/colorPickerDialog.component";
 import {DimensionsDialogComponent} from "./components/dimensionsDialog/dimensionsDialog.component";
 import {EditSymbolComponent} from "./components/editSymbol/editSymbol.component";
@@ -21,10 +20,11 @@ import {ClickOutsideModule} from "ng-click-outside";
 import {ColorPickerModule} from "ngx-color-picker";
 import {FormsModule} from "@angular/forms";
 import {ServiceWorkerModule} from "@angular/service-worker";
+import {StarrySkyComponent} from "./components/starrySky/starrySky.component";
+import {AngularFireAuthModule} from "@angular/fire/auth";
 
 @NgModule({
     declarations: [
-        AnimatedBackgroundComponent,
         AppComponent,
         CalibrateComponent,
         ColorPickerDialogComponent,
@@ -34,11 +34,13 @@ import {ServiceWorkerModule} from "@angular/service-worker";
         MapComponent,
         PaletteComponent,
         PermissionsComponent,
+        StarrySkyComponent,
         ToolbarComponent
     ],
     imports: [
         AngularFireModule.initializeApp(environment.firebaseConfig),
         AngularFirestoreModule.enablePersistence(),
+        AngularFireAuthModule,
         AppRouting,
         BrowserAnimationsModule,
         BrowserModule,

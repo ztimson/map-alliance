@@ -1,6 +1,7 @@
 import {Component} from "@angular/core";
 import {Router} from "@angular/router";
 import {SyncService} from "../../services/sync.service";
+import {AuthService} from "../../services/auth.service";
 
 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
@@ -13,7 +14,7 @@ export class HomeComponent {
     code: string = '';
     valid = false;
 
-    constructor(private syncService: SyncService, private router: Router) { }
+    constructor(public authService: AuthService, private syncService: SyncService, private router: Router) { }
 
     async new() {
         let mapCode: string;
