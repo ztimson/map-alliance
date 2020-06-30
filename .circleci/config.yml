@@ -17,7 +17,7 @@ jobs:
 
       - run:
           name: Install Dependancies
-          command: yarn
+          command: yarn install
 
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
