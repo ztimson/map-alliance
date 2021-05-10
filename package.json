@@ -39,7 +39,7 @@
     "leaflet-polylinedecorator": "^1.6.0",
     "leaflet-rotatedmarker": "^0.2.0",
     "leaflet.gridlayer.googlemutant": "^0.8.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "momentjs": "^2.0.0",
     "ng-click-outside": "^5.0.0",
     "ngx-color-picker": "^8.1.0",
