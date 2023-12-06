@@ -21,7 +21,7 @@
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "tsconfig.json",
             "aot": false,
             "assets": [
               "src/assets",
@@ -30,7 +30,6 @@
             "styles": [
               "./node_modules/bootstrap-scss/bootstrap.scss",
               "./node_modules/leaflet/dist/leaflet.css",
-              "src/material-theme.scss",
               "src/styles.scss"
             ],
             "scripts": [
@@ -83,12 +82,6 @@
             "production": {
               "browserTarget": "MapAlliance:build:production"
             }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "MapAlliance:build"
           }
         }
       }

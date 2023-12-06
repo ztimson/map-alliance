@@ -1,27 +1,80 @@
-# MapAlliance
+<!-- Header -->
+<div id="top" align="center">
+  <br />
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.4.
+  <!-- Logo -->
+  <img src="./src/assets/images/logo.png" alt="Logo" width="200" height="200">
 
-## Development server
+  <!-- Title -->
+  ### Template
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+  <!-- Description -->
+  Map Collaboration Tool
 
-## Code scaffolding
+  <!-- Repo badges -->
+  [![Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=for-the-badge&url=https://git.zakscode.com/api/v1/repos/ztimson/map-alliance/tags&query=$[0].name)](https://git.zakscode.com/ztimson/map-alliance/tags)
+  [![Pull Requests](https://img.shields.io/badge/dynamic/json.svg?label=Pull%20Requests&style=for-the-badge&url=https://git.zakscode.com/api/v1/repos/ztimson/map-alliance&query=open_pr_counter)](https://git.zakscode.com/ztimson/map-alliance/pulls)
+  [![Issues](https://img.shields.io/badge/dynamic/json.svg?label=Issues&style=for-the-badge&url=https://git.zakscode.com/api/v1/repos/ztimson/map-alliance&query=open_issues_count)](https://git.zakscode.com/ztimson/map-alliance/issues)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+  <!-- Links -->
 
-## Build
+  ---
+  <div>
+    <a href="https://git.zakscode.com/ztimson/map-alliance/releases" target="_blank">Release Notes</a>
+    • <a href="https://git.zakscode.com/ztimson/map-alliance/issues/new?template=.github%2fissue_template%2fbug.md" target="_blank">Report a Bug</a>
+    • <a href="https://git.zakscode.com/ztimson/map-alliance/issues/new?template=.github%2fissue_template%2fenhancement.md" target="_blank">Request a Feature</a>
+  </div>
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+  ---
+</div>
 
-## Running unit tests
+## Table of Contents
+- [Map Alliance](#top)
+    - [About](#about)
+        - [Demo](#demo)
+        - [Built With](#built-with)
+    - [Setup](#setup)
+        - [Development](#development)
+    - [License](#license)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## About
 
-## Running end-to-end tests
+Map Alliance is a map editing & collaboration tool. It provides several tile sets from multiple satellite image providers. From there users can
+markup the map with shapes & notations.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Maps are saved to a unique URL. To access or share any map, you just need to share the URL to your map. Anyone viewing the map will have their position synced & displayed on the map.
 
-## Further help
+This was built using Angular & Firebase's Firestore.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+### Demo
+
+Website: https://maps.zakscode.com
+
+### Built With
+[![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular)](https://angular.io/)
+[![Firebase](https://img.shields.io/badge/Firebase-FFFFFF?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org/)
+
+## Setup
+
+<details>
+<summary>
+  <h3 id="development" style="display: inline">
+    Development
+  </h3>
+</summary>
+
+#### Prerequisites
+- [Node.js](https://nodejs.org/en/download)
+
+#### Instructions
+1. Install the dependencies: `npm install`
+2. Start the Angular server: `npm run start`
+3. Open [http://localhost:4200](http://localhost:4200)
+
+</details>
+
+## License
+Copyright © 2023 Zakary Timson | All Rights Reserved
+
+See the [license](./LICENSE) for more information.
