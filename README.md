@@ -6,7 +6,7 @@
   <img src="./src/assets/images/logo.png" alt="Logo" width="200" height="200">
 
   <!-- Title -->
-  ### Template
+  ### Map Alliance
 
   <!-- Description -->
   Map Collaboration Tool
