@@ -1,6 +1,6 @@
-import {User as FirebaseUser} from "firebase"
-import {AngularFirestoreDocument} from '@angular/fire/firestore';
+import {User as FirebaseUser} from '@angular/fire/auth'
+import {DocumentReference} from '@angular/fire/firestore';
 
 export interface User extends FirebaseUser {
-    ref?: AngularFirestoreDocument;
+    ref?: DocumentReference;
 }

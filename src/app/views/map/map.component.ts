@@ -1,19 +1,20 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
+import {PermissionsService} from '../../components/permissions/permissions.service';
 import {PhysicsService} from "../../services/physics.service";
 import {filter, finalize, skip, take} from "rxjs/operators";
 import {CalibrateComponent} from "../../components/calibrate/calibrate.component";
 import {ToolbarItem} from "../../models/toolbarItem";
-import {flyInRight, flyOutRight} from "../../animations";
+import {flyInRight, flyOutRight} from "../../utils/animations";
 import {MapLayers, MapService, WeatherLayers} from "../../services/map.service";
 import {Subscription} from "rxjs";
-import {copyToClipboard, relativeLatLng} from "../../utils";
+import {copyToClipboard, relativeLatLng} from "../../utils/misc";
 import {ActivatedRoute} from "@angular/router";
 import {DimensionsDialogComponent} from "../../components/dimensionsDialog/dimensionsDialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {SyncService} from "../../services/sync.service";
 import {MapData, Marker} from "../../models/mapSymbol";
-import {Adjectives} from "../../adjectives";
-import {Nouns} from "../../nounes";
+import {Adjectives} from "../../models/adjectives";
+import {Nouns} from "../../models/nounes";
 import {EditSymbolComponent} from "../../components/editSymbol/editSymbol.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MatBottomSheet} from "@angular/material/bottom-sheet";
@@ -34,7 +35,7 @@ export class MapComponent implements OnDestroy, OnInit {
     map: MapService;
     name: string;
     polygon: any;
-    position;
+    position?: {heading: number, altitude: number, speed: number, latitude: number, longitude: number};
     positionMarker = {arrow: null, circle: null};
     shareDialog = false;
     showPalette = false;
@@ -42,7 +43,7 @@ export class MapComponent implements OnDestroy, OnInit {
 
     menu: ToolbarItem[];
 
-    constructor(public physicsService: PhysicsService, public syncService: SyncService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
+    constructor(public physicsService: PhysicsService, private permissionsService: PermissionsService, public syncService: SyncService, private snackBar: MatSnackBar, private bottomSheet: MatBottomSheet, private dialog: MatDialog, private route: ActivatedRoute) {
         this.name = localStorage.getItem('callSign');
         if(!this.name) {
             this.name = Adjectives[Math.floor(Math.random() * Adjectives.length)] + ' ' + Nouns[Math.floor(Math.random() * Nouns.length)];
@@ -75,7 +76,7 @@ export class MapComponent implements OnDestroy, OnInit {
                     {name: 'Sea Level Pressure', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.SEA_LEVEL_PRESSURE)},
                     {name: 'Clouds', toggle: true, click: () => this.map.setWeatherLayer(WeatherLayers.CLOUDS_NEW)},
                 ]},
-            {name: 'Calibrate', icon: 'explore', toggle: true, onEnabled: this.startCalibrating, onDisabled: this.unsub},
+            {name: 'Calibrate', icon: 'explore', click: this.startCalibrating},
             {name: 'Share', icon: 'share', toggle: true, onEnabled: () => this.share(), onDisabled: () => this.shareDialog = false},
             {name: 'Messages', icon: 'chat', hidden: true},
             {name: 'Identity', icon: 'perm_identity', hidden: true},
@@ -99,7 +100,7 @@ export class MapComponent implements OnDestroy, OnInit {
         this.syncService.mapData.pipe(filter(s => !!s)).subscribe((map: MapData) => {
             this.map.deleteAll();
             if (map.circles) Object.values(map.circles).filter(c => !c.deleted).forEach(c => this.map.newCircle(c));
-            if (map.locations) Object.values(map.locations).forEach(l => this.map.newMarker(Object.assign(l, {icon: 'dot', noDeleteTool: true})));
+			if (map.locations) Object.values(map.locations).forEach(l => this.map.newMarker({...l, icon: 'dot', noDeleteTool: true}));
             if (map.markers) Object.values(map.markers).filter(m => !m.deleted).forEach(m => this.map.newMarker(m));
             if (map.measurements) Object.values(map.measurements).filter(m => !m.deleted).forEach(m => this.map.newMeasurement(m));
             if (map.polygons) Object.values(map.polygons).filter(p => !p.deleted).forEach(p => this.map.newPolygon(p));
@@ -146,7 +147,7 @@ export class MapComponent implements OnDestroy, OnInit {
         });
     }
 
-    center(pos?) {
+    center(pos?: any) {
         if (!pos) pos = {lat: this.position.latitude, lng: this.position.longitude};
         this.map.centerOn(pos);
     }
@@ -177,14 +178,21 @@ export class MapComponent implements OnDestroy, OnInit {
     }
 
     startCalibrating = (menuItem?) => {
-        this.calibration = this.bottomSheet.open(CalibrateComponent, {hasBackdrop: false, disableClose: true});
-        this.sub = this.calibration.afterDismissed().pipe(finalize(() => {
-            menuItem.enabled = false;
-        })).subscribe(() => {
-            this.calibration.dismiss();
-            this.calibration = null;
-            this.sub = null;
-        });
+		if(this.calibration) {
+			if(this.sub) this.sub.unsubscribe();
+			this.calibration.dismiss();
+			this.sub = null;
+			this.calibration = null;
+		} else {
+			this.calibration = this.bottomSheet.open(CalibrateComponent, {hasBackdrop: false, disableClose: true});
+			this.sub = this.calibration.afterDismissed().pipe(finalize(() => {
+				menuItem.enabled = false;
+			})).subscribe(() => {
+				this.calibration.dismiss();
+				this.calibration = null;
+				this.sub = null;
+			});
+		}
     };
 
     startCircle = menuItem => {

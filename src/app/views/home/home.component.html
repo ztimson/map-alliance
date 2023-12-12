@@ -1,42 +1,42 @@
 <div [@fadeIn] class="h-100 w-100">
     <stary-sky></stary-sky>
-    <div class="badge">
-        <img src="assets/images/logo.png" width="200px" height="auto">
-    </div>
-    <div class="controls">
-        <div *ngIf="!authService.authenticated">
-            <!--<button mat-flat-button class="w-100 text-white mb-3" style="background-color: #3b5998" (click)="authService.loginWithFacebook()">
-                <img class="mr-2" src="/assets/images/facebook.png" height="18px" width="auto"> Facebook
-            </button>-->
-            <button mat-flat-button class="w-100 mb-1" style="background-color: #efe8e8" (click)="authService.loginWithGoogle()">
-                <img class="mr-2" src="/assets/images/google.png" height="18px" width="auto"> Google
-            </button>
-        </div>
-        <div *ngIf="authService.authenticated">
-            <button mat-flat-button class="w-100 text-white mb-1" style="background-color: #dd0330" (click)="authService.logout()">
-                <mat-icon>logout</mat-icon> Logout
-            </button>
-        </div>
-        <hr style="background-color: #FFFFFF90">
-        <div>
-            <button *ngIf="authService.authenticated" mat-flat-button class="w-100 mb-3" style="background-color: #efe8e8" (click)="new()">
-                <mat-icon>history</mat-icon> Recent
-            </button>
-            <button mat-flat-button class="w-100 text-white mb-3" style="background-color: #dd0330" (click)="new()">
-                <mat-icon>add</mat-icon> New Map
-            </button>
-            <div class="w-100">
-                <form class="input-group">
-                    <input type="text" class="form-control" [(ngModel)]="code" name="code" placeholder="Code" (keyup)="isValid()">
-                    <div class="input-group-append">
-                        <button class="btn btn-danger" [routerLink]="['/', code]" style="background-color: #dd0330" [disabled]="!valid || code.length < 4">Open</button>
-                    </div>
-                    <small *ngIf="!valid && code.length > 3" class="mt-2 text-danger">Codes can only be made up of letters and numbers!</small>
-                </form>
-            </div>
-        </div>
-    </div>
-    <span class="credits text-white">
+	<div class="controls d-flex flex-column">
+		<img src="assets/images/logo.png" class="mb-4 py-1" alt="logo" width="200px">
+		<div *ngIf="!authService.authenticated">
+			<!--<button mat-flat-button class="w-100 text-white mb-3 py-2" style="background-color: #3b5998" (click)="authService.loginWithFacebook()">
+				<img class="mr-2" src="/assets/images/facebook.png" height="18px" width="auto"> Facebook
+			</button>-->
+			<button mat-flat-button class="w-100 mb-1 py-2" style="background-color: #efe8e8" (click)="authService.loginWithGoogle()">
+				<img class="mr-2" src="/assets/images/google.png" height="18px" width="auto"> Google
+			</button>
+		</div>
+		<div *ngIf="authService.authenticated">
+			<button mat-flat-button class="w-100 text-white mb-1 py-2" style="background-color: #dd0330" (click)="authService.logout()">
+				<mat-icon>logout</mat-icon> Logout
+			</button>
+		</div>
+		<div>
+			<hr style="background-color: #FFFFFF90">
+		</div>
+		<div>
+			<button *ngIf="authService.authenticated" mat-flat-button class="w-100 mb-3 py-2" style="background-color: #efe8e8" (click)="new()">
+				<mat-icon>history</mat-icon> Recent
+			</button>
+			<button mat-flat-button class="w-100 text-white mb-3 py-2" style="background-color: #dd0330" (click)="new()">
+				<mat-icon>add</mat-icon> New Map
+			</button>
+			<div class="w-100">
+				<form class="input-group">
+					<input type="text" class="form-control" [(ngModel)]="code" name="code" placeholder="Code" (keyup)="isValid()">
+					<div class="input-group-append">
+						<button class="btn btn-danger" [routerLink]="['/', code]" style="background-color: #dd0330" [disabled]="!valid || code.length < 4">Open</button>
+					</div>
+					<small *ngIf="!valid && code.length > 3" class="mt-2 text-danger">Codes can only be made up of letters and numbers!</small>
+				</form>
+			</div>
+		</div>
+	</div>
+    <span class="credits text-white p-3">
         Created By <a href="https://zakscode.com" target="_blank">Zak Timson</a>
     </span>
 </div>

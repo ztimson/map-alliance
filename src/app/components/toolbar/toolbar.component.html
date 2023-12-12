@@ -1,6 +1,6 @@
 <mat-toolbar id="toolbar">
-    <button mat-icon-button routerLink="/">
-        <img src="/assets/images/logo.png" height="35px" width="auto">
+    <button mat-icon-button class="p-0" routerLink="/">
+        <img src="/assets/images/logo.png" style="height: 36px; width: 36px">
     </button>
     <small class="ml-1">{{version}}</small>
     <mat-progress-spinner *ngIf="(status | async) == 'staving'" color="primary" class="text-muted pl-2"></mat-progress-spinner>

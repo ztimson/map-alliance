@@ -1,46 +1,54 @@
-import {Injectable} from "@angular/core";
-import {BehaviorSubject, from} from "rxjs";
-import {AngularFirestore} from "@angular/fire/firestore";
-import {AngularFireAuth} from "@angular/fire/auth";
-import {auth} from 'firebase';
-import {Router} from "@angular/router";
-import {flatMap, map, skip} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {Router} from '@angular/router';
 import {User} from '../models/user';
+import {getAuth, FacebookAuthProvider, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
+import {collection, getFirestore, doc, getDoc} from 'firebase/firestore';
 
 @Injectable({
-    providedIn: 'root'
+	providedIn: 'root'
 })
 export class AuthService {
-    readonly collection = 'Users';
+	readonly collection = 'Users';
 
-    authenticated = false;
-    user = new BehaviorSubject<User>(null);
+	authenticated = false;
+	user = new BehaviorSubject<User | false>(null);
 
-    constructor(private afAuth: AngularFireAuth, private router: Router, private db: AngularFirestore) {
-        this.user.subscribe(user => {
-            this.authenticated = user instanceof Object
-        });
-        this.afAuth.user.pipe(
-            flatMap((user: any) => {
-                if(!user) return from([false]);
-                let ref = this.db.collection(this.collection).doc(user.uid);
-                return ref.valueChanges().pipe(map(dbUser => Object.assign({ref: ref}, user, dbUser)))
-            })
-        ).subscribe(user => this.user.next(<User>user));
-    }
+	private get auth() { return getAuth(); }
+	private get db() { return getFirestore(); }
 
-    async loginWithGoogle() {
-        this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
-        return this.user.pipe(skip(1));
-    }
+	constructor(private router: Router) {
+		this.user.subscribe(user => this.authenticated = user instanceof Object);
+		this.whoAmI();
+	}
 
-    async loginWithFacebook() {
-        this.afAuth.auth.signInWithPopup(new auth.FacebookAuthProvider());
-        return this.user.pipe(skip(1));
-    }
+	async loginWithGoogle() {
+		const result = await signInWithPopup(this.auth, new GoogleAuthProvider());
+		this.user.next(result.user);
+		return result.user;
+	}
 
-    async logout() {
-        await this.afAuth.auth.signOut();
-        return this.router.navigate(['/']);
-    }
+	async loginWithFacebook() {
+		const result = await signInWithPopup(this.auth, new FacebookAuthProvider());
+		this.user.next(result.user);
+		return result.user;
+	}
+
+	async logout() {
+		await this.auth.signOut();
+		this.user.next(false);
+		return this.router.navigate(['/']);
+	}
+
+	async whoAmI() {
+		await this.auth.authStateReady();
+		const user = this.auth.currentUser || false;
+		if(!!user) {
+			const ref = doc(collection(this.db, this.collection), user.uid);
+			const data = await getDoc(ref);
+			Object.assign(user, {ref, ...data});
+		}
+		this.user.next(user);
+		return user;
+	}
 }

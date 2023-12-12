@@ -1,2 +1,1 @@
-export interface Map {
-}
+export interface Map { }

@@ -1,23 +1,15 @@
-.badge {
-  position: absolute;
-  top: 15%;
-  left: 50%;
-  z-index: 5000;
-  transform: translateX(-50%);
-}
-
 .controls {
   position: absolute;
-  bottom: 15%;
+  top: 50%;
   left: 50%;
   width: 200px;
   z-index: 5000;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
 }
 
 .credits {
   position: absolute;
-  bottom: 2%;
-  right: 2%;
+  bottom: 0;
+  right: 0;
   z-index: 5000;
 }

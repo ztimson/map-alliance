@@ -1,64 +1,32 @@
 #map {
-  height: 100vh;
+	height: 100vh;
 }
 
 .palette {
-  position: fixed;
-  z-index: 5000;
-  top: 60px;
-  right: 15px;
+	position: fixed;
+	z-index: 5000;
+	top: 60px;
+	right: 15px;
 }
 
 .share {
-  position: fixed;
-  z-index: 5000;
-  top: 60px;
-  right: 15px;
+	position: fixed;
+	z-index: 5000;
+	top: 60px;
+	right: 15px;
 }
 
 .info {
-  background-color: #00000050;
-  position: fixed;
-  z-index: 5000;
-  bottom: 15px;
-  left: 15px;
+	background-color: #00000050;
+	position: fixed;
+	z-index: 5000;
+	bottom: 15px;
+	left: 15px;
 }
 
 .gps {
-  position: fixed;
-  z-index: 5000;
-  bottom: 15px;
-  right: 15px;
-}
-
-::ng-deep .mat-menu-panel {
-  background-color: rgba(0, 0, 0, 0.8) !important;
-
-  .mat-menu-item {
-    color: rgba(255, 255, 255, 0.54);
-
-    &:hover {
-      background-color: rgba(90, 90, 90, 0.8) !important;
-    }
-
-    .mat-icon-no-color {
-     color: rgba(255, 255, 255, 0.54)
-    }
-  }
-}
-
-::ng-deep .mat-toolbar {
-  position: absolute;
-  height: 45px !important;
-  z-index: 5000;
-  color: rgba(255, 255, 255, 0.54);
-  background-color: rgba(0, 0, 0, 0.8);
-
-  .selected {
-    background-color: rgba(75, 75, 75, 0.8);
-  }
-
-  .mat-icon-button:hover {
-    background-color: rgba(90, 90, 90, 0.8) !important;
-  }
+	position: fixed;
+	z-index: 5000;
+	bottom: 15px;
+	right: 15px;
 }

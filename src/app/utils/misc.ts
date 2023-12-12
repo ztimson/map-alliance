@@ -1,4 +1,4 @@
-import {LatLng} from "./models/mapSymbol";
+import {LatLng} from "../models/mapSymbol";
 
 export const R = 6_371; // Radius of the Earth
 

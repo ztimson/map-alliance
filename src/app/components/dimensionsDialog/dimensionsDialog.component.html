@@ -1,7 +1,7 @@
 <div>
-    <form id="dimensionsForm" class="d-flex align-items-center" (ngSubmit)="close()">
+    <form id="dimensionsForm" class="d-flex align-items-center pt-4 px-4 pb-0" (ngSubmit)="close()">
         <ng-container *ngFor="let d of dimensions; let i = index">
-            <div class="flex-shrink-0 mx-2" *ngIf="i != 0">X</div>
+            <div class="flex-shrink-0 mb-2 mx-2" *ngIf="i != 0">X</div>
             <div class="flex-shrink-1">
                 <mat-form-field class='w-100' appearance="fill">
                     <mat-label>{{d}}</mat-label>
