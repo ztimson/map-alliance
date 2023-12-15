@@ -34,6 +34,7 @@
         - [Demo](#demo)
         - [Built With](#built-with)
     - [Setup](#setup)
+	    - [Production](#production)
         - [Development](#development)
     - [License](#license)
 
@@ -52,10 +53,26 @@ Website: https://maps.zakscode.com
 
 ### Built With
 [![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular)](https://angular.io/)
+[![Docker](https://img.shields.io/badge/Docker-384d54?style=for-the-badge&logo=docker)](https://docker.com/)
 [![Firebase](https://img.shields.io/badge/Firebase-FFFFFF?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org/)
 
 ## Setup
+
+<details>
+<summary>
+  <h3 id="production" style="display: inline">
+    Production
+  </h3>
+</summary>
+
+#### Prerequisites
+- [Docker](https://docs.docker.com/install/)
+
+#### Instructions
+1. Run the docker image: `docker run -p 80:80 ztimson/map-alliance`
+2. Open http://localhost
+</details>
 
 <details>
 <summary>
@@ -70,7 +87,7 @@ Website: https://maps.zakscode.com
 #### Instructions
 1. Install the dependencies: `npm install`
 2. Start the Angular server: `npm run start`
-3. Open [http://localhost:4200](http://localhost:4200)
+3. Open http://localhost:4200
 
 </details>
 
