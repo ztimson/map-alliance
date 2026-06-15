@@ -14,7 +14,7 @@
 		"@angular/common": "^17.0.0",
 		"@angular/compiler": "^17.0.0",
 		"@angular/core": "^17.0.0",
-		"@angular/fire": "^17.0.0",
+		"@angular/fire": "^17.1.0",
 		"@angular/forms": "^17.0.0",
 		"@angular/material": "^17.0.0",
 		"@angular/platform-browser": "^17.0.0",
@@ -41,11 +41,11 @@
 		"zone.js": "~0.14.2"
 	},
 	"devDependencies": {
-		"@angular-devkit/build-angular": "^17.0.6",
+		"@angular-devkit/build-angular": "^21.2.15",
 		"@angular/cli": "^17.0.0",
 		"@angular/compiler-cli": "^17.0.0",
 		"@types/leaflet": "^1.5.1",
-		"firebase-tools": "^12.0.0",
+		"firebase-tools": "^13.27.0",
 		"typescript": "~5.2.2"
 	}
 }
